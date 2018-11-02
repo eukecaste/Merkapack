@@ -1,0 +1,215 @@
+@external .* ;
+body:fullscreen, body:-webkit-full-screen, body:-moz-full-screen {
+	background-color: rgba(255, 255, 255, 0);
+}
+
+@media print {
+	.aon-no-print, .aon-no-print * {
+		display: none !important;
+	}
+}
+
+input:focus {
+	background-color: #FBEDB6;
+}
+input[type="checkbox"]:focus+label {
+	background-color: #FBEDB6;
+}
+input[type="text"] {
+	border: 1px solid #808080 !important;
+}
+
+.mkpk-pointer{	cursor: pointer;}
+
+.mkpk-bold	{font-weight: bold;}
+
+.mkpk-width-all{width: 100%;}
+.mkpk-width-auto{width: auto;}
+.mkpk-width-10p{width: 10%;}
+.mkpk-width-20p{width: 20%;}
+.mkpk-width-30p{width: 30%;}
+.mkpk-width-40p{width: 40%;}
+.mkpk-width-50p{width: 50%;}
+.mkpk-width-60p{width: 60%;}
+.mkpk-width-70p{width: 70%;}
+.mkpk-width-80p{width: 80%;}
+.mkpk-width-90p{width: 90%;}
+
+.mkpk-block-center	{margin-left:auto; margin-right: auto;}
+.mkpk-text-left		{text-align: left;}
+.mkpk-text-center	{text-align: center;}
+.mkpk-text-right	{text-align: right;}
+
+.mkpk-inputText 	{border: 1px solid #808080;}
+.mkpk-input-text-important {border: 1px solid #808080 !important; padding: 1px;}
+
+.mkpk-nomargin {margin: 0px;}
+.mkpk-margin-bottom 	{margin-bottom: 1em;}
+.mkpk-margin-top 		{margin-top: 1em;}
+.mkpk-margin-right 		{margin-right: 1em;}
+.mkpk-margin-left 		{margin-left: 1em;}
+
+.mkpk-nopadding {padding: 0px;}
+.mkpk-padding 	{padding: 1em;}
+.mkpk-padding-bottom 	{padding-bottom: 1em;}
+.mkpk-padding-top 		{padding-top: 1em;}
+.mkpk-padding-right 	{padding-right: 1em;}
+.mkpk-padding-left 		{padding-left: 1em;}
+.mkpk-icon-padding-left	{padding-left: 15px;}
+
+.mkpk-noborder 			{border: none;}
+.mkpk-border-bottom 	{border-bottom: solid #999 1px;}
+.mkpk-border-top 		{border-top: solid #999 1px;}
+.mkpk-border-right 		{border-right: #999 1px solid;}
+.mkpk-border-left 		{border-left: #999 1px solid;}
+
+.mkpk-app-title		{font-size: 2em; font-weight: bold;}
+
+
+@sprite .mkpk-img-logo {
+	width: auto;
+	gwt-image: "mkpkLogo";
+}
+@sprite .mkpk-img-manufacturing {
+	width: auto;
+	padding-left: 75px;
+	font-size: 1.4em;
+	border: none;
+	gwt-image: "mkpkManufacturing";
+	cursor: pointer;
+	margin-top: 15px;
+}
+@sprite .mkpk-img-planning {
+	width: auto;
+	padding-left: 75px;
+	font-size: 1.4em;
+	border: none;
+	gwt-image: "mkpkPlanning";
+	cursor: pointer;
+	margin-top: 15px;
+}
+@sprite .mkpk-img-stats {
+	width: auto;
+	padding-left: 75px;
+	font-size: 1.4em;
+	border: none;
+	gwt-image: "mkpkStats";
+	cursor: pointer;
+	margin-top: 15px;
+}
+
+@sprite .mkpk-icon-menu 	{width: auto; gwt-image: "mkpkIconMenu";}
+@sprite .mkpk-icon-bullet 	{width: auto; gwt-image: "mkpkIconBullet";}
+@sprite .mkpk-icon-plus 	{width: auto; gwt-image: "mkpkIconPlus";}
+@sprite .mkpk-icon-cancel 	{width: auto; gwt-image: "mkpkIconCancel";}
+@sprite .mkpk-icon-delete 	{width: auto; gwt-image: "mkpkIconDelete";}
+
+
+
+.mkpk-cd-panel {
+	margin: 0px;
+	padding: 0px;
+}
+	
+@sprite .mkpk-cd-header {
+	gwt-image: 'mkpkCDHeaderBack';
+	background-color: #D4CFC7;
+	background-repeat: repeat-x;
+	background-position: left top;
+	background-attachment: scroll;
+	margin: 0px;
+	padding: 1px;
+	height: auto;
+	width: auto;
+}
+	
+@sprite .mkpk-cd-title {
+	gwt-image: 'mkpkCDHeader';
+	background-repeat: repeat-x;
+	background-attachment: scroll;
+	background-position: left top;
+	background-color: transparent;
+	border: 1px solid #FFFFFF;
+	color: #FFFFFF;
+	font-weight: bold;
+	padding: 5px 1em;
+	text-transform: uppercase;
+	height: 13px;
+	width: auto;
+	font-size: 11px;
+}
+	
+@sprite .mkpk-cd-close {
+	gwt-image: 'mkpkCDClose';
+	background-repeat: no-repeat;
+	background-attachment: scroll;
+	background-position: center center;
+	background-color: #F2F2F2;
+	border: 1px solid #FFFFFF;
+	cursor: pointer;
+	height: 16px;
+	margin: 5px 5px 3px 0;
+	width: 16px;
+	position: absolute;
+	right: 3px;
+	top: 3px;
+}
+
+.mkpk-confirm-dialog {
+	background: white none repeat scroll 0 0;
+	border: none;
+	padding: 2px;
+}
+
+.mkpk-confirm-dialog-msg {
+	font-size: 1.2em;
+	margin: 1em;
+	text-align: center;
+}
+
+@sprite .mkpk-confirm-dialog-ok-button {
+	gwt-image: "mkpkIconAccept";
+	background-attachment: scroll;
+	background-clip: border-box;
+	background-color: inherit;
+	background-position: 3px 2px;
+	background-repeat: no-repeat;
+	background-size: auto auto;
+	border: 1px solid #aaa;
+	cursor: pointer;
+	font-weight: bold;
+	height: auto;
+	overflow: visible;
+	padding-left: 20px;
+	text-align: left;
+	text-transform: uppercase;
+	width: auto;
+}
+
+.mkpk-confirm-dialog-ok-button:hover, .mkpk-confirm-dialog-ok-button:focus
+	{
+	background-color: #FBEDB6;
+}
+
+@sprite .mkpk-confirm-dialog-cancel-button {
+	gwt-image: "mkpkIconCancel";
+	background-attachment: scroll;
+	background-clip: border-box;
+	background-color: inherit;
+	background-position: 3px 2px;
+	background-repeat: no-repeat;
+	background-size: auto auto;
+	border: 1px solid #aaa;
+	cursor: pointer;
+	font-weight: bold;
+	height: auto;
+	overflow: visible;
+	padding-left: 20px;
+	text-align: left;
+	text-transform: uppercase;
+	width: auto;
+}
+
+.mkpk-confirm-dialog-cancel-button:hover, .mkpk-confirm-dialog-cancel-button:focus {
+	background-color: #FBEDB6;
+}
