@@ -1,5 +1,3 @@
-USE `merkapack_jooq`;
-
 CREATE TABLE `domain` (
 	 `id` int(4) NOT NULL AUTO_INCREMENT COMMENT 'Identificador unico'
 	,`name` varchar(64) COLLATE latin1_spanish_ci NOT NULL COMMENT 'Nombre del dominio'
@@ -13,12 +11,15 @@ CREATE TABLE `domain` (
 
 CREATE TABLE `machine` (
 	 `id` int(4) NOT NULL AUTO_INCREMENT COMMENT 'Identificador unico'
+	,`domain` int(4) NOT NULL COMMENT 'Identificador del Dominio'
 	,`name` varchar(32) COLLATE latin1_spanish_ci NOT NULL COMMENT 'Nombre de la maquina'
 	,`creation_user` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de creacion'
 	,`creation_date` datetime DEFAULT NULL COMMENT 'Fecha de creacion'
 	,`modification_user` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de modificacion'
 	,`modification_date` datetime DEFAULT NULL COMMENT 'Fecha de modificacion'
 	,PRIMARY KEY (`id`)
+	,KEY `IDX_MACHINE_DOMAIN` (`domain`)
+	,CONSTRAINT `FK_MACHINE_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)	
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Maquinas';
 
 CREATE TABLE `material` (

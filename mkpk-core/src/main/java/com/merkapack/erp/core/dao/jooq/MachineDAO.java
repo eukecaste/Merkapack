@@ -38,6 +38,7 @@ public class MachineDAO {
 	public static Machine insert(DBContext ctx,Machine machine) {
 		Integer id = ctx.getDslContext()
 			.insertInto(MACHINE)
+			.set(MACHINE.DOMAIN,machine.getDomain())
 			.set(MACHINE.NAME,machine.getName())
 			.set(MACHINE.CREATION_USER,ctx.getUser())
 			.set(MACHINE.CREATION_DATE, new Timestamp( System.currentTimeMillis()) )

@@ -80,6 +80,11 @@ public interface CSS extends CssResource {
 	@ClassName("mkpk-icon-delete")
 	String mkpkIconDelete();
 	
+	@ClassName("mkpk-menu")
+	String mkpkMenu();
+	
+	@ClassName("mkpk-close")
+	String mkpkClose();
 	
 	@ClassName("mkpk-cd-panel")
 	String mkpkCDPanel();
@@ -104,6 +109,7 @@ public interface CSS extends CssResource {
 	
 	@ClassName("mkpk-confirm-dialog-cancel-button")
 	String mkpkConfirmDialogCancelButton();
+	
 
 }
 

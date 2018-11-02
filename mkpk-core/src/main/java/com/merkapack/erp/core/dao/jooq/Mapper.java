@@ -15,6 +15,7 @@ public class Mapper {
 		public Machine apply(Record rec) {
 			return new Machine()
 				.setId(rec.get(MACHINE.ID))
+				.setDomain(rec.get(MACHINE.DOMAIN))
 				.setName(rec.get(MACHINE.NAME))
 				.setCreationUser(rec.getValue(MACHINE.CREATION_USER))
 				.setCreationDate(rec.getValue(MACHINE.CREATION_DATE))

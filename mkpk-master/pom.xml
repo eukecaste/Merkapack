@@ -77,9 +77,12 @@
 							<goal>execute</goal>
 						</goals>
 						<configuration>
+							<url>jdbc:mariadb://localhost:3306:mercapack_jooq</url>
 							<autocommit>true</autocommit>
 							<srcFiles>
+								<srcFile>src/main/resources/com/merkapack/erp/master/useSchema.sql</srcFile>
 								<srcFile>src/main/resources/com/merkapack/erp/master/schema.sql</srcFile>
+								<srcFile>src/main/resources/com/merkapack/erp/master/default-values.sql</srcFile>
 							</srcFiles>
 						</configuration>
 					</execution>

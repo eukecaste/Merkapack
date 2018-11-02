@@ -98,6 +98,8 @@ input[type="text"] {
 	margin-top: 15px;
 }
 
+@sprite .mkpk-menu 	{width: auto; gwt-image: "mkpkMenu";}
+@sprite .mkpk-close	{width: auto; gwt-image: "mkpkClose";}
 @sprite .mkpk-icon-menu 	{width: auto; gwt-image: "mkpkIconMenu";}
 @sprite .mkpk-icon-bullet 	{width: auto; gwt-image: "mkpkIconBullet";}
 @sprite .mkpk-icon-plus 	{width: auto; gwt-image: "mkpkIconPlus";}

@@ -70,13 +70,15 @@ public class MkpkDockLayout extends DockLayoutPanel implements EntryPoint {
 
 		FlowPanel buttonsContainer = new FlowPanel(); 
 
-		Button openSidebar = new Button("Men\u00FA");
-		openSidebar.setStyleName(MKPK.CSS.mkpkIconMenu());
+		Button openSidebar = new Button();
+		openSidebar.setTitle("Men\u00FA");
+		openSidebar.setStyleName(MKPK.CSS.mkpkMenu());
 		openSidebar.addStyleName(MKPK.CSS.mkpkIconPaddingLeft());
 		openSidebar.addStyleName(MKPK.CSS.mkpkNoBorder());
 		
-		Button closeSidebar = new Button("Cerrar");
-		closeSidebar.setStyleName(MKPK.CSS.mkpkIconCancel());
+		Button closeSidebar = new Button();
+		closeSidebar.setTitle("Cerrar");
+		closeSidebar.setStyleName(MKPK.CSS.mkpkClose());
 		closeSidebar.addStyleName(MKPK.CSS.mkpkIconPaddingLeft());
 		closeSidebar.addStyleName(MKPK.CSS.mkpkNoBorder());
 		closeSidebar.setVisible(false);

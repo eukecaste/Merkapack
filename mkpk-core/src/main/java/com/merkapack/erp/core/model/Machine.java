@@ -8,6 +8,7 @@ public class Machine implements Serializable, HasAudit {
 	private static final long serialVersionUID = -7795449515443023516L;
 	
 	private Integer id;
+	private int domain;
 	private String name;
 	
 	private String creationUser;
@@ -24,7 +25,15 @@ public class Machine implements Serializable, HasAudit {
 		this.id = id;
 		return this;
 	}
-
+	
+	public int getDomain() {
+		return domain;
+	}
+	public Machine setDomain(int domain) {
+		this.domain = domain;
+		return this;
+	}
+	
 	public String getName() {
 		return name;
 	}
