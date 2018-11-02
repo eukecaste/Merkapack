@@ -1,0 +1,169 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.merkapack.erp</groupId>
+		<artifactId>mkpk-parent</artifactId>
+		<version>1.0-SNAPSHOT</version>
+	</parent>
+
+	<artifactId>mkpk-master</artifactId>
+	<name>MKPK MASTER</name>
+	<description>MKPK MASTER</description>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>sql-maven-plugin</artifactId>
+				<version>1.5</version>
+
+				<dependencies>
+					<!-- specify the dependent jdbc driver here -->
+					<dependency>
+						<groupId>org.mariadb.jdbc</groupId>
+						<artifactId>mariadb-java-client</artifactId>
+						<version>2.3.0</version>
+					</dependency>
+				</dependencies>
+
+				<!-- common configuration shared by all executions -->
+				<configuration>
+					<driver>org.mariadb.jdbc.Driver</driver>
+					<url>jdbc:mariadb://localhost:3306:mercapack_jooq</url>
+					<username>dbuser</username>
+					<password>serubd2000</password>
+					<settingsKey>sensibleKey</settingsKey>
+					<skip>${maven.test.skip}</skip>
+				</configuration>
+
+				<executions>
+					<execution>
+						<id>drop-db-before-test-if-any</id>
+						<phase>initialize</phase>
+						<goals>
+							<goal>execute</goal>
+						</goals>
+						<configuration>
+							<url>jdbc:mariadb://localhost:3306:mysql</url>
+							<autocommit>true</autocommit>
+							<sqlCommand>drop database merkapack_jooq</sqlCommand>
+							<onError>continue</onError>
+						</configuration>
+					</execution>
+
+					<execution>
+						<id>create-db</id>
+						<phase>initialize</phase>
+						<goals>
+							<goal>execute</goal>
+						</goals>
+						<configuration>
+							<url>jdbc:mariadb://localhost:3306:mercapack_jooq</url>
+							<!-- no transaction -->
+							<autocommit>true</autocommit>
+							<sqlCommand>
+								CREATE DATABASE merkapack_jooq CHARACTER SET latin1
+								COLLATE latin1_spanish_ci
+							</sqlCommand>
+						</configuration>
+					</execution>
+
+					<execution>
+						<id>create-schema</id>
+						<phase>initialize</phase>
+						<goals>
+							<goal>execute</goal>
+						</goals>
+						<configuration>
+							<autocommit>true</autocommit>
+							<srcFiles>
+								<srcFile>src/main/resources/com/merkapack/erp/master/schema.sql</srcFile>
+							</srcFiles>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<!-- Specify the maven code generator plugin -->
+				<groupId>org.jooq</groupId>
+				<artifactId>jooq-codegen-maven</artifactId>
+				<version>3.11.5</version>
+
+				<!-- The plugin should hook into the generate goal -->
+				<executions>
+					<execution>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+					</execution>
+				</executions>
+
+				<!-- Manage the plugin's dependency. We'll use a MySQL database -->
+				<dependencies>
+					<dependency>
+						<groupId>org.mariadb.jdbc</groupId>
+						<artifactId>mariadb-java-client</artifactId>
+						<version>2.3.0</version>
+					</dependency>
+				</dependencies>
+
+				<!-- Specify the plugin configuration. The configuration format is the 
+					same as for the standalone code generator -->
+				<configuration>
+
+					<!-- JDBC connection parameters -->
+					<jdbc>
+						<driver>org.mariadb.jdbc.Driver</driver>
+						<url>jdbc:mariadb://localhost:3306:mercapack_jooq</url>
+						<username>dbuser</username>
+						<password>serubd2000</password>
+					</jdbc>
+
+					<!-- Generator parameters -->
+					<generator>
+					<!-- 
+						<name>org.jooq.util.DefaultGenerator</name>
+ 					-->
+						<database>
+							<!-- MarisDB database dialect from jooq-meta. -->
+							<name>org.jooq.meta.mariadb.MariaDBDatabase</name>
+
+							<!-- All elements are generated from our schema -->
+							<includes>.*</includes>
+
+							<!--No elements are excluded from our schema -->
+							<excludes />
+
+							<inputSchema>merkapack_jooq</inputSchema>
+
+							<!-- Use this as the integration / production database: -->
+							<outputSchema>merkapack</outputSchema>
+						</database>
+
+						<generate>
+
+						</generate>
+
+						<target>
+							<packageName>com.merkapack.erp.master.jooq</packageName>
+							<directory>target/generated-sources</directory>
+						</target>
+					</generator>
+				</configuration>
+			</plugin>
+
+		</plugins>
+	</build>
+	<dependencies>
+		<dependency>
+			<groupId>org.jooq</groupId>
+			<artifactId>jooq</artifactId>
+			<version>3.11.5</version>
+			<scope>compile</scope>
+		</dependency>
+	</dependencies>
+
+</project>
