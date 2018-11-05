@@ -1,7 +1,6 @@
 package com.merkapack.erp.gwt.client.common.i18n;
 
 import com.google.gwt.i18n.client.Messages;
-import com.google.gwt.safehtml.shared.SafeHtml;
 
 public interface MkpkMessages extends Messages {
 	// Á --> \u00C1 á --> \u00E1 
@@ -63,8 +62,8 @@ public interface MkpkMessages extends Messages {
 	@DefaultMessage("M\u00E1quinas")
 	String machines();
 
-
-
+	@DefaultMessage("Grosor")
+	String thickness();
 	
 }
 

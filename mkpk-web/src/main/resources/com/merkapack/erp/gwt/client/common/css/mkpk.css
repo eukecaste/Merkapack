@@ -18,6 +18,40 @@ input[type="checkbox"]:focus+label {
 input[type="text"] {
 	border: 1px solid #808080 !important;
 }
+.mkpk-number-box {
+	text-align: right;
+	padding-left: 15px;
+	padding-right: 2px;
+}
+@sprite .mkpk-input-calc {
+	gwt-image: "mkpkInputCalc";
+	background-position: 2px 3px;
+	color: red !important;
+	width: auto;
+	height: auto;
+	padding-left: 15px !important;
+}
+@sprite .mkpk-input-error {
+	gwt-image: "mkpkInputError";
+	background-position: 2px 3px;
+	color: red !important;
+	width: auto;
+	height: auto;
+	background-color: white;
+	padding-left: 10px !important;
+}
+.mkpk-value-changed {
+	color: #897820;
+	font-weight: bold;
+	text-shadow: 0.1em 0.1em 0.2em #9E945E;
+}
+.mkpk-error-label{
+	color: red;
+	border: solid red 1px;
+	padding: 0.5em;
+	margin-left: 1em;
+	margin-right: 1em;
+}
 
 .mkpk-pointer{	cursor: pointer;}
 

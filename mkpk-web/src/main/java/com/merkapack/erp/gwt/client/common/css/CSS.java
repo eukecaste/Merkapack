@@ -4,10 +4,13 @@ import com.google.gwt.resources.client.CssResource;
 
 public interface CSS extends CssResource {
 
-	@ClassName("mkpk-inputText")
-	String mkpkInputText();
-	@ClassName("mkpk-input-text-important")
-	String mkpkInputTextImportant();
+	@ClassName("mkpk-inputText")			String mkpkInputText();
+	@ClassName("mkpk-input-text-important")	String mkpkInputTextImportant();
+	@ClassName("mkpk-number-box")			String mkpkNumberBox();
+	@ClassName("mkpk-input-calc")			String mkpkInputCalc();
+	@ClassName("mkpk-input-error")			String mkpkInputError();
+	@ClassName("mkpk-value-changed") 		String mkpkValueChanged();
+	@ClassName("mkpk-error-label") 			String mkpkErrorLabel();
 
 	@ClassName("mkpk-pointer") 		String mkpkPointer();
 
@@ -109,6 +112,7 @@ public interface CSS extends CssResource {
 	
 	@ClassName("mkpk-confirm-dialog-cancel-button")
 	String mkpkConfirmDialogCancelButton();
+	
 	
 
 }

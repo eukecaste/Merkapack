@@ -24,6 +24,7 @@ CREATE TABLE `machine` (
 
 CREATE TABLE `material` (
 	 `id` int(4) NOT NULL AUTO_INCREMENT COMMENT 'Identificador unico del material'
+	,`domain` int(4) NOT NULL COMMENT 'Identificador del Dominio'
 	,`name` varchar(32) COLLATE latin1_spanish_ci NOT NULL COMMENT 'Nombre del material'
 	,`thickness` double(6,4) DEFAULT '0.00' COMMENT 'Grosor del material'
 	,`creation_user` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de creacion'
@@ -31,6 +32,8 @@ CREATE TABLE `material` (
 	,`modification_user` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de modificacion'
 	,`modification_date` datetime DEFAULT NULL COMMENT 'Fecha de modificacion'
 	,PRIMARY KEY (`id`)
+	,KEY `IDX_MATERIAL_DOMAIN` (`domain`)
+	,CONSTRAINT `FK_MATERIAL_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)	
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Materiales';
 
 

@@ -7,21 +7,21 @@ import javax.servlet.annotation.WebServlet;
 import com.merkapack.erp.core.basic.DBContext;
 import com.merkapack.erp.core.basic.MkpkDatasource;
 import com.merkapack.erp.core.dao.MkpkGo;
-import com.merkapack.erp.core.model.Machine;
+import com.merkapack.erp.core.model.Material;
 import com.merkapack.erp.core.model.MkpkCoreException;
-import com.merkapack.erp.gwt.client.rpc.MachineService;
+import com.merkapack.erp.gwt.client.rpc.MaterialService;
 
-@WebServlet(name = "Machine Service Servlet", urlPatterns = { "/mkpk_gwt/MkpkMachine" })
-public class MachineServiceImpl extends StatelessRemoteServiceServlet implements MachineService {
+@WebServlet(name = "Material Service Servlet", urlPatterns = { "/mkpk_gwt/MkpkMaterial" })
+public class MaterialServiceImpl extends StatelessRemoteServiceServlet implements MaterialService {
 
 	private static final long serialVersionUID = 949123203256791644L;
 
 	@Override
-	public LinkedList<Machine> getMachines() throws MkpkCoreException {
+	public LinkedList<Material> getMaterials() throws MkpkCoreException {
 		DBContext ctx = null;
 		try {
 			ctx = MkpkDatasource.getDBContext(DOMAIN, USER);
-			return MkpkGo.getMachines(ctx);
+			return MkpkGo.getMaterials(ctx);
 		} catch (Throwable t) {
 			throw new MkpkCoreException("Se ha producido un error ["+ t.getMessage() +"]", t);
 		} finally {
@@ -31,12 +31,12 @@ public class MachineServiceImpl extends StatelessRemoteServiceServlet implements
 	}
 
 	@Override
-	public Machine save(Machine machine) throws MkpkCoreException {
+	public Material save(Material material) throws MkpkCoreException {
 		DBContext ctx = null;
 		try {
 			ctx = MkpkDatasource.getDBContext(DOMAIN, USER);
-			machine.setDomain(DOMAIN);
-			return MkpkGo.save(ctx,machine);
+			material.setDomain(DOMAIN);
+			return MkpkGo.save(ctx,material);
 		} catch (Throwable t) {
 			throw new MkpkCoreException("Se ha producido un error ["+ t.getMessage() +"]", t);
 		} finally {
@@ -46,12 +46,12 @@ public class MachineServiceImpl extends StatelessRemoteServiceServlet implements
 	}
 
 	@Override
-	public void delete(Machine machine) throws MkpkCoreException {
+	public void delete(Material material) throws MkpkCoreException {
 		DBContext ctx = null;
 		try {
 			ctx = MkpkDatasource.getDBContext(DOMAIN, USER);
-			machine.setDomain(DOMAIN);
-			MkpkGo.delete(ctx,machine);
+			material.setDomain(DOMAIN);
+			MkpkGo.delete(ctx,material);
 		} catch (Throwable t) {
 			throw new MkpkCoreException("Se ha producido un error ["+ t.getMessage() +"]", t);
 		} finally {

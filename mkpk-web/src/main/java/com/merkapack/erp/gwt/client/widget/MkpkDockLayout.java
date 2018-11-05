@@ -13,11 +13,11 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.merkapack.erp.gwt.client.Client;
-import com.merkapack.erp.gwt.client.Material;
 import com.merkapack.erp.gwt.client.Menu;
 import com.merkapack.erp.gwt.client.Product;
 import com.merkapack.erp.gwt.client.common.MKPK;
 import com.merkapack.erp.gwt.client.view.MachineView;
+import com.merkapack.erp.gwt.client.view.MaterialView;
 
 public class MkpkDockLayout extends DockLayoutPanel implements EntryPoint {
 
@@ -153,7 +153,7 @@ public class MkpkDockLayout extends DockLayoutPanel implements EntryPoint {
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				Material material = new Material();
+				MaterialView material = new MaterialView();
 				material.onModuleLoad();
 			}
 		});
@@ -196,6 +196,9 @@ public class MkpkDockLayout extends DockLayoutPanel implements EntryPoint {
 	}
 
 	protected void showError(Throwable caught) {
-		tabHeader.setWidget(2, 1, new Label(caught.getMessage()));
+		Label errorLabel = new Label(caught.getMessage());
+		errorLabel.setStyleName(MKPK.CSS.mkpkErrorLabel());
+		tabHeader.setWidget(1, 0, errorLabel);
+		
 	}
 }
