@@ -6,6 +6,7 @@ public interface CSS extends CssResource {
 
 	@ClassName("mkpk-inputText")			String mkpkInputText();
 	@ClassName("mkpk-input-text-important")	String mkpkInputTextImportant();
+	@ClassName("mkpk-text-box-error")		String mkpkTextBoxError();
 	@ClassName("mkpk-number-box")			String mkpkNumberBox();
 	@ClassName("mkpk-input-calc")			String mkpkInputCalc();
 	@ClassName("mkpk-input-error")			String mkpkInputError();
@@ -15,7 +16,8 @@ public interface CSS extends CssResource {
 	@ClassName("mkpk-pointer") 		String mkpkPointer();
 
 	@ClassName("mkpk-bold") 		String mkpkBold();
-
+	@ClassName("mkpk-color-red")	String mkpkColorRed();
+	
 	@ClassName("mkpk-width-all") 	String mkpkWidthAll();
 	@ClassName("mkpk-width-auto") 	String mkpkWidthAuto();
 	@ClassName("mkpk-width-10p") 	String mkpkWidth10p();
@@ -113,8 +115,6 @@ public interface CSS extends CssResource {
 	@ClassName("mkpk-confirm-dialog-cancel-button")
 	String mkpkConfirmDialogCancelButton();
 	
-	
-
 }
 
 

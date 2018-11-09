@@ -10,6 +10,7 @@ import com.merkapack.erp.core.model.MkpkCoreException;
 @RemoteServiceRelativePath("MkpkMaterial")
 public interface MaterialService extends RemoteService {
 	LinkedList<Material> getMaterials() throws MkpkCoreException;
+	LinkedList<Material> getMaterials(String query) throws MkpkCoreException;
 	Material save(Material material) throws MkpkCoreException;
 	void delete(Material material) throws MkpkCoreException;
 }

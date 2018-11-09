@@ -23,12 +23,14 @@ import com.merkapack.erp.gwt.client.widget.MkpkButton;
 import com.merkapack.erp.gwt.client.widget.MkpkConfirmDialog;
 import com.merkapack.erp.gwt.client.widget.MkpkConfirmDialog.MkpkConfirmDialogCallback;
 import com.merkapack.erp.gwt.client.widget.MkpkDockLayout;
+import com.merkapack.erp.gwt.client.widget.MkpkDoubleBox;
 import com.merkapack.erp.gwt.client.widget.MkpkTextBox;
 
 public class MachineView extends MkpkDockLayout  {
 	
 	private static MachineServiceAsync SERVICE;
-	private ScrollPanel content; 
+	private ScrollPanel content;
+	private final int deleteButtonColumn = 2; 
 	
 	public MachineView() {
 		MachineServiceAsync serviceRaw = GWT.create(MachineService.class);
@@ -47,6 +49,10 @@ public class MachineView extends MkpkDockLayout  {
 		Label nameLabel = new Label(MKPK.MSG.machines());
 		nameLabel.setStyleName(MKPK.CSS.mkpkBold());
 		tab.setWidget(0, 0, nameLabel);
+		Label blowsLabel = new Label(MKPK.MSG.blows());
+		blowsLabel.setStyleName(MKPK.CSS.mkpkBold());
+		tab.setWidget(0, 1, blowsLabel);
+		
 		SERVICE.getMachines(new AsyncCallback<LinkedList<Machine>>() {
 			
 			@Override
@@ -68,10 +74,11 @@ public class MachineView extends MkpkDockLayout  {
 	protected void paintRow(FlexTable tab, final Machine machine) {
 		int row = tab.getRowCount();
 		MkpkTextBox nameBox = paintNameColumn(tab,row,machine);
+		paintBlowsColumn(tab,row,1,machine);
 		if (machine.getId() != null) {
 			paintDeleteButton(tab,row,machine);
 		} else {
-			tab.setWidget(row, 1, new Label());
+			tab.setWidget(row, 2, new Label());
 		}
 		
 		Scheduler.get().scheduleDeferred(new ScheduledCommand() {
@@ -92,27 +99,36 @@ public class MachineView extends MkpkDockLayout  {
 			@Override
 			public void onValueChange(ValueChangeEvent<String> event) {
 				machine.setName( nameBox.getValue() ); 
-				SERVICE.save(machine, new AsyncCallback<Machine>() {
-					
+				save(tab, row, machine);
+			}
+		});
+		return nameBox;
+	}
+	
+	private MkpkDoubleBox paintBlowsColumn(FlexTable tab, int row, int col, Machine machine) {
+		MkpkDoubleBox blowsBox = new MkpkDoubleBox();
+		blowsBox.setValue(machine.getBlows(), false);
+		tab.setWidget(row, col, blowsBox);
+		blowsBox.addValueChangeHandler( new ValueChangeHandler<Double>() {
+
+			@Override
+			public void onValueChange(ValueChangeEvent<Double> event) {
+				machine.setBlows(blowsBox.getValue() );
+				save(tab, row, machine, new AsyncCallback<Machine>() {
+
 					@Override
 					public void onSuccess(Machine result) {
-						if (machine.getId() == null) {
-							machine.setId(result.getId());
-							paintDeleteButton(tab,row,machine);							
-						}
 						if ((row +1)== tab.getRowCount()) {
 							paintRow(tab, new Machine());
 						}
 					}
-					
 					@Override
 					public void onFailure(Throwable caught) {
-						showError(caught);
 					}
 				});
 			}
 		});
-		return nameBox;
+		return blowsBox;
 	}
 
 	private void paintDeleteButton(FlexTable tab, int row, Machine machine) {
@@ -151,7 +167,31 @@ public class MachineView extends MkpkDockLayout  {
 				
 			}
 		});
-		tab.setWidget(row, 1, deleteButton);
+		tab.setWidget(row, deleteButtonColumn, deleteButton);
 	}
+	
+	private void save(FlexTable tab, int row, Machine machine) {
+		save(tab, row, machine, null);
+	}
+	private void save(FlexTable tab, int row, Machine machine,AsyncCallback<Machine> callback) {
+		SERVICE.save(machine, new AsyncCallback<Machine>() {
+			
+			@Override
+			public void onSuccess(Machine result) {
+				if (machine.getId() == null) {
+					machine.setId(result.getId());
+					paintDeleteButton(tab,row,machine);							
+				}
+				if (callback != null) callback.onSuccess(result);
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				showError(caught);
+				if (callback != null) callback.onFailure(caught);
+			}
+		});
+	}
+	
 }
 

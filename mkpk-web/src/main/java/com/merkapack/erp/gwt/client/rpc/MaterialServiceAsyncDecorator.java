@@ -22,6 +22,13 @@ public class MaterialServiceAsyncDecorator implements MaterialServiceAsync {
 	}
 
 	@Override
+	public void getMaterials(String query, AsyncCallback<LinkedList<Material>> callback) {
+		MKPK.start();
+		service.getMaterials(query, callback);
+		
+	}
+
+	@Override
 	public void save(Material material, AsyncCallback<Material> callback) {
 		MKPK.start();
 		service.save(material, callback);

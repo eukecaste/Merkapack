@@ -18,6 +18,9 @@ input[type="checkbox"]:focus+label {
 input[type="text"] {
 	border: 1px solid #808080 !important;
 }
+.mkpk-text-box-error{
+	border: 1px solid red !important;
+}
 .mkpk-number-box {
 	text-align: right;
 	padding-left: 15px;
@@ -55,7 +58,8 @@ input[type="text"] {
 
 .mkpk-pointer{	cursor: pointer;}
 
-.mkpk-bold	{font-weight: bold;}
+.mkpk-bold		{font-weight: bold;}
+.mkpk-color-red	{color: red;}
 
 .mkpk-width-all{width: 100%;}
 .mkpk-width-auto{width: auto;}

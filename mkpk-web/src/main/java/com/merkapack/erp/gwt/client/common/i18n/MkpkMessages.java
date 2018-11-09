@@ -65,5 +65,14 @@ public interface MkpkMessages extends Messages {
 	@DefaultMessage("Grosor")
 	String thickness();
 	
+	@DefaultMessage("Ancho")
+	String width();
+	
+	@DefaultMessage("Alto")
+	String height();
+
+	@DefaultMessage("Golpes")
+	String blows();
+	
 }
 

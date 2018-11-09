@@ -3,15 +3,17 @@ package com.merkapack.erp.core.model;
 import java.io.Serializable;
 import java.util.Date;
 
-public class Machine implements Serializable, HasAudit {
+public class Product implements Serializable, HasAudit {
 
-	private static final long serialVersionUID = -7795449515443023516L;
+	private static final long serialVersionUID = -4570869853880477932L;
 	
 	private Integer id;
 	private int domain;
 	private String name;
-	private double blows;
-
+	private Material material;
+	private Double width;
+	private Double height;
+	
 	private String creationUser;
 	private Date creationDate;
 	private String modificationUser;
@@ -22,7 +24,7 @@ public class Machine implements Serializable, HasAudit {
 	public Integer getId() {
 		return id;
 	}
-	public Machine setId(Integer id) {
+	public Product setId(Integer id) {
 		this.id = id;
 		return this;
 	}
@@ -30,7 +32,7 @@ public class Machine implements Serializable, HasAudit {
 	public int getDomain() {
 		return domain;
 	}
-	public Machine setDomain(int domain) {
+	public Product setDomain(int domain) {
 		this.domain = domain;
 		return this;
 	}
@@ -38,24 +40,37 @@ public class Machine implements Serializable, HasAudit {
 	public String getName() {
 		return name;
 	}
-	public Machine setName(String name) {
+	public Product setName(String name) {
 		this.name = name;
 		return this;
 	}
 	
-	public double getBlows() {
-		return blows;
+	public Material getMaterial() {
+		return material;
 	}
-	public Machine setBlows(double blows) {
-		this.blows = blows;
+	public Product setMaterial(Material material) {
+		this.material = material;
 		return this;
 	}
-
+	public Double getWidth() {
+		return width;
+	}
+	public Product setWidth(Double width) {
+		this.width = width;
+		return this;
+	}
+	public Double getHeight() {
+		return height;
+	}
+	public Product setHeight(Double height) {
+		this.height = height;
+		return this;
+	}
 	// ---------------------------------------------------------- DIRTY
 	public boolean isDirty() {
 		return dirty;
 	}
-	public Machine setDirty(boolean dirty) {
+	public Product setDirty(boolean dirty) {
 		this.dirty = dirty;
 		return this;
 	}
@@ -65,7 +80,7 @@ public class Machine implements Serializable, HasAudit {
 	public String getCreationUser() {
 		return creationUser;
 	}
-	public Machine setCreationUser(String creationUser) {
+	public Product setCreationUser(String creationUser) {
 		this.creationUser = creationUser;
 		return this;
 	}
@@ -73,7 +88,7 @@ public class Machine implements Serializable, HasAudit {
 	public Date getCreationDate() {
 		return creationDate;
 	}
-	public Machine setCreationDate(Date creationDate) {
+	public Product setCreationDate(Date creationDate) {
 		this.creationDate = creationDate;
 		return this;
 	}
@@ -81,7 +96,7 @@ public class Machine implements Serializable, HasAudit {
 	public String getModificationUser() {
 		return modificationUser;
 	}
-	public Machine setModificationUser(String modificationUser) {
+	public Product setModificationUser(String modificationUser) {
 		this.modificationUser = modificationUser;
 		return this;
 	}
@@ -89,7 +104,7 @@ public class Machine implements Serializable, HasAudit {
 	public Date getModificationDate() {
 		return modificationDate;
 	}
-	public Machine setModificationDate(Date modificationDate) {
+	public Product setModificationDate(Date modificationDate) {
 		this.modificationDate = modificationDate;
 		return this;
 	}

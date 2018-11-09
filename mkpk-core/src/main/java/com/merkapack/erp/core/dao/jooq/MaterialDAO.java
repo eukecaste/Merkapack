@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 import com.merkapack.erp.core.basic.DBContext;
 import com.merkapack.erp.core.dao.jooq.Mapper.MaterialMapper;
 import com.merkapack.erp.core.model.Material;
+import com.merkapack.watson.util.MkpkStringUtils;
 
 public class MaterialDAO {
 	public static Material getMaterial(DBContext ctx, Integer id) {
@@ -28,6 +29,17 @@ public class MaterialDAO {
 			.stream()
 			.map( new MaterialMapper() )
 			.collect(Collectors.toCollection(LinkedList::new));
+	}
+	public static LinkedList<Material> getMaterials(DBContext ctx, String query) {
+		query = MkpkStringUtils.prependIfMissing(query, "%");
+		query = MkpkStringUtils.appendIfMissing(query, "%");
+		return ctx.getDslContext().select()
+				.from( MATERIAL )
+				.where(MATERIAL.NAME.like(query))
+				.fetch()
+				.stream()
+				.map( new MaterialMapper() )
+				.collect(Collectors.toCollection(LinkedList::new));
 	}
 	public static Material save(DBContext ctx, Material material) {
 		if (material.getId() == null) {

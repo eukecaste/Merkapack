@@ -5,11 +5,16 @@ import java.util.LinkedList;
 import com.merkapack.erp.core.basic.DBContext;
 import com.merkapack.erp.core.dao.jooq.MachineDAO;
 import com.merkapack.erp.core.dao.jooq.MaterialDAO;
+import com.merkapack.erp.core.dao.jooq.ProductDAO;
 import com.merkapack.erp.core.model.Machine;
 import com.merkapack.erp.core.model.Material;
+import com.merkapack.erp.core.model.Product;
 
 public class MkpkGo {
 	
+	//							---------
+	// 							[MACHINE]
+	//							---------
 	public static LinkedList<Machine> getMachines(DBContext ctx) {
 		return ctx.getDslContext().transactionResult(
 				configuration -> MachineDAO.getMachines(ctx));
@@ -24,11 +29,19 @@ public class MkpkGo {
 		ctx.getDslContext().transaction( configuration -> MachineDAO.delete(ctx,machine));
 	}
 
+	//							----------
+	// 							[MATERIAL]
+	//							----------
 	public static LinkedList<Material> getMaterials(DBContext ctx) {
 		return ctx.getDslContext().transactionResult(
 				configuration -> MaterialDAO.getMaterials(ctx));
 	}
 	
+	public static LinkedList<Material> getMaterials(String query, DBContext ctx) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> MaterialDAO.getMaterials(ctx,query));
+	}
+
 	public static Material save(DBContext ctx,Material material) {
 		return ctx.getDslContext().transactionResult(
 				configuration -> MaterialDAO.save(ctx,material));
@@ -37,4 +50,22 @@ public class MkpkGo {
 	public static void delete(DBContext ctx, Material material) {
 		ctx.getDslContext().transaction( configuration -> MaterialDAO.delete(ctx,material));
 	}
+
+	//							---------
+	// 							[PRODUCT]
+	//							---------
+	public static LinkedList<Product> getProducts(DBContext ctx) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> ProductDAO.getProducts(ctx));
+	}
+	
+	public static Product save(DBContext ctx,Product product) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> ProductDAO.save(ctx,product));
+	}
+
+	public static void delete(DBContext ctx, Product product) {
+		ctx.getDslContext().transaction( configuration -> ProductDAO.delete(ctx,product));
+	}
+
 }

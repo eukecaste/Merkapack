@@ -7,52 +7,21 @@ import javax.servlet.annotation.WebServlet;
 import com.merkapack.erp.core.basic.DBContext;
 import com.merkapack.erp.core.basic.MkpkDatasource;
 import com.merkapack.erp.core.dao.MkpkGo;
-import com.merkapack.erp.core.model.Material;
 import com.merkapack.erp.core.model.MkpkCoreException;
-import com.merkapack.erp.gwt.client.rpc.MaterialService;
+import com.merkapack.erp.core.model.Product;
+import com.merkapack.erp.gwt.client.rpc.ProductService;
 
-@WebServlet(name = "Material Service Servlet", urlPatterns = { "/mkpk_gwt/MkpkMaterial" })
-public class MaterialServiceImpl extends StatelessRemoteServiceServlet implements MaterialService {
+@WebServlet(name = "Product Service Servlet", urlPatterns = { "/mkpk_gwt/MkpkProduct" })
+public class ProductServiceImpl extends StatelessRemoteServiceServlet implements ProductService {
 
 	private static final long serialVersionUID = 949123203256791644L;
 
 	@Override
-	public LinkedList<Material> getMaterials() throws MkpkCoreException {
+	public LinkedList<Product> getProducts() throws MkpkCoreException {
 		DBContext ctx = null;
 		try {
 			ctx = MkpkDatasource.getDBContext(DOMAIN, USER);
-			return MkpkGo.getMaterials(ctx);
-		} catch (Throwable t) {
-			t.printStackTrace();
-			throw new MkpkCoreException("Se ha producido un error ["+ t.getMessage() +"]", t);
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
-	}
-
-	@Override
-	public LinkedList<Material> getMaterials(String query) throws MkpkCoreException {
-		DBContext ctx = null;
-		try {
-			ctx = MkpkDatasource.getDBContext(DOMAIN, USER);
-			return MkpkGo.getMaterials(query,ctx);
-		} catch (Throwable t) {
-			t.printStackTrace();
-			throw new MkpkCoreException("Se ha producido un error ["+ t.getMessage() +"]", t);
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
-	}
-
-	@Override
-	public Material save(Material material) throws MkpkCoreException {
-		DBContext ctx = null;
-		try {
-			ctx = MkpkDatasource.getDBContext(DOMAIN, USER);
-			material.setDomain(DOMAIN);
-			return MkpkGo.save(ctx,material);
+			return MkpkGo.getProducts(ctx);
 		} catch (Throwable t) {
 			throw new MkpkCoreException("Se ha producido un error ["+ t.getMessage() +"]", t);
 		} finally {
@@ -62,12 +31,27 @@ public class MaterialServiceImpl extends StatelessRemoteServiceServlet implement
 	}
 
 	@Override
-	public void delete(Material material) throws MkpkCoreException {
+	public Product save(Product product) throws MkpkCoreException {
 		DBContext ctx = null;
 		try {
 			ctx = MkpkDatasource.getDBContext(DOMAIN, USER);
-			material.setDomain(DOMAIN);
-			MkpkGo.delete(ctx,material);
+			product.setDomain(DOMAIN);
+			return MkpkGo.save(ctx,product);
+		} catch (Throwable t) {
+			throw new MkpkCoreException("Se ha producido un error ["+ t.getMessage() +"]", t);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
+	@Override
+	public void delete(Product product) throws MkpkCoreException {
+		DBContext ctx = null;
+		try {
+			ctx = MkpkDatasource.getDBContext(DOMAIN, USER);
+			product.setDomain(DOMAIN);
+			MkpkGo.delete(ctx,product);
 		} catch (Throwable t) {
 			throw new MkpkCoreException("Se ha producido un error ["+ t.getMessage() +"]", t);
 		} finally {
