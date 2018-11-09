@@ -10,6 +10,7 @@ import com.merkapack.erp.core.model.Product;
 @RemoteServiceRelativePath("MkpkProduct")
 public interface ProductService extends RemoteService {
 	LinkedList<Product> getProducts() throws MkpkCoreException;
+	LinkedList<Product> getProducts(String query) throws MkpkCoreException;
 	Product save(Product product) throws MkpkCoreException;
 	void delete(Product product) throws MkpkCoreException;
 }

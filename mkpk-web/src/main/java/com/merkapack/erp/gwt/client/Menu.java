@@ -6,6 +6,7 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Widget;
 import com.merkapack.erp.gwt.client.common.MKPK;
+import com.merkapack.erp.gwt.client.view.PlanningView;
 import com.merkapack.erp.gwt.client.widget.MkpkDockLayout;
 
 public class Menu extends MkpkDockLayout {
@@ -23,7 +24,7 @@ public class Menu extends MkpkDockLayout {
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				Planning planning = new Planning();
+				PlanningView planning = new PlanningView();
 				planning.onModuleLoad();
 			}
 		});

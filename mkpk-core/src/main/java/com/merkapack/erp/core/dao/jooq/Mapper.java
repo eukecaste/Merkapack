@@ -1,6 +1,7 @@
 package com.merkapack.erp.core.dao.jooq;
 
 
+import static com.merkapack.erp.master.jooq.tables.Client.CLIENT;
 import static com.merkapack.erp.master.jooq.tables.Product.PRODUCT;
 import static com.merkapack.erp.master.jooq.tables.Machine.MACHINE;
 import static com.merkapack.erp.master.jooq.tables.Material.MATERIAL;
@@ -9,11 +10,29 @@ import java.util.function.Function;
 
 import org.jooq.Record;
 
+import com.merkapack.erp.core.model.Client;
 import com.merkapack.erp.core.model.Machine;
 import com.merkapack.erp.core.model.Material;
 import com.merkapack.erp.core.model.Product;
 
 public class Mapper {
+	protected static class ClientMapper implements Function<Record,Client> {
+
+		@Override
+		public Client apply(Record rec) {
+			return new Client()
+				.setId(rec.get(CLIENT.ID))
+				.setDomain(rec.get(CLIENT.DOMAIN))
+				.setName(rec.get(CLIENT.NAME))
+				.setCreationUser(rec.getValue(CLIENT.CREATION_USER))
+				.setCreationDate(rec.getValue(CLIENT.CREATION_DATE))
+				.setModificationUser(rec.getValue(CLIENT.MODIFICATION_USER))
+				.setModificationDate(rec.getValue(CLIENT.MODIFICATION_DATE))
+				.setDirty(false);
+		}
+		
+	}
+
 	protected static class MachineMapper implements Function<Record,Machine> {
 
 		@Override

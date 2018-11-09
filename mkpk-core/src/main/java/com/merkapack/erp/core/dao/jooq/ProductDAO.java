@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 import com.merkapack.erp.core.basic.DBContext;
 import com.merkapack.erp.core.dao.jooq.Mapper.ProductMapper;
 import com.merkapack.erp.core.model.Product;
+import com.merkapack.watson.util.MkpkStringUtils;
 
 public class ProductDAO {
 	
@@ -33,6 +34,17 @@ public class ProductDAO {
 			.stream()
 			.map( new ProductMapper() )
 			.collect(Collectors.toCollection(LinkedList::new));
+	}
+	public static LinkedList<Product> getProducts(DBContext ctx, String query) {
+		query = MkpkStringUtils.prependIfMissing(query, "%");
+		query = MkpkStringUtils.appendIfMissing(query, "%");
+		return ctx.getDslContext().select()
+				.from( PRODUCT )
+				.where(PRODUCT.NAME.like(query))
+				.fetch()
+				.stream()
+				.map( new ProductMapper() )
+				.collect(Collectors.toCollection(LinkedList::new));
 	}
 	public static Product save(DBContext ctx, Product product) {
 		if (product.getId() == null) {

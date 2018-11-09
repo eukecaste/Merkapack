@@ -31,15 +31,15 @@ import com.google.gwt.user.client.ui.SuggestOracle;
 import com.google.gwt.user.client.ui.SuggestOracle.Suggestion;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
-import com.merkapack.erp.core.model.Material;
+import com.merkapack.erp.core.model.Product;
 import com.merkapack.erp.gwt.client.common.MKPK;
-import com.merkapack.erp.gwt.client.rpc.MaterialService;
-import com.merkapack.erp.gwt.client.rpc.MaterialServiceAsync;
-import com.merkapack.erp.gwt.client.rpc.MaterialServiceAsyncDecorator;
+import com.merkapack.erp.gwt.client.rpc.ProductService;
+import com.merkapack.erp.gwt.client.rpc.ProductServiceAsync;
+import com.merkapack.erp.gwt.client.rpc.ProductServiceAsyncDecorator;
 import com.merkapack.watson.util.MkpkStringUtils;
 
-public class MkpkMaterialBox extends ResizeComposite implements HasValue<String>
-	,Focusable, HasSelectionHandlers<Material>, HasAllFocusHandlers
+public class MkpkProductBox extends ResizeComposite implements HasValue<String>
+	,Focusable, HasSelectionHandlers<Product>, HasAllFocusHandlers
 	,HasAllKeyHandlers {
 	
 	protected static final String BEGIN_STRONG = "<strong>";
@@ -48,12 +48,12 @@ public class MkpkMaterialBox extends ResizeComposite implements HasValue<String>
 	private static final int MIN_CHARACTERS = 2;
 	private static final int MAX_CHARACTERS = 8;
 
-	private MaterialServiceAsync service;
+	private ProductServiceAsync service;
 
-	private Material selected;
+	private Product selected;
 	
-	private SuggestBox material;
-	private TextBox materialTextBox;
+	private SuggestBox product;
+	private TextBox productTextBox;
 	
 	private AccountSuggestionDisplay suggestionDisplay;
 	
@@ -90,24 +90,24 @@ public class MkpkMaterialBox extends ResizeComposite implements HasValue<String>
 	    }
 	}
 	
-	private static class MaterialSuggestion extends MultiWordSuggestion {
+	private static class ProductSuggestion extends MultiWordSuggestion {
 		
-		private Material material;
+		private Product product;
 		
-		private MaterialSuggestion(Material material, String replacementString, String displayString) {
+		private ProductSuggestion(Product product, String replacementString, String displayString) {
 			super( replacementString, displayString );
-			this.material = material;
+			this.product = product;
 		}
 		
-		public Material getMaterial() {
-			return material;
+		public Product getProduct() {
+			return product;
 		}
 		
 	}
 	
-	public MkpkMaterialBox() {
-		MaterialServiceAsync commonServiceRaw = GWT.create(MaterialService.class);
-		service = new MaterialServiceAsyncDecorator(commonServiceRaw);
+	public MkpkProductBox() {
+		ProductServiceAsync commonServiceRaw = GWT.create(ProductService.class);
+		service = new ProductServiceAsyncDecorator(commonServiceRaw);
 		MultiWordSuggestOracle oracle = new MultiWordSuggestOracle() {
 			@Override
 			public void requestSuggestions(final Request request,final Callback callback) {
@@ -115,19 +115,19 @@ public class MkpkMaterialBox extends ResizeComposite implements HasValue<String>
 				if (MkpkStringUtils.length(request.getQuery()) >= MIN_CHARACTERS
 				 && MkpkStringUtils.length(request.getQuery()) <= MAX_CHARACTERS) {
 					reset();
-					service.getMaterials(request.getQuery() ,new AsyncCallback<LinkedList<Material>>() {
+					service.getProducts(request.getQuery() ,new AsyncCallback<LinkedList<Product>>() {
 		
 								public void onFailure(Throwable caught) {
 									callback.onSuggestionsReady(request, new Response());
 								}
 		
-								public void onSuccess(LinkedList<Material> result) {
+								public void onSuccess(LinkedList<Product> result) {
 									LinkedList<Suggestion> suggestions = new LinkedList<Suggestion>();
 									if (result != null) {
 										
-										for (final Material material : result) {
+										for (final Product product : result) {
 											SafeHtmlBuilder bld = new SafeHtmlBuilder();
-											String ds = material.getName();
+											String ds = product.getName();
 											int i = MkpkStringUtils.indexOfIgnoreCase(ds, request.getQuery());
 											bld.appendHtmlConstant("<span class=\"" 
 													+ MKPK.CSS.mkpkIconBullet()
@@ -140,7 +140,7 @@ public class MkpkMaterialBox extends ResizeComposite implements HasValue<String>
 									        bld.appendHtmlConstant(END_STRONG);
 									        bld.appendEscaped(MkpkStringUtils.substring(ds, (i + MkpkStringUtils.length(request.getQuery()) )));
 									        bld.appendHtmlConstant("</span>");
-									        MaterialSuggestion as = new MaterialSuggestion(material, material.getName(), bld.toSafeHtml().asString());
+									        ProductSuggestion as = new ProductSuggestion(product, product.getName(), bld.toSafeHtml().asString());
 											suggestions.add(as);
 										}
 									}
@@ -152,54 +152,54 @@ public class MkpkMaterialBox extends ResizeComposite implements HasValue<String>
 				}
 			}
 		};
-		materialTextBox = new TextBox();
+		productTextBox = new TextBox();
 		suggestionDisplay =  new AccountSuggestionDisplay();
-		material = new SuggestBox(oracle,materialTextBox,suggestionDisplay);
-		materialTextBox.setStyleName(MKPK.CSS.mkpkInputText());
-		materialTextBox.setVisibleLength(20);
-		materialTextBox.setMaxLength(32);
+		product = new SuggestBox(oracle,productTextBox,suggestionDisplay);
+		productTextBox.setStyleName(MKPK.CSS.mkpkInputText());
+		productTextBox.setVisibleLength(20);
+		productTextBox.setMaxLength(32);
 		
-		material.addSelectionHandler(new SelectionHandler<SuggestOracle.Suggestion>() {
+		product.addSelectionHandler(new SelectionHandler<SuggestOracle.Suggestion>() {
 			@Override
 			public void onSelection(SelectionEvent<Suggestion> event) {
-				MaterialSuggestion selected = (MaterialSuggestion) event.getSelectedItem();
-				select( selected.getMaterial() );
+				ProductSuggestion selected = (ProductSuggestion) event.getSelectedItem();
+				select( selected.getProduct() );
 			}
 		});
-		initWidget(material);
+		initWidget(product);
 	}
 	
 	public void setVisibleLength(int i) {
-		materialTextBox.setVisibleLength(i);		
+		productTextBox.setVisibleLength(i);		
 	}
 
-	private void select(Material result) {
-		materialTextBox.removeStyleName(MKPK.CSS.mkpkTextBoxError() );
+	private void select(Product result) {
+		productTextBox.removeStyleName(MKPK.CSS.mkpkTextBoxError() );
 		selected = result;
-		SelectionEvent.fire(MkpkMaterialBox.this, result );
+		SelectionEvent.fire(MkpkProductBox.this, result );
 	}
 	
 	private void reset() {
-		materialTextBox.removeStyleName(MKPK.CSS.mkpkTextBoxError() );
+		productTextBox.removeStyleName(MKPK.CSS.mkpkTextBoxError() );
 		selected = null;
 	}
 
-	public Material getSelected() {
+	public Product getSelected() {
 		return selected;
 	}
 
 	@Override
 	public String getValue() {
-		return material.getValue();
+		return product.getValue();
 	}
-	public void setValue(Material material, boolean fire) {
-		this.selected = material;
-		setValue(material==null?null:material.getName(),fire);
+	public void setValue(Product product, boolean fire) {
+		this.selected = product;
+		setValue(product==null?null:product.getName(),fire);
 	}
 
 	@Override
 	public void setValue(String value) {
-		material.setValue(value);
+		product.setValue(value);
 		if (MkpkStringUtils.isEmpty(value)) {
 			reset();
 		}
@@ -207,67 +207,67 @@ public class MkpkMaterialBox extends ResizeComposite implements HasValue<String>
 
 	@Override
 	public void setValue(String value, boolean fireEvents) {
-		material.setValue(value,fireEvents);
+		product.setValue(value,fireEvents);
 	}
 
 	// --------------------------------------------------------- HANDLERS
 	@Override
 	public HandlerRegistration addBlurHandler(BlurHandler handler) {
-		return materialTextBox.addBlurHandler(handler);
+		return productTextBox.addBlurHandler(handler);
 	}
 
 	@Override
 	public HandlerRegistration addFocusHandler(FocusHandler handler) {
-		return materialTextBox.addFocusHandler(handler);
+		return productTextBox.addFocusHandler(handler);
 	}
 
 	@Override
 	public int getTabIndex() {
-		return materialTextBox.getTabIndex();
+		return productTextBox.getTabIndex();
 	}
 
 	@Override
 	public void setAccessKey(char key) {
-		materialTextBox.setAccessKey(key);
+		productTextBox.setAccessKey(key);
 	}
 
 	@Override
 	public void setFocus(boolean focused) {
-		materialTextBox.selectAll();
-		materialTextBox.setFocus(focused);
+		productTextBox.selectAll();
+		productTextBox.setFocus(focused);
 	}
 
 	@Override
 	public void setTabIndex(int index) {
-		materialTextBox.setTabIndex(index);
+		productTextBox.setTabIndex(index);
 	}
 
 	@Override
 	public HandlerRegistration addValueChangeHandler(ValueChangeHandler<String> handler) {
-		return material.addValueChangeHandler(handler);
+		return product.addValueChangeHandler(handler);
 	}
 
 	@Override
-	public HandlerRegistration addSelectionHandler(SelectionHandler<Material> handler) {
+	public HandlerRegistration addSelectionHandler(SelectionHandler<Product> handler) {
 		return super.addHandler(handler, SelectionEvent.getType());
 	}
 
 	@Override
 	public HandlerRegistration addKeyUpHandler(KeyUpHandler handler) {
-		return materialTextBox.addKeyUpHandler(handler);
+		return productTextBox.addKeyUpHandler(handler);
 	}
 
 	@Override
 	public HandlerRegistration addKeyDownHandler(KeyDownHandler handler) {
-		return materialTextBox.addKeyDownHandler(handler);
+		return productTextBox.addKeyDownHandler(handler);
 	}
 
 	@Override
 	public HandlerRegistration addKeyPressHandler(KeyPressHandler handler) {
-		return materialTextBox.addKeyPressHandler(handler);
+		return productTextBox.addKeyPressHandler(handler);
 	}
 	public void setEnabled(boolean enabled) {
-		materialTextBox.setEnabled(enabled);
+		productTextBox.setEnabled(enabled);
 	}
 
 }

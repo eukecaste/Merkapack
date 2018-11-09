@@ -12,9 +12,9 @@ import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.merkapack.erp.gwt.client.Client;
 import com.merkapack.erp.gwt.client.Menu;
 import com.merkapack.erp.gwt.client.common.MKPK;
+import com.merkapack.erp.gwt.client.view.ClientView;
 import com.merkapack.erp.gwt.client.view.MachineView;
 import com.merkapack.erp.gwt.client.view.MaterialView;
 import com.merkapack.erp.gwt.client.view.ProductView;
@@ -183,7 +183,7 @@ public class MkpkDockLayout extends DockLayoutPanel implements EntryPoint {
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				Client client = new Client();
+				ClientView client = new ClientView();
 				client.onModuleLoad();
 			}
 		});

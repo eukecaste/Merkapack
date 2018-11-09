@@ -22,6 +22,13 @@ public class ProductServiceAsyncDecorator implements ProductServiceAsync {
 	}
 
 	@Override
+	public void getProducts(String query, AsyncCallback<LinkedList<Product>> callback) {
+		MKPK.start();
+		service.getProducts(query,callback);
+		
+	}
+
+	@Override
 	public void save(Product product, AsyncCallback<Product> callback) {
 		MKPK.start();
 		service.save(product, callback);

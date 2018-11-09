@@ -53,9 +53,18 @@ public interface MkpkMessages extends Messages {
 	@DefaultMessage("Materiales")
 	String materials();
 
+	@DefaultMessage("Material")
+	String material();
+
 	@DefaultMessage("Art\u00EDculos")
 	String products();
 
+	@DefaultMessage("Art\u00EDculo")
+	String product();
+	
+	@DefaultMessage("Medida")
+	String measure();
+	
 	@DefaultMessage("Clientes")
 	String clients();
 	
