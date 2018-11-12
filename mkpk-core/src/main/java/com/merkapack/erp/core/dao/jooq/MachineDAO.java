@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 import com.merkapack.erp.core.basic.DBContext;
 import com.merkapack.erp.core.dao.jooq.Mapper.MachineMapper;
 import com.merkapack.erp.core.model.Machine;
+import com.merkapack.watson.util.MkpkStringUtils;
 
 public class MachineDAO {
 	public static Machine getMachine(DBContext ctx, Integer id) {
@@ -24,6 +25,17 @@ public class MachineDAO {
 	public static LinkedList<Machine> getMachines(DBContext ctx) {
 		return ctx.getDslContext().select()
 			.from( MACHINE )
+			.fetch()
+			.stream()
+			.map( new MachineMapper() )
+			.collect(Collectors.toCollection(LinkedList::new));
+	}
+	public static LinkedList<Machine> getMachines(DBContext ctx, String query) {
+		query = MkpkStringUtils.prependIfMissing(query, "%");
+		query = MkpkStringUtils.appendIfMissing(query, "%");
+		return ctx.getDslContext().select()
+			.from( MACHINE )
+			.where(MACHINE.NAME.like(query))
 			.fetch()
 			.stream()
 			.map( new MachineMapper() )

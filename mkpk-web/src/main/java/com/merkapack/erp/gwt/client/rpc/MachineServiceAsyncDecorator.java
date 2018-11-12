@@ -18,7 +18,12 @@ public class MachineServiceAsyncDecorator implements MachineServiceAsync {
 	public void getMachines(AsyncCallback<LinkedList<Machine>> callback) {
 		MKPK.start();
 		service.getMachines(callback);
-		
+	}
+
+	@Override
+	public void getMachines(String query, AsyncCallback<LinkedList<Machine>> callback) {
+		MKPK.start();
+		service.getMachines(query, callback);
 	}
 
 	@Override

@@ -3,6 +3,8 @@ package com.merkapack.erp.core.model;
 import java.io.Serializable;
 import java.util.Date;
 
+import com.merkapack.watson.util.MkpkMathUtils;
+
 public class Planning implements Serializable, HasAudit {
 	
 	private static final long serialVersionUID = -5728018105374452335L;
@@ -13,12 +15,15 @@ public class Planning implements Serializable, HasAudit {
 	private Machine machine;
 	private Product product;
 	private double width;
-	private double height;
+	private double length;
 	private Material material;
-	private double roll_width;
+	private double rollWidth;
+	private double rollLength;
 	private double amount;
+	private int blowUnits;
 	private double meters;
 	private double blows;
+	private double blowsMinute;
 	private double minutes;
 	private Client client;
 	private String comments;
@@ -74,11 +79,11 @@ public class Planning implements Serializable, HasAudit {
 		this.width = width;
 		return this;
 	}
-	public double getHeight() {
-		return height;
+	public double getLength() {
+		return length;
 	}
-	public Planning setHeight(double height) {
-		this.height = height;
+	public Planning setLength(double length) {
+		this.length = length;
 		return this;
 	}
 	public Material getMaterial() {
@@ -88,11 +93,18 @@ public class Planning implements Serializable, HasAudit {
 		this.material = material;
 		return this;
 	}
-	public double getRoll_width() {
-		return roll_width;
+	public double getRollWidth() {
+		return rollWidth;
 	}
-	public Planning setRoll_width(double roll_width) {
-		this.roll_width = roll_width;
+	public Planning setRollWidth(double rollWidth) {
+		this.rollWidth = rollWidth;
+		return this;
+	}
+	public double getRollLength() {
+		return rollLength;
+	}
+	public Planning setRollLength(double rollLength) {
+		this.rollLength = rollLength;
 		return this;
 	}
 	public double getAmount() {
@@ -100,6 +112,13 @@ public class Planning implements Serializable, HasAudit {
 	}
 	public Planning setAmount(double amount) {
 		this.amount = amount;
+		return this;
+	}
+	public int getBlowUnits() {
+		return this.blowUnits;
+	}
+	public Planning setBlowUnits(int blowUnits) {
+		this.blowUnits = blowUnits;
 		return this;
 	}
 	public double getMeters() {
@@ -114,6 +133,13 @@ public class Planning implements Serializable, HasAudit {
 	}
 	public Planning setBlows(double blows) {
 		this.blows = blows;
+		return this;
+	}
+	public double getBlowsMinute() {
+		return blowsMinute;
+	}
+	public Planning setBlowsMinute(double blowsMinute) {
+		this.blowsMinute = blowsMinute;
 		return this;
 	}
 	public double getMinutes() {
@@ -179,5 +205,39 @@ public class Planning implements Serializable, HasAudit {
 		this.modificationDate = modificationDate;
 		return this;
 	}
-	
+	public void initialize() {
+		setWidth(0);
+		setLength(0);
+		setRollWidth(0);
+		setRollLength(0);
+		setAmount(0);
+		setMeters(0);
+		setBlows(0);
+		setBlowsMinute(0);
+		setMinutes(0);
+	}
+	public void calculate() {
+		if (product == null || material == null) {
+			initialize();
+		} else {
+			this.setWidth(product.getWidth());
+			this.setLength(product.getLength());
+			this.setRollWidth(material.getWidth());
+			this.setRollLength(material.getLength());
+			this.setBlowUnits( MkpkMathUtils.isZero( this.getWidth())
+					? 0
+					: ((int) MkpkMathUtils.round( this.getRollWidth() / this.getWidth(), 0))
+					);
+			if (this.getBlowUnits() == 0) {
+				this.setMeters( 0 );
+				this.setBlows( 0 );
+			} else {
+				this.setMeters( MkpkMathUtils.round((this.getLength() * this.getAmount()) / (1000 * getBlowUnits())));
+				this.setBlows(MkpkMathUtils.round(this.getAmount() / getBlowUnits()));
+			}
+			this.setMinutes(this.getBlowsMinute() == 0 
+					? 0 
+					: MkpkMathUtils.round(this.getBlows() / this.getBlowsMinute()) );
+		}
+	}
 }

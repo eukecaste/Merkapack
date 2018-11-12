@@ -36,10 +36,12 @@ public class ProductDAO {
 			.collect(Collectors.toCollection(LinkedList::new));
 	}
 	public static LinkedList<Product> getProducts(DBContext ctx, String query) {
+		
 		query = MkpkStringUtils.prependIfMissing(query, "%");
 		query = MkpkStringUtils.appendIfMissing(query, "%");
 		return ctx.getDslContext().select()
 				.from( PRODUCT )
+				.join(MATERIAL).on(PRODUCT.MATERIAL.eq(MATERIAL.ID))
 				.where(PRODUCT.NAME.like(query))
 				.fetch()
 				.stream()
@@ -59,7 +61,7 @@ public class ProductDAO {
 			.set(PRODUCT.NAME,product.getName())
 			.set(PRODUCT.MATERIAL,product.getMaterial().getId())
 			.set(PRODUCT.WIDTH,product.getWidth())
-			.set(PRODUCT.HEIGHT,product.getHeight())
+			.set(PRODUCT.LENGTH,product.getLength())
 			.set(PRODUCT.CREATION_USER,ctx.getUser())
 			.set(PRODUCT.CREATION_DATE, new Timestamp( System.currentTimeMillis()) )
 			.returning(PRODUCT.ID)
@@ -75,7 +77,7 @@ public class ProductDAO {
 			.set(PRODUCT.NAME,product.getName())
 			.set(PRODUCT.MATERIAL,product.getMaterial().getId())
 			.set(PRODUCT.WIDTH,product.getWidth())
-			.set(PRODUCT.HEIGHT,product.getHeight())
+			.set(PRODUCT.LENGTH,product.getLength())
 			.set(PRODUCT.MODIFICATION_USER,ctx.getUser())
 			.set(PRODUCT.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()) )
 			.where(PRODUCT.ID.equal( product.getId()))

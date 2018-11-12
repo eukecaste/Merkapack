@@ -23,6 +23,9 @@ public interface MkpkMessages extends Messages {
 	@DefaultMessage("dd/MM/yyyy")
 	String datePattern();
 	
+	@DefaultMessage("EEEEEEEE")
+	String dayPattern();
+	
 	@DefaultMessage("Aceptar")
 	String accept();
 
@@ -71,6 +74,9 @@ public interface MkpkMessages extends Messages {
 	@DefaultMessage("M\u00E1quinas")
 	String machines();
 
+	@DefaultMessage("M\u00E1quina")
+	String machine();
+
 	@DefaultMessage("Grosor")
 	String thickness();
 	
@@ -80,8 +86,14 @@ public interface MkpkMessages extends Messages {
 	@DefaultMessage("Alto")
 	String height();
 
+	@DefaultMessage("Largo")
+	String length();
+	
 	@DefaultMessage("Golpes")
 	String blows();
+
+	@DefaultMessage("Fecha inicial")
+	String startDate();
 	
 }
 

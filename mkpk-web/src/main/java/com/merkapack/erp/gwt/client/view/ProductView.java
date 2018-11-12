@@ -67,9 +67,9 @@ public class ProductView extends MkpkDockLayout  {
 		widthLabel.setStyleName(MKPK.CSS.mkpkBold());
 		tab.setWidget(0, col, widthLabel);
 		col++;
-		Label heightLabel = new Label(MKPK.MSG.height());
-		heightLabel.setStyleName(MKPK.CSS.mkpkBold());
-		tab.setWidget(0, col, heightLabel);
+		Label lengthLabel = new Label(MKPK.MSG.length());
+		lengthLabel.setStyleName(MKPK.CSS.mkpkBold());
+		tab.setWidget(0, col, lengthLabel);
 		col++;
 		
 		Label deleteLabel = new Label("X");
@@ -100,7 +100,7 @@ public class ProductView extends MkpkDockLayout  {
 		MkpkTextBox nameBox = paintNameColumn(tab,row,0,product);
 		paintMaterialColumn(tab,row,1,product);
 		paintWidthColumn(tab, row, 2, product);
-		paintHeightColumn(tab, row, 3, product);
+		paintLengthColumn(tab, row, 3, product);
 		paintDeleteButton(tab,row,product);
 		Scheduler.get().scheduleDeferred(new ScheduledCommand() {
 			public void execute() {
@@ -156,15 +156,15 @@ public class ProductView extends MkpkDockLayout  {
 		return widthBox;
 	}
 
-	private MkpkDoubleBox paintHeightColumn(FlexTable tab, int row, int col, Product product) {
-		MkpkDoubleBox heightBox = new MkpkDoubleBox();
-		heightBox.setValue(product.getHeight(), false);
-		tab.setWidget(row, col, heightBox);
-		heightBox.addValueChangeHandler( new ValueChangeHandler<Double>() {
+	private MkpkDoubleBox paintLengthColumn(FlexTable tab, int row, int col, Product product) {
+		MkpkDoubleBox lengthBox = new MkpkDoubleBox();
+		lengthBox.setValue(product.getLength(), false);
+		tab.setWidget(row, col, lengthBox);
+		lengthBox.addValueChangeHandler( new ValueChangeHandler<Double>() {
 
 			@Override
 			public void onValueChange(ValueChangeEvent<Double> event) {
-				product.setHeight( heightBox.getValue() ); 
+				product.setLength( lengthBox.getValue() ); 
 				save(tab, row, product, new AsyncCallback<Product>() {
 
 					@Override
@@ -179,7 +179,7 @@ public class ProductView extends MkpkDockLayout  {
 				});
 			}
 		});
-		return heightBox;
+		return lengthBox;
 	}
 
 	private void paintDeleteButton(FlexTable tab, int row, Product product) {

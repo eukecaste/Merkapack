@@ -11,6 +11,8 @@ public class Material implements Serializable, HasAudit {
 	private int domain;
 	private String name;
 	private double thickness;
+	private double width;
+	private double length;
 	
 	private String creationUser;
 	private Date creationDate;
@@ -48,6 +50,22 @@ public class Material implements Serializable, HasAudit {
 	}
 	public Material setThickness(double thickness) {
 		this.thickness = thickness;
+		return this;
+	}
+	
+	public double getWidth() {
+		return width;
+	}
+	public Material setWidth(double width) {
+		this.width = width;
+		return this;
+	}
+
+	public double getLength() {
+		return length;
+	}
+	public Material setLength(double length) {
+		this.length = length;
 		return this;
 	}
 	

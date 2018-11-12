@@ -35,7 +35,8 @@ public class ProductServiceImpl extends StatelessRemoteServiceServlet implements
 		DBContext ctx = null;
 		try {
 			ctx = MkpkDatasource.getDBContext(DOMAIN, USER);
-			return MkpkGo.getProducts(ctx,query);
+			LinkedList<Product> list = MkpkGo.getProducts(ctx,query);
+			return list;
 		} catch (Throwable t) {
 			throw new MkpkCoreException("Se ha producido un error ["+ t.getMessage() +"]", t);
 		} finally {

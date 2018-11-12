@@ -16,6 +16,7 @@ public class MKPK {
 	public static final NumberFormat FMT = NumberFormat.getFormat(MSG.decimalPattern());
 	public static final NumberFormat FMT_INT = NumberFormat.getFormat(MSG.integerPattern());
 	public static final DateTimeFormat DATE_FORMAT = DateTimeFormat.getFormat(MSG.datePattern());
+	public static final DateTimeFormat DAY_FORMAT = DateTimeFormat.getFormat(MSG.dayPattern());
 
 	public static void ensureInjected() {
 		CSS.ensureInjected();

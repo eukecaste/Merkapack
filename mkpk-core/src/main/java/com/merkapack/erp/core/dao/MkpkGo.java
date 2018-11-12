@@ -44,6 +44,11 @@ public class MkpkGo {
 				configuration -> MachineDAO.getMachines(ctx));
 	}
 	
+	public static LinkedList<Machine> getMachines(DBContext ctx,String query) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> MachineDAO.getMachines(ctx,query));
+	}
+
 	public static Machine save(DBContext ctx,Machine machine) {
 		return ctx.getDslContext().transactionResult(
 				configuration -> MachineDAO.save(ctx,machine));

@@ -8,6 +8,7 @@ public interface CSS extends CssResource {
 	@ClassName("mkpk-input-text-important")	String mkpkInputTextImportant();
 	@ClassName("mkpk-text-box-error")		String mkpkTextBoxError();
 	@ClassName("mkpk-number-box")			String mkpkNumberBox();
+	@ClassName("mkpk-number-label")			String mkpkNumberLabel();
 	@ClassName("mkpk-input-calc")			String mkpkInputCalc();
 	@ClassName("mkpk-input-error")			String mkpkInputError();
 	@ClassName("mkpk-value-changed") 		String mkpkValueChanged();

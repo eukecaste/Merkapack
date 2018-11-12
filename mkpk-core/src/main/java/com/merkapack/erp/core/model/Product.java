@@ -12,7 +12,7 @@ public class Product implements Serializable, HasAudit {
 	private String name;
 	private Material material;
 	private Double width;
-	private Double height;
+	private Double length;
 	
 	private String creationUser;
 	private Date creationDate;
@@ -59,11 +59,11 @@ public class Product implements Serializable, HasAudit {
 		this.width = width;
 		return this;
 	}
-	public Double getHeight() {
-		return height;
+	public Double getLength() {
+		return length;
 	}
-	public Product setHeight(Double height) {
-		this.height = height;
+	public Product setLength(Double length) {
+		this.length = length;
 		return this;
 	}
 	// ---------------------------------------------------------- DIRTY

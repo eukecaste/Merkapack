@@ -10,6 +10,7 @@ import com.merkapack.erp.core.model.MkpkCoreException;
 @RemoteServiceRelativePath("MkpkMachine")
 public interface MachineService extends RemoteService {
 	LinkedList<Machine> getMachines() throws MkpkCoreException;
+	LinkedList<Machine> getMachines(String query) throws MkpkCoreException;
 	Machine save(Machine machine) throws MkpkCoreException;
 	void delete(Machine machine) throws MkpkCoreException;
 }

@@ -29,7 +29,8 @@ import com.merkapack.erp.gwt.client.widget.MkpkTextBox;
 public class MaterialView extends MkpkDockLayout  {
 	
 	private static MaterialServiceAsync SERVICE;
-	private ScrollPanel content; 
+	private ScrollPanel content;
+	private final int deleteButtonColumn = 4; 
 	
 	public MaterialView() {
 		MaterialServiceAsync serviceRaw = GWT.create(MaterialService.class);
@@ -50,6 +51,14 @@ public class MaterialView extends MkpkDockLayout  {
 		Label nameLabel = new Label(MKPK.MSG.materials());
 		nameLabel.setStyleName(MKPK.CSS.mkpkBold());
 		tab.setWidget(0, col, nameLabel);
+		col++;
+		Label widthLabel = new Label(MKPK.MSG.width());
+		widthLabel.setStyleName(MKPK.CSS.mkpkBold());
+		tab.setWidget(0, col, widthLabel);
+		col++;
+		Label lengthLabel = new Label(MKPK.MSG.length());
+		lengthLabel.setStyleName(MKPK.CSS.mkpkBold());
+		tab.setWidget(0, col, lengthLabel);
 		col++;
 		Label thicknessLabel = new Label(MKPK.MSG.thickness());
 		thicknessLabel.setStyleName(MKPK.CSS.mkpkBold());
@@ -82,8 +91,10 @@ public class MaterialView extends MkpkDockLayout  {
 	protected void paintRow(FlexTable tab, final Material material) {
 		int row = tab.getRowCount();
 		MkpkTextBox nameBox = paintNameColumn(tab,row,0,material);
-		paintThicknessColumn(tab,row,1,material);
-		paintDeleteButton(tab,row,2,material);
+		paintWidthColumn(tab,row,1,material);
+		paintLengthColumn(tab,row,2,material);
+		paintThicknessColumn(tab,row,3,material);
+		paintDeleteButton(tab,row,material);
 		
 		Scheduler.get().scheduleDeferred(new ScheduledCommand() {
 			public void execute() {
@@ -102,28 +113,41 @@ public class MaterialView extends MkpkDockLayout  {
 
 			@Override
 			public void onValueChange(ValueChangeEvent<String> event) {
-				material.setName( nameBox.getValue() ); 
-				SERVICE.save(material, new AsyncCallback<Material>() {
-					
-					@Override
-					public void onSuccess(Material result) {
-						if (material.getId() == null) {
-							material.setId(result.getId());
-							paintDeleteButton(tab,row,2,material);							
-						}
-						if ((row +1)== tab.getRowCount()) {
-							paintRow(tab, new Material());
-						}
-					}
-					
-					@Override
-					public void onFailure(Throwable caught) {
-						showError(caught);
-					}
-				});
+				material.setName( nameBox.getValue() );
+				save(tab,row,material);
 			}
 		});
 		return nameBox;
+	}
+
+	private MkpkDoubleBox paintWidthColumn(FlexTable tab, int row, int col, Material material) {
+		MkpkDoubleBox widthBox = new MkpkDoubleBox();
+		widthBox.setValue(material.getWidth(), false);
+		tab.setWidget(row, col, widthBox);
+		widthBox.addValueChangeHandler( new ValueChangeHandler<Double>() {
+
+			@Override
+			public void onValueChange(ValueChangeEvent<Double> event) {
+				material.setWidth( widthBox.getValue() );
+				save(tab, row, material);
+			}
+		});
+		return widthBox;
+	}
+
+	private MkpkDoubleBox paintLengthColumn(FlexTable tab, int row, int col, Material material) {
+		MkpkDoubleBox lengthBox = new MkpkDoubleBox();
+		lengthBox.setValue(material.getLength(), false);
+		tab.setWidget(row, col, lengthBox);
+		lengthBox.addValueChangeHandler( new ValueChangeHandler<Double>() {
+
+			@Override
+			public void onValueChange(ValueChangeEvent<Double> event) {
+				material.setLength( lengthBox.getValue() ); 
+				save(tab, row, material);
+			}
+		});
+		return lengthBox;
 	}
 
 	private MkpkDoubleBox paintThicknessColumn(FlexTable tab, int row, int col, Material material) {
@@ -134,23 +158,17 @@ public class MaterialView extends MkpkDockLayout  {
 
 			@Override
 			public void onValueChange(ValueChangeEvent<Double> event) {
-				material.setThickness( thicknessBox.getValue() ); 
-				SERVICE.save(material, new AsyncCallback<Material>() {
-					
+				material.setThickness( thicknessBox.getValue() );
+				save(tab,row,material, new AsyncCallback<Material>() {
+
 					@Override
 					public void onSuccess(Material result) {
-						if (material.getId() == null) {
-							material.setId(result.getId());
-							paintDeleteButton(tab,row,2,material);							
-						}
 						if ((row +1)== tab.getRowCount()) {
 							paintRow(tab, new Material());
 						}
 					}
-					
 					@Override
 					public void onFailure(Throwable caught) {
-						showError(caught);
 					}
 				});
 			}
@@ -158,7 +176,7 @@ public class MaterialView extends MkpkDockLayout  {
 		return thicknessBox;
 	}
 
-	private void paintDeleteButton(FlexTable tab, int row, int col,Material material) {
+	private void paintDeleteButton(FlexTable tab, int row, Material material) {
 		if (material.getId() != null) {
 			MkpkButton deleteButton = new MkpkButton();
 			deleteButton.setTitle(MKPK.MSG.delete());
@@ -195,10 +213,32 @@ public class MaterialView extends MkpkDockLayout  {
 					
 				}
 			});
-			tab.setWidget(row, col, deleteButton);
+			tab.setWidget(row, deleteButtonColumn, deleteButton);
 		} else {
-			tab.setWidget(row, col, new Label());
+			tab.setWidget(row, deleteButtonColumn, new Label());
 		}
+	}
+
+	private void save(FlexTable tab, int row, Material material) {
+		save(tab, row, material, null);
+	}
+	private void save(FlexTable tab, int row, Material material,AsyncCallback<Material> callback) {
+		SERVICE.save(material, new AsyncCallback<Material>() {
+			
+			@Override
+			public void onSuccess(Material result) {
+				if (material.getId() == null) {
+					material.setId(result.getId());
+					paintDeleteButton(tab,row,material);							
+				}
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				showError(caught);
+			}
+		});
+		
 	}
 }
 

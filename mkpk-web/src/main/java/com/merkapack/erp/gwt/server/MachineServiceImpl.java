@@ -31,6 +31,20 @@ public class MachineServiceImpl extends StatelessRemoteServiceServlet implements
 	}
 
 	@Override
+	public LinkedList<Machine> getMachines(String query) throws MkpkCoreException {
+		DBContext ctx = null;
+		try {
+			ctx = MkpkDatasource.getDBContext(DOMAIN, USER);
+			return MkpkGo.getMachines(ctx,query);
+		} catch (Throwable t) {
+			throw new MkpkCoreException("Se ha producido un error ["+ t.getMessage() +"]", t);
+		} finally {
+			if (ctx != null)
+				ctx.close();
+		}
+	}
+
+	@Override
 	public Machine save(Machine machine) throws MkpkCoreException {
 		DBContext ctx = null;
 		try {
