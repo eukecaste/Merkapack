@@ -3,15 +3,20 @@ package com.merkapack.erp.core.model;
 import java.io.Serializable;
 import java.util.Date;
 
-import com.merkapack.watson.util.MkpkMathUtils;
-
 public class Planning implements Serializable, HasAudit {
+	
+	public static enum PlanningCalculationStrategy implements Serializable {
+		AMOUNT_CHANGED,
+		METERS_CHANGED,
+		TIME_CHANGED
+	}
 	
 	private static final long serialVersionUID = -5728018105374452335L;
 	
 	private Integer id;
 	private int domain;
 	private Date date;
+	private int order;
 	private Machine machine;
 	private Product product;
 	private double width;
@@ -34,7 +39,7 @@ public class Planning implements Serializable, HasAudit {
 	private Date modificationDate;
 	
 	private boolean dirty = true;
-
+	private PlanningCalculationStrategy strategy; 
 	public Integer getId() {
 		return id;
 	}
@@ -50,12 +55,19 @@ public class Planning implements Serializable, HasAudit {
 		this.domain = domain;
 		return this;
 	}
-	
+
 	public Date getDate() {
 		return date;
 	}
 	public Planning setDate(Date date) {
 		this.date = date;
+		return this;
+	}
+	public int getOrder() {
+		return order;
+	}
+	public Planning setOrder(int order) {
+		this.order = order;
 		return this;
 	}
 	public Machine getMachine() {
@@ -171,7 +183,13 @@ public class Planning implements Serializable, HasAudit {
 		this.dirty = dirty;
 		return this;
 	}
-	
+	public PlanningCalculationStrategy getStrategy() {
+		return strategy;
+	}
+	public Planning setStrategy(PlanningCalculationStrategy strategy) {
+		this.strategy = strategy;
+		return this;
+	}
 	// ---------------------------------------------------------- AUDIT
 	@Override
 	public String getCreationUser() {
@@ -204,40 +222,5 @@ public class Planning implements Serializable, HasAudit {
 	public Planning setModificationDate(Date modificationDate) {
 		this.modificationDate = modificationDate;
 		return this;
-	}
-	public void initialize() {
-		setWidth(0);
-		setLength(0);
-		setRollWidth(0);
-		setRollLength(0);
-		setAmount(0);
-		setMeters(0);
-		setBlows(0);
-		setBlowsMinute(0);
-		setMinutes(0);
-	}
-	public void calculate() {
-		if (product == null || material == null) {
-			initialize();
-		} else {
-			this.setWidth(product.getWidth());
-			this.setLength(product.getLength());
-			this.setRollWidth(material.getWidth());
-			this.setRollLength(material.getLength());
-			this.setBlowUnits( MkpkMathUtils.isZero( this.getWidth())
-					? 0
-					: ((int) MkpkMathUtils.round( this.getRollWidth() / this.getWidth(), 0))
-					);
-			if (this.getBlowUnits() == 0) {
-				this.setMeters( 0 );
-				this.setBlows( 0 );
-			} else {
-				this.setMeters( MkpkMathUtils.round((this.getLength() * this.getAmount()) / (1000 * getBlowUnits())));
-				this.setBlows(MkpkMathUtils.round(this.getAmount() / getBlowUnits()));
-			}
-			this.setMinutes(this.getBlowsMinute() == 0 
-					? 0 
-					: MkpkMathUtils.round(this.getBlows() / this.getBlowsMinute()) );
-		}
 	}
 }

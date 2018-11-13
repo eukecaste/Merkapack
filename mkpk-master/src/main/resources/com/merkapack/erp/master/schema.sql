@@ -87,6 +87,7 @@ CREATE TABLE `planning` (
 	 `id` int(4) NOT NULL AUTO_INCREMENT COMMENT 'Identificador unico'
 	,`domain` int(4) NOT NULL COMMENT 'Identificador del Dominio'
 	,`date` date DEFAULT NULL COMMENT 'Fecha del plan'
+	,`order` int(4) NOT NULL COMMENT 'Orden'
 	,`machine` int(4) NOT NULL COMMENT 'Identificador de la maquina'
 	,`product` int(4) NOT NULL COMMENT 'Identificador del producto'
 	,`width` double(8,2) DEFAULT '0.00' COMMENT 'Ancho bolsa'
