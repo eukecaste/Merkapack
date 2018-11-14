@@ -127,7 +127,8 @@ public class MkpkProductBox extends ResizeComposite implements HasValue<String>
 										
 										for (final Product product : result) {
 											SafeHtmlBuilder bld = new SafeHtmlBuilder();
-											String ds = product.getName();
+											String ds = product.getName() 
+												+ (product.getMaterial()!=null?" ("+ product.getMaterial().getName()+")":"");
 											int i = MkpkStringUtils.indexOfIgnoreCase(ds, request.getQuery());
 											bld.appendHtmlConstant("<span class=\"" 
 													+ MKPK.CSS.mkpkIconBullet()

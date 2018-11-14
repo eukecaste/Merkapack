@@ -65,6 +65,8 @@ input[type="text"] {
 
 .mkpk-pointer{	cursor: pointer;}
 
+.mkpk-font-smaller {font-size: 0.9em;}
+
 .mkpk-bold		{font-weight: bold;}
 .mkpk-color-red	{color: red;}
 
@@ -100,9 +102,12 @@ input[type="text"] {
 .mkpk-padding-top 		{padding-top: 1em;}
 .mkpk-padding-right 	{padding-right: 1em;}
 .mkpk-padding-left 		{padding-left: 1em;}
+.mkpk-padding-left2px	{padding-left: 2px;}
 .mkpk-icon-padding-left	{padding-left: 15px;}
 
 .mkpk-noborder 			{border: none;}
+.mkpk-border 			{border: solid #999 1px;}
+.mkpk-border-collapse	{border-collapse: collapse;}
 .mkpk-border-bottom 	{border-bottom: solid #999 1px;}
 .mkpk-border-top 		{border-top: solid #999 1px;}
 .mkpk-border-right 		{border-right: #999 1px solid;}
@@ -151,7 +156,24 @@ input[type="text"] {
 @sprite .mkpk-icon-cancel 	{width: auto; gwt-image: "mkpkIconCancel";}
 @sprite .mkpk-icon-delete 	{width: auto; gwt-image: "mkpkIconDelete";}
 
+.mkpk-table {
+	margin-top: 1em;
+	margin-bottom: 1em;
+	margin-left:auto; 
+	margin-right: auto;
+	border-collapse: collapse;
+}
+.mkpk-table-header {
+	font-size: 0.9em;
+	font-weight: bold;
+	text-align: center;
+	background-color: lightgray;
+}
 
+.mkpk-table td {
+	border: solid #888 1px;
+	padding: 2px;
+}
 
 .mkpk-cd-panel {
 	margin: 0px;

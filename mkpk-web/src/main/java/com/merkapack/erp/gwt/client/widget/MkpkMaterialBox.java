@@ -127,7 +127,8 @@ public class MkpkMaterialBox extends ResizeComposite implements HasValue<String>
 										
 										for (final Material material : result) {
 											SafeHtmlBuilder bld = new SafeHtmlBuilder();
-											String ds = material.getName();
+											String ds = material.getName() + " ("
+												+ material.getLength() + "x" + material.getWidth() + ")";
 											int i = MkpkStringUtils.indexOfIgnoreCase(ds, request.getQuery());
 											bld.appendHtmlConstant("<span class=\"" 
 													+ MKPK.CSS.mkpkIconBullet()

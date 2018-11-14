@@ -15,7 +15,8 @@ public interface CSS extends CssResource {
 	@ClassName("mkpk-error-label") 			String mkpkErrorLabel();
 
 	@ClassName("mkpk-pointer") 		String mkpkPointer();
-
+	
+	@ClassName("mkpk-font-smaller")	String mkpkFontSmaller();
 	@ClassName("mkpk-bold") 		String mkpkBold();
 	@ClassName("mkpk-color-red")	String mkpkColorRed();
 	
@@ -48,13 +49,19 @@ public interface CSS extends CssResource {
 	@ClassName("mkpk-padding-top")		String mkpkPaddingTop();
 	@ClassName("mkpk-padding-right")	String mkpkPaddingRight();
 	@ClassName("mkpk-padding-left")		String mkpkPaddingLeft();
+	@ClassName("mkpk-padding-left2px")	String mkpkPaddingLeft2px();
 	@ClassName("mkpk-icon-padding-left")String mkpkIconPaddingLeft();
 
 	@ClassName("mkpk-noborder")			String mkpkNoBorder();
+	@ClassName("mkpk-border")			String mkpkBorder();
+	@ClassName("mkpk-border-collapse")	String mkpkBorderCollpase();
 	@ClassName("mkpk-border-top")		String mkpkBorderTop();
 	@ClassName("mkpk-border-bottom")	String mkpkBorderBottom();
 	@ClassName("mkpk-border-right")		String mkpkBorderRight();
 	@ClassName("mkpk-border-left")		String mkpkBorderLeft();
+	
+	@ClassName("mkpk-table")			String mkpkTable();
+	@ClassName("mkpk-table-header")		String mkpkTableHeader();
 	
 	@ClassName("mkpk-app-title")
 	String mkpkAppTitle();
@@ -115,6 +122,7 @@ public interface CSS extends CssResource {
 	
 	@ClassName("mkpk-confirm-dialog-cancel-button")
 	String mkpkConfirmDialogCancelButton();
+	
 	
 }
 
