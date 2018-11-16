@@ -3,14 +3,16 @@ package com.merkapack.erp.core.model;
 import java.io.Serializable;
 import java.util.Date;
 
-public class Material implements Serializable, HasAudit {
+public class Roll implements Serializable, HasAudit {
 
-	private static final long serialVersionUID = -7795449515443023516L;
+	private static final long serialVersionUID = -5799101237589801244L;
 	
 	private Integer id;
 	private int domain;
+	private Material material;
 	private String name;
-	private double thickness;
+	private double width;
+	private double length;
 	
 	private String creationUser;
 	private Date creationDate;
@@ -22,7 +24,7 @@ public class Material implements Serializable, HasAudit {
 	public Integer getId() {
 		return id;
 	}
-	public Material setId(Integer id) {
+	public Roll setId(Integer id) {
 		this.id = id;
 		return this;
 	}
@@ -30,24 +32,39 @@ public class Material implements Serializable, HasAudit {
 	public int getDomain() {
 		return domain;
 	}
-	public Material setDomain(int domain) {
+	public Roll setDomain(int domain) {
 		this.domain = domain;
 		return this;
 	}
 	
+	public Material getMaterial() {
+		return material;
+	}
+	public Roll setMaterial(Material material) {
+		this.material = material;
+		return this;
+	}
 	public String getName() {
 		return name;
 	}
-	public Material setName(String name) {
+	public Roll setName(String name) {
 		this.name = name;
 		return this;
 	}
 	
-	public double getThickness() {
-		return thickness;
+	public double getWidth() {
+		return width;
 	}
-	public Material setThickness(double thickness) {
-		this.thickness = thickness;
+	public Roll setWidth(double width) {
+		this.width = width;
+		return this;
+	}
+
+	public double getLength() {
+		return length;
+	}
+	public Roll setLength(double length) {
+		this.length = length;
 		return this;
 	}
 	
@@ -55,7 +72,7 @@ public class Material implements Serializable, HasAudit {
 	public boolean isDirty() {
 		return dirty;
 	}
-	public Material setDirty(boolean dirty) {
+	public Roll setDirty(boolean dirty) {
 		this.dirty = dirty;
 		return this;
 	}
@@ -65,7 +82,7 @@ public class Material implements Serializable, HasAudit {
 	public String getCreationUser() {
 		return creationUser;
 	}
-	public Material setCreationUser(String creationUser) {
+	public Roll setCreationUser(String creationUser) {
 		this.creationUser = creationUser;
 		return this;
 	}
@@ -73,7 +90,7 @@ public class Material implements Serializable, HasAudit {
 	public Date getCreationDate() {
 		return creationDate;
 	}
-	public Material setCreationDate(Date creationDate) {
+	public Roll setCreationDate(Date creationDate) {
 		this.creationDate = creationDate;
 		return this;
 	}
@@ -81,7 +98,7 @@ public class Material implements Serializable, HasAudit {
 	public String getModificationUser() {
 		return modificationUser;
 	}
-	public Material setModificationUser(String modificationUser) {
+	public Roll setModificationUser(String modificationUser) {
 		this.modificationUser = modificationUser;
 		return this;
 	}
@@ -89,7 +106,7 @@ public class Material implements Serializable, HasAudit {
 	public Date getModificationDate() {
 		return modificationDate;
 	}
-	public Material setModificationDate(Date modificationDate) {
+	public Roll setModificationDate(Date modificationDate) {
 		this.modificationDate = modificationDate;
 		return this;
 	}

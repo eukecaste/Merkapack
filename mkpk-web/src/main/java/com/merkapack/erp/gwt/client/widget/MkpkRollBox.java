@@ -31,15 +31,15 @@ import com.google.gwt.user.client.ui.SuggestOracle;
 import com.google.gwt.user.client.ui.SuggestOracle.Suggestion;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
-import com.merkapack.erp.core.model.Material;
+import com.merkapack.erp.core.model.Roll;
 import com.merkapack.erp.gwt.client.common.MKPK;
-import com.merkapack.erp.gwt.client.rpc.MaterialService;
-import com.merkapack.erp.gwt.client.rpc.MaterialServiceAsync;
-import com.merkapack.erp.gwt.client.rpc.MaterialServiceAsyncDecorator;
+import com.merkapack.erp.gwt.client.rpc.RollService;
+import com.merkapack.erp.gwt.client.rpc.RollServiceAsync;
+import com.merkapack.erp.gwt.client.rpc.RollServiceAsyncDecorator;
 import com.merkapack.watson.util.MkpkStringUtils;
 
-public class MkpkMaterialBox extends ResizeComposite implements HasValue<String>
-	,Focusable, HasSelectionHandlers<Material>, HasAllFocusHandlers
+public class MkpkRollBox extends ResizeComposite implements HasValue<String>
+	,Focusable, HasSelectionHandlers<Roll>, HasAllFocusHandlers
 	,HasAllKeyHandlers {
 	
 	protected static final String BEGIN_STRONG = "<strong>";
@@ -48,12 +48,12 @@ public class MkpkMaterialBox extends ResizeComposite implements HasValue<String>
 	private static final int MIN_CHARACTERS = 2;
 	private static final int MAX_CHARACTERS = 8;
 
-	private MaterialServiceAsync service;
+	private RollServiceAsync service;
 
-	private Material selected;
+	private Roll selected;
 	
-	private SuggestBox material;
-	private TextBox materialTextBox;
+	private SuggestBox roll;
+	private TextBox rollTextBox;
 	
 	private AccountSuggestionDisplay suggestionDisplay;
 	
@@ -90,24 +90,24 @@ public class MkpkMaterialBox extends ResizeComposite implements HasValue<String>
 	    }
 	}
 	
-	private static class MaterialSuggestion extends MultiWordSuggestion {
+	private static class RollSuggestion extends MultiWordSuggestion {
 		
-		private Material material;
+		private Roll roll;
 		
-		private MaterialSuggestion(Material material, String replacementString, String displayString) {
+		private RollSuggestion(Roll roll, String replacementString, String displayString) {
 			super( replacementString, displayString );
-			this.material = material;
+			this.roll = roll;
 		}
 		
-		public Material getMaterial() {
-			return material;
+		public Roll getRoll() {
+			return roll;
 		}
 		
 	}
 	
-	public MkpkMaterialBox() {
-		MaterialServiceAsync commonServiceRaw = GWT.create(MaterialService.class);
-		service = new MaterialServiceAsyncDecorator(commonServiceRaw);
+	public MkpkRollBox() {
+		RollServiceAsync commonServiceRaw = GWT.create(RollService.class);
+		service = new RollServiceAsyncDecorator(commonServiceRaw);
 		MultiWordSuggestOracle oracle = new MultiWordSuggestOracle() {
 			@Override
 			public void requestSuggestions(final Request request,final Callback callback) {
@@ -115,19 +115,20 @@ public class MkpkMaterialBox extends ResizeComposite implements HasValue<String>
 				if (MkpkStringUtils.length(request.getQuery()) >= MIN_CHARACTERS
 				 && MkpkStringUtils.length(request.getQuery()) <= MAX_CHARACTERS) {
 					reset();
-					service.getMaterials(request.getQuery() ,new AsyncCallback<LinkedList<Material>>() {
+					service.getRolls(request.getQuery() ,new AsyncCallback<LinkedList<Roll>>() {
 		
 								public void onFailure(Throwable caught) {
 									callback.onSuggestionsReady(request, new Response());
 								}
 		
-								public void onSuccess(LinkedList<Material> result) {
+								public void onSuccess(LinkedList<Roll> result) {
 									LinkedList<Suggestion> suggestions = new LinkedList<Suggestion>();
 									if (result != null) {
 										
-										for (final Material material : result) {
+										for (final Roll roll : result) {
 											SafeHtmlBuilder bld = new SafeHtmlBuilder();
-											String ds = material.getName();
+											String ds = roll.getName() 
+												+ (roll.getMaterial()!=null?" ("+ roll.getMaterial().getName()+")":"");
 											int i = MkpkStringUtils.indexOfIgnoreCase(ds, request.getQuery());
 											bld.appendHtmlConstant("<span class=\"" 
 													+ MKPK.CSS.mkpkIconBullet()
@@ -140,7 +141,7 @@ public class MkpkMaterialBox extends ResizeComposite implements HasValue<String>
 									        bld.appendHtmlConstant(END_STRONG);
 									        bld.appendEscaped(MkpkStringUtils.substring(ds, (i + MkpkStringUtils.length(request.getQuery()) )));
 									        bld.appendHtmlConstant("</span>");
-									        MaterialSuggestion as = new MaterialSuggestion(material, material.getName(), bld.toSafeHtml().asString());
+									        RollSuggestion as = new RollSuggestion(roll, roll.getName(), bld.toSafeHtml().asString());
 											suggestions.add(as);
 										}
 									}
@@ -152,54 +153,54 @@ public class MkpkMaterialBox extends ResizeComposite implements HasValue<String>
 				}
 			}
 		};
-		materialTextBox = new TextBox();
+		rollTextBox = new TextBox();
 		suggestionDisplay =  new AccountSuggestionDisplay();
-		material = new SuggestBox(oracle,materialTextBox,suggestionDisplay);
-		materialTextBox.setStyleName(MKPK.CSS.mkpkInputText());
-		materialTextBox.setVisibleLength(20);
-		materialTextBox.setMaxLength(32);
+		roll = new SuggestBox(oracle,rollTextBox,suggestionDisplay);
+		rollTextBox.setStyleName(MKPK.CSS.mkpkInputText());
+		rollTextBox.setVisibleLength(20);
+		rollTextBox.setMaxLength(32);
 		
-		material.addSelectionHandler(new SelectionHandler<SuggestOracle.Suggestion>() {
+		roll.addSelectionHandler(new SelectionHandler<SuggestOracle.Suggestion>() {
 			@Override
 			public void onSelection(SelectionEvent<Suggestion> event) {
-				MaterialSuggestion selected = (MaterialSuggestion) event.getSelectedItem();
-				select( selected.getMaterial() );
+				RollSuggestion selected = (RollSuggestion) event.getSelectedItem();
+				select( selected.getRoll() );
 			}
 		});
-		initWidget(material);
+		initWidget(roll);
 	}
 	
 	public void setVisibleLength(int i) {
-		materialTextBox.setVisibleLength(i);		
+		rollTextBox.setVisibleLength(i);		
 	}
 
-	private void select(Material result) {
-		materialTextBox.removeStyleName(MKPK.CSS.mkpkTextBoxError() );
+	private void select(Roll result) {
+		rollTextBox.removeStyleName(MKPK.CSS.mkpkTextBoxError() );
 		selected = result;
-		SelectionEvent.fire(MkpkMaterialBox.this, result );
+		SelectionEvent.fire(MkpkRollBox.this, result );
 	}
 	
 	private void reset() {
-		materialTextBox.removeStyleName(MKPK.CSS.mkpkTextBoxError() );
+		rollTextBox.removeStyleName(MKPK.CSS.mkpkTextBoxError() );
 		selected = null;
 	}
 
-	public Material getSelected() {
+	public Roll getSelected() {
 		return selected;
 	}
 
 	@Override
 	public String getValue() {
-		return material.getValue();
+		return roll.getValue();
 	}
-	public void setValue(Material material, boolean fire) {
-		this.selected = material;
-		setValue(material==null?null:material.getName(),fire);
+	public void setValue(Roll roll, boolean fire) {
+		this.selected = roll;
+		setValue(roll==null?null:roll.getName(),fire);
 	}
 
 	@Override
 	public void setValue(String value) {
-		material.setValue(value);
+		roll.setValue(value);
 		if (MkpkStringUtils.isEmpty(value)) {
 			reset();
 		}
@@ -207,67 +208,67 @@ public class MkpkMaterialBox extends ResizeComposite implements HasValue<String>
 
 	@Override
 	public void setValue(String value, boolean fireEvents) {
-		material.setValue(value,fireEvents);
+		roll.setValue(value,fireEvents);
 	}
 
 	// --------------------------------------------------------- HANDLERS
 	@Override
 	public HandlerRegistration addBlurHandler(BlurHandler handler) {
-		return materialTextBox.addBlurHandler(handler);
+		return rollTextBox.addBlurHandler(handler);
 	}
 
 	@Override
 	public HandlerRegistration addFocusHandler(FocusHandler handler) {
-		return materialTextBox.addFocusHandler(handler);
+		return rollTextBox.addFocusHandler(handler);
 	}
 
 	@Override
 	public int getTabIndex() {
-		return materialTextBox.getTabIndex();
+		return rollTextBox.getTabIndex();
 	}
 
 	@Override
 	public void setAccessKey(char key) {
-		materialTextBox.setAccessKey(key);
+		rollTextBox.setAccessKey(key);
 	}
 
 	@Override
 	public void setFocus(boolean focused) {
-		materialTextBox.selectAll();
-		materialTextBox.setFocus(focused);
+		rollTextBox.selectAll();
+		rollTextBox.setFocus(focused);
 	}
 
 	@Override
 	public void setTabIndex(int index) {
-		materialTextBox.setTabIndex(index);
+		rollTextBox.setTabIndex(index);
 	}
 
 	@Override
 	public HandlerRegistration addValueChangeHandler(ValueChangeHandler<String> handler) {
-		return material.addValueChangeHandler(handler);
+		return roll.addValueChangeHandler(handler);
 	}
 
 	@Override
-	public HandlerRegistration addSelectionHandler(SelectionHandler<Material> handler) {
+	public HandlerRegistration addSelectionHandler(SelectionHandler<Roll> handler) {
 		return super.addHandler(handler, SelectionEvent.getType());
 	}
 
 	@Override
 	public HandlerRegistration addKeyUpHandler(KeyUpHandler handler) {
-		return materialTextBox.addKeyUpHandler(handler);
+		return rollTextBox.addKeyUpHandler(handler);
 	}
 
 	@Override
 	public HandlerRegistration addKeyDownHandler(KeyDownHandler handler) {
-		return materialTextBox.addKeyDownHandler(handler);
+		return rollTextBox.addKeyDownHandler(handler);
 	}
 
 	@Override
 	public HandlerRegistration addKeyPressHandler(KeyPressHandler handler) {
-		return materialTextBox.addKeyPressHandler(handler);
+		return rollTextBox.addKeyPressHandler(handler);
 	}
 	public void setEnabled(boolean enabled) {
-		materialTextBox.setEnabled(enabled);
+		rollTextBox.setEnabled(enabled);
 	}
 
 }

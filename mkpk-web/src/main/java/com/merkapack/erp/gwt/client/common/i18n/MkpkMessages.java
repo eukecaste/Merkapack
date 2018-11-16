@@ -65,6 +65,12 @@ public interface MkpkMessages extends Messages {
 	@DefaultMessage("Art\u00EDculo")
 	String product();
 
+	@DefaultMessage("Bobinas")
+	String rolls();
+
+	@DefaultMessage("Bobina")
+	String roll();
+
 	@DefaultMessage("Medida")
 	String measure();
 
@@ -101,9 +107,6 @@ public interface MkpkMessages extends Messages {
 	@DefaultMessage("Fecha")
 	String date();
 
-	@DefaultMessage("Bobina")
-	String roll();
-
 	@DefaultMessage("Unidad")
 	String unit();
 
@@ -121,4 +124,5 @@ public interface MkpkMessages extends Messages {
 	
 	@DefaultMessage("Comentarios")
 	String comments();
+
 }

@@ -22,6 +22,7 @@ public class Planning implements Serializable, HasAudit {
 	private double width;
 	private double length;
 	private Material material;
+	private Roll roll;
 	private double rollWidth;
 	private double rollLength;
 	private double amount;
@@ -103,6 +104,13 @@ public class Planning implements Serializable, HasAudit {
 	}
 	public Planning setMaterial(Material material) {
 		this.material = material;
+		return this;
+	}
+	public Roll getRoll() {
+		return roll;
+	}
+	public Planning setRoll(Roll roll) {
+		this.roll = roll;
 		return this;
 	}
 	public double getRollWidth() {

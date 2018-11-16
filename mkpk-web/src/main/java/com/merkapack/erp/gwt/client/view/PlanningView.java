@@ -26,6 +26,7 @@ import com.merkapack.erp.core.model.Material;
 import com.merkapack.erp.core.model.Planning;
 import com.merkapack.erp.core.model.Planning.PlanningCalculationStrategy;
 import com.merkapack.erp.core.model.Product;
+import com.merkapack.erp.core.model.Roll;
 import com.merkapack.erp.gwt.client.common.MKPK;
 import com.merkapack.erp.gwt.client.widget.MkpkButton;
 import com.merkapack.erp.gwt.client.widget.MkpkClientBox;
@@ -38,7 +39,7 @@ import com.merkapack.erp.gwt.client.widget.MkpkIntegerBox;
 import com.merkapack.erp.gwt.client.widget.MkpkMachineBox;
 import com.merkapack.erp.gwt.client.widget.MkpkMaterialBox;
 import com.merkapack.erp.gwt.client.widget.MkpkProductBox;
-import com.merkapack.erp.gwt.client.widget.MkpkTextBox;
+import com.merkapack.erp.gwt.client.widget.MkpkRollBox;
 import com.merkapack.watson.util.MkpkMathUtils;
 import com.merkapack.watson.util.MkpkNumberUtils;
 
@@ -183,7 +184,7 @@ public class PlanningView extends MkpkDockLayout  {
 		private MkpkProductBox product = new MkpkProductBox();
 		private MkpkMaterialBox material = new MkpkMaterialBox();
 		private MkpkButton deleteButton = new MkpkButton();		
-		private MkpkTextBox roll = new MkpkTextBox();
+		private MkpkRollBox roll = new MkpkRollBox();
 		private MkpkDoubleBox amount = new MkpkDoubleBox();
 		private MkpkIntegerBox blowUnits = new MkpkIntegerBox();
 		private MkpkDoubleBox meters = new MkpkDoubleBox();
@@ -230,6 +231,7 @@ public class PlanningView extends MkpkDockLayout  {
 					Product p = event.getSelectedItem();
 					planning.setProduct(p);
 					planning.setMaterial(p.getMaterial());
+					material.setValue(p.getMaterial(),false);
 					planning.setStrategy(PlanningCalculationStrategy.AMOUNT_CHANGED);
 					fire(planning);
 				}
@@ -250,10 +252,20 @@ public class PlanningView extends MkpkDockLayout  {
 			++col;
 			
 			// BOBINA
-			roll.addStyleName(MKPK.CSS.mkpkTextCenter());
 			roll.setVisibleLength(10);
-			roll.setEnabled(false);
 			tab.setWidget(row, col, roll);
+			roll.addSelectionHandler(new SelectionHandler<Roll>() {
+				
+				@Override
+				public void onSelection(SelectionEvent<Roll> event) {
+					Roll r = event.getSelectedItem();
+					planning.setRoll(r);
+					planning.setRollWidth(r.getWidth());
+					planning.setRollLength(r.getLength());
+					planning.setStrategy(PlanningCalculationStrategy.AMOUNT_CHANGED);
+					fire(planning);
+				}
+			});
 			++col;
 			
 			// UNIDAD
@@ -365,7 +377,7 @@ public class PlanningView extends MkpkDockLayout  {
 		public void refresh( Planning planning) {
 			product.setValue(planning.getProduct(),false);
 			material.setValue(planning.getMaterial(),false);
-			roll.setValue(planning.getRollLength()+" x "+planning.getRollWidth(),false);
+			roll.setValue(planning.getRoll(),false);
 			amount.setValue(planning.getAmount(),false);
 			blowUnits.setValue(planning.getBlowUnits(),false);
 			meters.setValue(planning.getMeters(),false);
@@ -447,10 +459,12 @@ public class PlanningView extends MkpkDockLayout  {
 				LOGGER.severe("Material set from product");
 				planning.setMaterial( planning.getProduct().getMaterial());
 			}
+			if (planning.getRoll() != null) {
+				planning.setRollWidth(planning.getRoll().getWidth());
+				planning.setRollLength(planning.getRoll().getLength());
+			}
 			planning.setWidth(planning.getProduct().getWidth());
 			planning.setLength(planning.getProduct().getLength());
-			planning.setRollWidth(planning.getMaterial().getWidth());
-			planning.setRollLength(planning.getMaterial().getLength());
 			planning.setBlowUnits( (int) MkpkMathUtils.round( planning.getRollWidth() / planning.getWidth(), 0) );
 			return true;
 		}

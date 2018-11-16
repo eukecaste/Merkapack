@@ -13,6 +13,8 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.SimpleLayoutPanel;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.merkapack.erp.core.model.Machine;
 import com.merkapack.erp.gwt.client.common.MKPK;
@@ -29,30 +31,46 @@ import com.merkapack.erp.gwt.client.widget.MkpkTextBox;
 public class MachineView extends MkpkDockLayout  {
 	
 	private static MachineServiceAsync SERVICE;
-	private ScrollPanel content;
+	private SimpleLayoutPanel content;
 	private final int deleteButtonColumn = 2; 
 	
 	public MachineView() {
 		MachineServiceAsync serviceRaw = GWT.create(MachineService.class);
 		SERVICE = new MachineServiceAsyncDecorator(serviceRaw);
-		content = new ScrollPanel();
+		content = new SimpleLayoutPanel();
 		content.setWidget(getContent());
 		add(content);
 	}
 
 	private Widget getContent() {
+		ScrollPanel container = new ScrollPanel();
+		VerticalPanel panel = new VerticalPanel();
+		panel.setStyleName(MKPK.CSS.mkpkBlockCenter());
+		container.setWidget(panel);
+		
 		final FlexTable tab = new FlexTable();
-		tab.setStyleName(MKPK.CSS.mkpkBlockCenter());
+		tab.setStyleName(MKPK.CSS.mkpkTable());
+		tab.addStyleName(MKPK.CSS.mkpkBlockCenter());
 		tab.getColumnFormatter().setWidth(0, "auto");
 		tab.getColumnFormatter().setWidth(1, "15px");
 		
+		int col = 0;
 		Label nameLabel = new Label(MKPK.MSG.machines());
-		nameLabel.setStyleName(MKPK.CSS.mkpkBold());
-		tab.setWidget(0, 0, nameLabel);
+		tab.setWidget(0, col, nameLabel);
+		tab.getCellFormatter().setStyleName(0, col, MKPK.CSS.mkpkTableHeader());
+		col++;
+
 		Label blowsLabel = new Label(MKPK.MSG.blows());
 		blowsLabel.setStyleName(MKPK.CSS.mkpkBold());
-		tab.setWidget(0, 1, blowsLabel);
+		tab.setWidget(0, col, blowsLabel);
+		tab.getCellFormatter().setStyleName(0, col, MKPK.CSS.mkpkTableHeader());
+		col++;
 		
+		Label deleteLabel = new Label("X");
+		tab.setWidget(0, col, deleteLabel);
+		tab.getCellFormatter().setStyleName(0, col, MKPK.CSS.mkpkTableHeader());
+		col++;
+
 		SERVICE.getMachines(new AsyncCallback<LinkedList<Machine>>() {
 			
 			@Override
@@ -68,7 +86,19 @@ public class MachineView extends MkpkDockLayout  {
 				MachineView.this.showError( caught );
 			}
 		});
-		return tab;		
+		panel .add(tab);
+		
+		MkpkButton newLineButton = new MkpkButton();
+		newLineButton.addStyleName(MKPK.CSS.mkpkIconPlus());
+		newLineButton.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				paintRow(tab,new Machine());
+			}
+		});
+		panel.add(newLineButton);
+		return container;		
 	}
 
 	protected void paintRow(FlexTable tab, final Machine machine) {
@@ -114,18 +144,7 @@ public class MachineView extends MkpkDockLayout  {
 			@Override
 			public void onValueChange(ValueChangeEvent<Double> event) {
 				machine.setBlows(blowsBox.getValue() );
-				save(tab, row, machine, new AsyncCallback<Machine>() {
-
-					@Override
-					public void onSuccess(Machine result) {
-						if ((row +1)== tab.getRowCount()) {
-							paintRow(tab, new Machine());
-						}
-					}
-					@Override
-					public void onFailure(Throwable caught) {
-					}
-				});
+				save(tab, row, machine);
 			}
 		});
 		return blowsBox;
@@ -171,9 +190,6 @@ public class MachineView extends MkpkDockLayout  {
 	}
 	
 	private void save(FlexTable tab, int row, Machine machine) {
-		save(tab, row, machine, null);
-	}
-	private void save(FlexTable tab, int row, Machine machine,AsyncCallback<Machine> callback) {
 		SERVICE.save(machine, new AsyncCallback<Machine>() {
 			
 			@Override
@@ -182,13 +198,11 @@ public class MachineView extends MkpkDockLayout  {
 					machine.setId(result.getId());
 					paintDeleteButton(tab,row,machine);							
 				}
-				if (callback != null) callback.onSuccess(result);
 			}
 			
 			@Override
 			public void onFailure(Throwable caught) {
 				showError(caught);
-				if (callback != null) callback.onFailure(caught);
 			}
 		});
 	}

@@ -7,10 +7,12 @@ import com.merkapack.erp.core.dao.jooq.ClientDAO;
 import com.merkapack.erp.core.dao.jooq.MachineDAO;
 import com.merkapack.erp.core.dao.jooq.MaterialDAO;
 import com.merkapack.erp.core.dao.jooq.ProductDAO;
+import com.merkapack.erp.core.dao.jooq.RollDAO;
 import com.merkapack.erp.core.model.Client;
 import com.merkapack.erp.core.model.Machine;
 import com.merkapack.erp.core.model.Material;
 import com.merkapack.erp.core.model.Product;
+import com.merkapack.erp.core.model.Roll;
 
 public class MkpkGo {
 	
@@ -102,4 +104,25 @@ public class MkpkGo {
 		ctx.getDslContext().transaction( configuration -> ProductDAO.delete(ctx,product));
 	}
 
+	//							------
+	// 							[ROLL]
+	//							------
+	public static LinkedList<Roll> getRolls(DBContext ctx) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> RollDAO.getRolls(ctx));
+	}
+	
+	public static LinkedList<Roll> getRolls(DBContext ctx,String query) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> RollDAO.getRolls(ctx,query));
+	}
+
+	public static Roll save(DBContext ctx,Roll roll) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> RollDAO.save(ctx,roll));
+	}
+
+	public static void delete(DBContext ctx, Roll roll) {
+		ctx.getDslContext().transaction( configuration -> RollDAO.delete(ctx,roll));
+	}
 }

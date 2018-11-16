@@ -5,6 +5,7 @@ import static com.merkapack.erp.master.jooq.tables.Client.CLIENT;
 import static com.merkapack.erp.master.jooq.tables.Product.PRODUCT;
 import static com.merkapack.erp.master.jooq.tables.Machine.MACHINE;
 import static com.merkapack.erp.master.jooq.tables.Material.MATERIAL;
+import static com.merkapack.erp.master.jooq.tables.Roll.ROLL;
 
 import java.util.function.Function;
 
@@ -14,6 +15,7 @@ import com.merkapack.erp.core.model.Client;
 import com.merkapack.erp.core.model.Machine;
 import com.merkapack.erp.core.model.Material;
 import com.merkapack.erp.core.model.Product;
+import com.merkapack.erp.core.model.Roll;
 
 public class Mapper {
 	protected static class ClientMapper implements Function<Record,Client> {
@@ -59,8 +61,6 @@ public class Mapper {
 				.setId(rec.get(MATERIAL.ID))
 				.setDomain(rec.get(MATERIAL.DOMAIN))
 				.setName(rec.get(MATERIAL.NAME))
-				.setWidth(rec.get(MATERIAL.WIDTH))
-				.setLength(rec.get(MATERIAL.LENGTH))
 				.setThickness(rec.get(MATERIAL.THICKNESS))
 				.setCreationUser(rec.getValue(MATERIAL.CREATION_USER))
 				.setCreationDate(rec.getValue(MATERIAL.CREATION_DATE))
@@ -71,6 +71,26 @@ public class Mapper {
 		
 	}
 	
+	protected static class RollMapper implements Function<Record,Roll> {
+
+		@Override
+		public Roll apply(Record rec) {
+			return new Roll()
+				.setId(rec.get(ROLL.ID))
+				.setDomain(rec.get(ROLL.DOMAIN))
+				.setMaterial( (new MaterialMapper()).apply(rec) )
+				.setName(rec.get(ROLL.NAME))
+				.setWidth(rec.get(ROLL.WIDTH))
+				.setLength(rec.get(ROLL.LENGTH))
+				.setCreationUser(rec.getValue(ROLL.CREATION_USER))
+				.setCreationDate(rec.getValue(ROLL.CREATION_DATE))
+				.setModificationUser(rec.getValue(ROLL.MODIFICATION_USER))
+				.setModificationDate(rec.getValue(ROLL.MODIFICATION_DATE))
+				.setDirty(false);
+		}
+		
+	}
+
 	protected static class ProductMapper implements Function<Record,Product> {
 
 		@Override

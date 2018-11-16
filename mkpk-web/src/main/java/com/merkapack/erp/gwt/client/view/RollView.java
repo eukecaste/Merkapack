@@ -19,11 +19,11 @@ import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.merkapack.erp.core.model.Material;
-import com.merkapack.erp.core.model.Product;
+import com.merkapack.erp.core.model.Roll;
 import com.merkapack.erp.gwt.client.common.MKPK;
-import com.merkapack.erp.gwt.client.rpc.ProductService;
-import com.merkapack.erp.gwt.client.rpc.ProductServiceAsync;
-import com.merkapack.erp.gwt.client.rpc.ProductServiceAsyncDecorator;
+import com.merkapack.erp.gwt.client.rpc.RollService;
+import com.merkapack.erp.gwt.client.rpc.RollServiceAsync;
+import com.merkapack.erp.gwt.client.rpc.RollServiceAsyncDecorator;
 import com.merkapack.erp.gwt.client.widget.MkpkButton;
 import com.merkapack.erp.gwt.client.widget.MkpkConfirmDialog;
 import com.merkapack.erp.gwt.client.widget.MkpkConfirmDialog.MkpkConfirmDialogCallback;
@@ -33,15 +33,15 @@ import com.merkapack.erp.gwt.client.widget.MkpkMaterialBox;
 import com.merkapack.erp.gwt.client.widget.MkpkTextBox;
 import com.merkapack.watson.util.MkpkStringUtils;
 
-public class ProductView extends MkpkDockLayout  {
+public class RollView extends MkpkDockLayout  {
 	
-	private static ProductServiceAsync SERVICE;
+	private static RollServiceAsync SERVICE;
 	private SimpleLayoutPanel content;
 	private final int deleteIconColumn = 4; 
 	
-	public ProductView() {
-		ProductServiceAsync serviceRaw = GWT.create(ProductService.class);
-		SERVICE = new ProductServiceAsyncDecorator(serviceRaw);
+	public RollView() {
+		RollServiceAsync serviceRaw = GWT.create(RollService.class);
+		SERVICE = new RollServiceAsyncDecorator(serviceRaw);
 		content = new SimpleLayoutPanel();
 		content.setWidget(getContent());
 		add(content);
@@ -63,7 +63,7 @@ public class ProductView extends MkpkDockLayout  {
 		tab.getColumnFormatter().setWidth(4, "15px");
 		
 		int col = 0;
-		Label nameLabel = new Label(MKPK.MSG.product());
+		Label nameLabel = new Label(MKPK.MSG.roll());
 		nameLabel.setStyleName(MKPK.CSS.mkpkBold());
 		tab.setWidget(0, col, nameLabel);
 		tab.getCellFormatter().setStyleName(0, col, MKPK.CSS.mkpkTableHeader());
@@ -92,19 +92,19 @@ public class ProductView extends MkpkDockLayout  {
 		tab.getCellFormatter().setStyleName(0, col, MKPK.CSS.mkpkTableHeader());
 		col++;
 		
-		SERVICE.getProducts(new AsyncCallback<LinkedList<Product>>() {
+		SERVICE.getRolls(new AsyncCallback<LinkedList<Roll>>() {
 			
 			@Override
-			public void onSuccess(LinkedList<Product> products) {
-				for (Product product : products) {
-					paintRow(tab,product);
+			public void onSuccess(LinkedList<Roll> rolls) {
+				for (Roll roll : rolls) {
+					paintRow(tab,roll);
 				}
-				paintRow(tab,new Product());
+				paintRow(tab,new Roll());
 			}
 			
 			@Override
 			public void onFailure(Throwable caught) {
-				ProductView.this.showError( caught );
+				RollView.this.showError( caught );
 			}
 		});
 		panel .add(tab);
@@ -115,20 +115,20 @@ public class ProductView extends MkpkDockLayout  {
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				paintRow(tab,new Product());
+				paintRow(tab,new Roll());
 			}
 		});
 		panel.add(newLineButton);
 		return container;		
 	}
 
-	protected void paintRow(FlexTable tab, final Product product) {
+	protected void paintRow(FlexTable tab, final Roll roll) {
 		int row = tab.getRowCount();
-		MkpkTextBox nameBox = paintNameColumn(tab,row,0,product);
-		paintMaterialColumn(tab,row,1,product);
-		paintWidthColumn(tab, row, 2, product);
-		paintLengthColumn(tab, row, 3, product);
-		paintDeleteButton(tab,row,product);
+		MkpkTextBox nameBox = paintNameColumn(tab,row,0,roll);
+		paintMaterialColumn(tab,row,1,roll);
+		paintWidthColumn(tab, row, 2, roll);
+		paintLengthColumn(tab, row, 3, roll);
+		paintDeleteButton(tab,row,roll);
 		Scheduler.get().scheduleDeferred(new ScheduledCommand() {
 			public void execute() {
 				nameBox.setFocus(true);
@@ -136,9 +136,9 @@ public class ProductView extends MkpkDockLayout  {
 		});
 	}
 
-	private MkpkTextBox paintNameColumn(FlexTable tab, int row, int col, Product product) {
+	private MkpkTextBox paintNameColumn(FlexTable tab, int row, int col, Roll roll) {
 		MkpkTextBox nameBox = new MkpkTextBox();
-		nameBox.setValue(product.getName(), false);
+		nameBox.setValue(roll.getName(), false);
 		nameBox.setMaxLength(32);
 		nameBox.setVisibleLength(40);
 		tab.setWidget(row, col, nameBox);
@@ -146,62 +146,62 @@ public class ProductView extends MkpkDockLayout  {
 
 			@Override
 			public void onValueChange(ValueChangeEvent<String> event) {
-				product.setName( nameBox.getValue() );
-				save(tab,row,product);
+				roll.setName( nameBox.getValue() );
+				save(tab,row,roll);
 			}
 		});
 		return nameBox;
 	}
 
-	private MkpkMaterialBox paintMaterialColumn(FlexTable tab, int row, int col, Product product) {
+	private MkpkMaterialBox paintMaterialColumn(FlexTable tab, int row, int col, Roll roll) {
 		MkpkMaterialBox materialBox = new MkpkMaterialBox();
-		materialBox.setValue(product.getMaterial(), false);
+		materialBox.setValue(roll.getMaterial(), false);
 		tab.setWidget(row, col, materialBox);
 		materialBox.addSelectionHandler( new SelectionHandler<Material>() {
 			
 			@Override
 			public void onSelection(SelectionEvent<Material> event) {
-				product.setMaterial( event.getSelectedItem());
-				save(tab,row,product);
+				roll.setMaterial( event.getSelectedItem());
+				save(tab,row,roll);
 			}
 		});
 		return materialBox;
 	}
 
-	private MkpkDoubleBox paintWidthColumn(FlexTable tab, int row, int col, Product product) {
+	private MkpkDoubleBox paintWidthColumn(FlexTable tab, int row, int col, Roll roll) {
 		MkpkDoubleBox widthBox = new MkpkDoubleBox();
 		widthBox.setVisibleLength(6);
-		widthBox.setValue(product.getWidth(), false);
+		widthBox.setValue(roll.getWidth(), false);
 		tab.setWidget(row, col, widthBox);
 		widthBox.addValueChangeHandler( new ValueChangeHandler<Double>() {
 
 			@Override
 			public void onValueChange(ValueChangeEvent<Double> event) {
-				product.setWidth( widthBox.getValue() );
-				save(tab, row, product);
+				roll.setWidth( widthBox.getValue() );
+				save(tab, row, roll);
 			}
 		});
 		return widthBox;
 	}
 
-	private MkpkDoubleBox paintLengthColumn(FlexTable tab, int row, int col, Product product) {
+	private MkpkDoubleBox paintLengthColumn(FlexTable tab, int row, int col, Roll roll) {
 		MkpkDoubleBox lengthBox = new MkpkDoubleBox();
 		lengthBox.setVisibleLength(6);
-		lengthBox.setValue(product.getLength(), false);
+		lengthBox.setValue(roll.getLength(), false);
 		tab.setWidget(row, col, lengthBox);
 		lengthBox.addValueChangeHandler( new ValueChangeHandler<Double>() {
 
 			@Override
 			public void onValueChange(ValueChangeEvent<Double> event) {
-				product.setLength( lengthBox.getValue() ); 
-				save(tab, row, product);
+				roll.setLength( lengthBox.getValue() ); 
+				save(tab, row, roll);
 			}
 		});
 		return lengthBox;
 	}
 
-	private void paintDeleteButton(FlexTable tab, int row, Product product) {
-		if (product.getId() != null) {
+	private void paintDeleteButton(FlexTable tab, int row, Roll roll) {
+		if (roll.getId() != null) {
 			MkpkButton deleteButton = new MkpkButton();
 			deleteButton.setTitle(MKPK.MSG.delete());
 			deleteButton.addStyleName(MKPK.CSS.mkpkIconDelete());
@@ -219,12 +219,12 @@ public class ProductView extends MkpkDockLayout  {
 						@Override
 						public void onAccept() {
 							
-							SERVICE.delete(product, new AsyncCallback<Void>() {
+							SERVICE.delete(roll, new AsyncCallback<Void>() {
 								
 								@Override
 								public void onSuccess(Void nothing) {
-									ProductView.this.content.clear();
-									ProductView.this.content.setWidget(getContent());
+									RollView.this.content.clear();
+									RollView.this.content.setWidget(getContent());
 								}
 								
 								@Override
@@ -242,16 +242,16 @@ public class ProductView extends MkpkDockLayout  {
 			tab.setWidget(row, deleteIconColumn, new Label());
 		}
 	}
-	private void save(FlexTable tab, int row, Product product) {
-		if (MkpkStringUtils.isNotBlank( product.getName() )
-			&& product.getMaterial().getId() != null) {
-			SERVICE.save(product, new AsyncCallback<Product>() {
+	private void save(FlexTable tab, int row, Roll roll) {
+		if (MkpkStringUtils.isNotBlank( roll.getName() )
+			&& roll.getMaterial().getId() != null) {
+			SERVICE.save(roll, new AsyncCallback<Roll>() {
 				
 				@Override
-				public void onSuccess(Product result) {
-					if (product.getId() == null) {
-						product.setId(result.getId());
-						paintDeleteButton(tab,row,product);							
+				public void onSuccess(Roll result) {
+					if (roll.getId() == null) {
+						roll.setId(result.getId());
+						paintDeleteButton(tab,row,roll);							
 					}
 				}
 				

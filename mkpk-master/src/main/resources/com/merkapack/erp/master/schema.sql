@@ -27,8 +27,6 @@ CREATE TABLE `material` (
 	 `id` int(4) NOT NULL AUTO_INCREMENT COMMENT 'Identificador unico del material'
 	,`domain` int(4) NOT NULL COMMENT 'Identificador del Dominio'
 	,`name` varchar(32) COLLATE latin1_spanish_ci NOT NULL COMMENT 'Nombre del material'
-	,`width` double(8,2) DEFAULT '0.00' COMMENT 'Ancho bobina'
-	,`length` double(8,2) DEFAULT '0.00' COMMENT 'Largo bobina'
 	,`thickness` double(6,4) DEFAULT '0.00' COMMENT 'Grosor del material'
 	,`creation_user` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de creacion'
 	,`creation_date` datetime DEFAULT NULL COMMENT 'Fecha de creacion'
@@ -38,6 +36,23 @@ CREATE TABLE `material` (
 	,KEY `IDX_MATERIAL_DOMAIN` (`domain`)
 	,CONSTRAINT `FK_MATERIAL_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)	
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Materiales';
+
+CREATE TABLE `roll` (
+	 `id` int(4) NOT NULL AUTO_INCREMENT COMMENT 'Identificador unico de la bobina'
+	,`domain` int(4) NOT NULL COMMENT 'Identificador del Dominio'
+	,`material` int(4) NOT NULL COMMENT 'Identificador del material'
+	,`name` varchar(32) COLLATE latin1_spanish_ci NOT NULL COMMENT 'Nombre de la bobina'
+	,`width` double(8,2) DEFAULT '0.00' COMMENT 'Ancho bobina'
+	,`length` double(8,2) DEFAULT '0.00' COMMENT 'Largo bobina'
+	,`creation_user` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de creacion'
+	,`creation_date` datetime DEFAULT NULL COMMENT 'Fecha de creacion'
+	,`modification_user` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de modificacion'
+	,`modification_date` datetime DEFAULT NULL COMMENT 'Fecha de modificacion'
+	,PRIMARY KEY (`id`)
+	,KEY `IDX_ROLL_DOMAIN` (`domain`)
+	,CONSTRAINT `FK_ROLL_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)	
+	,CONSTRAINT `FK_ROLL_MATERIAL` FOREIGN KEY (`material`) REFERENCES `material` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Bobinas';
 
 CREATE TABLE `product` (
 	 `id` int(4) NOT NULL AUTO_INCREMENT COMMENT 'Identificador unico del producto'
@@ -93,6 +108,7 @@ CREATE TABLE `planning` (
 	,`width` double(8,2) DEFAULT '0.00' COMMENT 'Ancho bolsa'
 	,`length` double(8,2) DEFAULT '0.00' COMMENT 'Largo bolsa'
 	,`material` int(4) NOT NULL COMMENT 'Identificador del material'
+	,`roll` int(4) NOT NULL COMMENT 'Identificador de la bobina'
  	,`roll_width` double(8,2) DEFAULT 0.00 COMMENT 'Ancho bobina'
   	,`roll_length` double(8,2) DEFAULT 0.00 COMMENT 'Largo bobina'
 	,`amount` double(8,2) DEFAULT '0.00' COMMENT 'Cantidad'
@@ -112,6 +128,7 @@ CREATE TABLE `planning` (
 	,CONSTRAINT `FK_PLANNING_MACHINE` FOREIGN KEY (`machine`) REFERENCES `machine` (`id`)
 	,CONSTRAINT `FK_PLANNING_PRODUCT` FOREIGN KEY (`product`) REFERENCES `product` (`id`)  
 	,CONSTRAINT `FK_PLANNING_MATERIAL` FOREIGN KEY (`material`) REFERENCES `material` (`id`)
+	,CONSTRAINT `FK_PLANNING_ROLL` FOREIGN KEY (`roll`) REFERENCES `roll` (`id`)
 	,CONSTRAINT `FK_PLANNING_CLIENT` FOREIGN KEY (`client`) REFERENCES `client` (`id`)  
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Plan de fabricacion';
 

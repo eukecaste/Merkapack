@@ -13,6 +13,8 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.SimpleLayoutPanel;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.merkapack.erp.core.model.Client;
 import com.merkapack.erp.gwt.client.common.MKPK;
@@ -28,33 +30,39 @@ import com.merkapack.erp.gwt.client.widget.MkpkTextBox;
 public class ClientView extends MkpkDockLayout  {
 	
 	private static ClientServiceAsync SERVICE;
-	private ScrollPanel content;
+	private SimpleLayoutPanel content;
 	private final int deleteColumnIndex = 1; 
 	
 	public ClientView() {
 		ClientServiceAsync serviceRaw = GWT.create(ClientService.class);
 		SERVICE = new ClientServiceAsyncDecorator(serviceRaw);
-		content = new ScrollPanel();
+		content = new SimpleLayoutPanel();
 		content.setWidget(getContent());
 		add(content);
 	}
 
 	private Widget getContent() {
+		ScrollPanel container = new ScrollPanel();
+		VerticalPanel panel = new VerticalPanel();
+		panel.setStyleName(MKPK.CSS.mkpkBlockCenter());
+		container.setWidget(panel);
+		
 		final FlexTable tab = new FlexTable();
-		tab.setStyleName(MKPK.CSS.mkpkBlockCenter());
+		tab.setStyleName(MKPK.CSS.mkpkTable());
+		tab.addStyleName(MKPK.CSS.mkpkBlockCenter());
 		tab.getColumnFormatter().setWidth(0, "auto");
 		tab.getColumnFormatter().setWidth(1, "100px");
 		tab.getColumnFormatter().setWidth(2, "15px");
 		
 		int col = 0;
 		Label nameLabel = new Label(MKPK.MSG.clients());
-		nameLabel.setStyleName(MKPK.CSS.mkpkBold());
 		tab.setWidget(0, col, nameLabel);
+		tab.getCellFormatter().setStyleName(0, col, MKPK.CSS.mkpkTableHeader());
 		col++;
 		
 		Label deleteLabel = new Label("X");
-		deleteLabel.setStyleName(MKPK.CSS.mkpkBold());
 		tab.setWidget(0, col, deleteLabel);
+		tab.getCellFormatter().setStyleName(0, col, MKPK.CSS.mkpkTableHeader());
 		col++;
 		
 		SERVICE.getClients(new AsyncCallback<LinkedList<Client>>() {
@@ -72,7 +80,19 @@ public class ClientView extends MkpkDockLayout  {
 				ClientView.this.showError( caught );
 			}
 		});
-		return tab;		
+		panel .add(tab);
+		
+		MkpkButton newLineButton = new MkpkButton();
+		newLineButton.addStyleName(MKPK.CSS.mkpkIconPlus());
+		newLineButton.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				paintRow(tab,new Client());
+			}
+		});
+		panel.add(newLineButton);
+		return container;		
 	}
 
 	protected void paintRow(FlexTable tab, final Client client) {
@@ -105,9 +125,6 @@ public class ClientView extends MkpkDockLayout  {
 						if (client.getId() == null) {
 							client.setId(result.getId());
 							paintDeleteButton(tab,row,client);							
-						}
-						if ((row +1)== tab.getRowCount()) {
-							paintRow(tab, new Client());
 						}
 					}
 					

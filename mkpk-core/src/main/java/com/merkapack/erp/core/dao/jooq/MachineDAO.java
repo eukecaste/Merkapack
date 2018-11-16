@@ -16,6 +16,7 @@ public class MachineDAO {
 		return ctx.getDslContext().select()
 			.from( MACHINE )
 			.where(MACHINE.ID.eq(id))
+			.orderBy(MACHINE.NAME)
 			.fetch()
 			.stream()
 			.map( new MachineMapper() )
@@ -25,6 +26,7 @@ public class MachineDAO {
 	public static LinkedList<Machine> getMachines(DBContext ctx) {
 		return ctx.getDslContext().select()
 			.from( MACHINE )
+			.orderBy(MACHINE.NAME)
 			.fetch()
 			.stream()
 			.map( new MachineMapper() )

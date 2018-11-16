@@ -18,6 +18,7 @@ import com.merkapack.erp.gwt.client.view.ClientView;
 import com.merkapack.erp.gwt.client.view.MachineView;
 import com.merkapack.erp.gwt.client.view.MaterialView;
 import com.merkapack.erp.gwt.client.view.ProductView;
+import com.merkapack.erp.gwt.client.view.RollView;
 
 public class MkpkDockLayout extends DockLayoutPanel implements EntryPoint {
 
@@ -173,6 +174,21 @@ public class MkpkDockLayout extends DockLayoutPanel implements EntryPoint {
 			}
 		});
 		toc.setWidget(row, 0, products);
+		++row;
+
+		Button rolls = new Button(MKPK.MSG.rolls());
+		rolls.setStyleName(MKPK.CSS.mkpkIconBullet());
+		rolls.addStyleName(MKPK.CSS.mkpkIconPaddingLeft());
+		rolls.addStyleName(MKPK.CSS.mkpkNoBorder());
+		rolls.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				RollView roll = new RollView();
+				roll.onModuleLoad();
+			}
+		});
+		toc.setWidget(row, 0, rolls);
 		++row;
 
 		Button clients = new Button(MKPK.MSG.clients());
