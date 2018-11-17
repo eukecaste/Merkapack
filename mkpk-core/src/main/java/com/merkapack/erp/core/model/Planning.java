@@ -3,7 +3,7 @@ package com.merkapack.erp.core.model;
 import java.io.Serializable;
 import java.util.Date;
 
-public class Planning implements Serializable, HasAudit {
+public class Planning implements Serializable, HasAudit, Cloneable {
 	
 	public static enum PlanningCalculationStrategy implements Serializable {
 		AMOUNT_CHANGED,
@@ -230,5 +230,34 @@ public class Planning implements Serializable, HasAudit {
 	public Planning setModificationDate(Date modificationDate) {
 		this.modificationDate = modificationDate;
 		return this;
+	}
+	
+	public Planning clone() {
+		return 	new Planning()
+			.setId(this.id)
+			.setDomain(this.domain)
+			.setDate(this.date) 
+			.setOrder(this.order) 
+			.setMachine(this.machine) 
+			.setProduct(this.product) 
+			.setWidth(this.width) 
+			.setLength(this.length) 
+			.setMaterial(this.material)
+			.setRoll(this.roll) 
+			.setRollWidth(this.rollWidth)
+			.setRollLength(this.rollLength) 
+			.setAmount(this.amount) 
+			.setBlowUnits(this.blowUnits) 
+			.setMeters(this.meters) 
+			.setBlows(this.blows) 
+			.setBlowsMinute(this.blowsMinute)
+			.setMinutes(this.minutes) 
+			.setClient(this.client) 
+			.setComments(this.comments) 
+			.setCreationUser(this.creationUser) 
+			.setCreationDate(this.creationDate) 
+			.setModificationUser(this.modificationUser) 
+			.setModificationDate(this.modificationDate) 
+			;
 	}
 }

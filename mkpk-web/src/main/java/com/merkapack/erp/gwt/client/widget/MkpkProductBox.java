@@ -19,6 +19,7 @@ import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.HasValue;
@@ -42,6 +43,7 @@ public class MkpkProductBox extends ResizeComposite implements HasValue<String>
 	,Focusable, HasSelectionHandlers<Product>, HasAllFocusHandlers
 	,HasAllKeyHandlers {
 	
+	private static final int CHANGE_DISPLAY_MILLIS = 4000;
 	protected static final String BEGIN_STRONG = "<strong>";
 	protected static final String END_STRONG = "</strong>";
 	
@@ -196,6 +198,19 @@ public class MkpkProductBox extends ResizeComposite implements HasValue<String>
 	public void setValue(Product product, boolean fire) {
 		this.selected = product;
 		setValue(product==null?null:product.getName(),fire);
+	}
+	public void setValue(Product value, boolean fireEvents, boolean shouldDisplayChange) {
+		setValue(value, fireEvents);
+		if (shouldDisplayChange) {
+			addStyleName(MKPK.CSS.mkpkValueChanged());
+			if (CHANGE_DISPLAY_MILLIS > 0)
+				new Timer() {
+					@Override
+					public void run() {
+						removeStyleName(MKPK.CSS.mkpkValueChanged());
+					}
+				}.schedule(CHANGE_DISPLAY_MILLIS);
+		}
 	}
 
 	@Override

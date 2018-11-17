@@ -1,11 +1,10 @@
 package com.merkapack.erp.gwt.client.widget;
 
 
-import java.util.LinkedList;
-import java.util.List;
-
 import com.google.gwt.core.shared.GWT;
+import com.google.gwt.dom.client.Style.Cursor;
 import com.google.gwt.dom.client.Style.Position;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.DoubleClickEvent;
@@ -20,13 +19,10 @@ import com.google.gwt.event.dom.client.MouseUpHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.safehtml.client.SafeHtmlTemplates;
 import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.gwt.uibinder.client.UiBinder;
-import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.DOM;
-import com.google.gwt.user.client.Element;
+import com.google.gwt.dom.client.Element;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.HTML;
@@ -40,7 +36,6 @@ import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
-import com.merkapack.erp.gwt.client.common.MKPK;
 import com.merkapack.watson.util.MkpkStringUtils;
 
 public class MkpkCustomDialog extends PopupPanel implements MkpkCustomDialogBar.Listener {
@@ -196,28 +191,22 @@ public class MkpkCustomDialog extends PopupPanel implements MkpkCustomDialogBar.
 	private class WindowResizeHandler {
 
 		public WindowResizeHandler() {
-			init(0, -2, 10, 3, "nw-resize", new NWWindowResizeHandler());
-			init(10, -2, 80, 3, "n-resize", new NWindowResizeHandler());
-			init(90, -2, 10, 3, "ne-resize", new NEWindowResizeHandler());
-			init(0, 99, 10, 3, "sw-resize", new SWWindowResizeHandler());
-			init(10, 99, 80, 3, "s-resize", new SWindowResizeHandler());
-			init(90, 99, 10, 3, "se-resize", new SEWindowResizeHandler());
-			init(-2, 0, 3, 10, "nw-resize", new NWWindowResizeHandler());
-			init(-2, 10, 3, 80, "w-resize", new WWindowResizeHandler());
-			init(-2, 90, 3, 10, "sw-resize", new SWWindowResizeHandler());
-			init(99, 0, 3, 10, "ne-resize", new NEWindowResizeHandler());
-			init(99, 10, 3, 80, "e-resize", new EWindowResizeHandler());
-			init(99, 90, 3, 10, "se-resize", new SEWindowResizeHandler());
+			init(0, -2, 10, 3,  Cursor.NW_RESIZE, new NWWindowResizeHandler());
+			init(10, -2, 80, 3, Cursor.N_RESIZE,  new NWindowResizeHandler());
+			init(90, -2, 10, 3, Cursor.NE_RESIZE, new NEWindowResizeHandler());
+			init(0, 99, 10, 3,  Cursor.SW_RESIZE, new SWWindowResizeHandler());
+			init(10, 99, 80, 3, Cursor.S_RESIZE,  new SWindowResizeHandler());
+			init(90, 99, 10, 3, Cursor.SE_RESIZE, new SEWindowResizeHandler());
+			init(-2, 0, 3, 10,  Cursor.NW_RESIZE, new NWWindowResizeHandler());
+			init(-2, 10, 3, 80, Cursor.W_RESIZE,  new WWindowResizeHandler());
+			init(-2, 90, 3, 10, Cursor.SW_RESIZE, new SWWindowResizeHandler());
+			init(99, 0, 3, 10,  Cursor.NE_RESIZE, new NEWindowResizeHandler());
+			init(99, 10, 3, 80, Cursor.E_RESIZE,  new EWindowResizeHandler());
+			init(99, 90, 3, 10, Cursor.SE_RESIZE, new SEWindowResizeHandler());
 		}
 
-		private void init(int left, int top, int width, int height,
-				String cursor, MouseDragHandler dragHandler) {
-			init(left + "%", top + "%", width + "%", height + "%", cursor,
-					dragHandler);
-		}
-
-		private void init(String left, String top, String width, String height,
-				String cursor, MouseDragHandler dragHandler) {
+		private void init(double left, double top, double  width, double height,
+				Cursor cursor, MouseDragHandler dragHandler) {
 
 			if (dragHandler == null) {
 				return;
@@ -226,12 +215,12 @@ public class MkpkCustomDialog extends PopupPanel implements MkpkCustomDialogBar.
 			Element dialogElement = MkpkCustomDialog.this.getElement();
 
 			Element div = DOM.createDiv();
-			DOM.setStyleAttribute(div, "position", "absolute");
-			DOM.setStyleAttribute(div, "top", top);
-			DOM.setStyleAttribute(div, "left", left);
-			DOM.setStyleAttribute(div, "width", width);
-			DOM.setStyleAttribute(div, "height", height);
-			DOM.setStyleAttribute(div, "cursor", cursor);
+			div.getStyle().setPosition(Position.ABSOLUTE);
+			div.getStyle().setTop(top, Unit.PCT);
+			div.getStyle().setLeft(left, Unit.PCT);
+			div.getStyle().setWidth(width, Unit.PCT);
+			div.getStyle().setTop(height, Unit.PCT);
+			div.getStyle().setCursor( cursor );
 
 			dialogElement.appendChild(div);
 			dragHandler.setWidgets(HTML.wrap(div));

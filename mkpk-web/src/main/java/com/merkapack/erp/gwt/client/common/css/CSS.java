@@ -123,7 +123,6 @@ public interface CSS extends CssResource {
 	@ClassName("mkpk-confirm-dialog-cancel-button")
 	String mkpkConfirmDialogCancelButton();
 	
-	
 }
 
 

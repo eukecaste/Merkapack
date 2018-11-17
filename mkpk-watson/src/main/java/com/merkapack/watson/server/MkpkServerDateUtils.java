@@ -1,4 +1,4 @@
-package com.merkapack.watson.util;
+package com.merkapack.watson.server;
 
 import static java.util.Calendar.DAY_OF_MONTH;
 import static java.util.Calendar.DAY_OF_YEAR;
@@ -7,7 +7,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.function.LongFunction;
 
-public class MkpkDateUtils {
+public class MkpkServerDateUtils {
 
 	public static Date max(Date a, Date b) {
 		return compare(a, b) > 0 ? a : b;

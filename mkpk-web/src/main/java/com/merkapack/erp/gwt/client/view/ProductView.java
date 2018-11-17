@@ -74,16 +74,16 @@ public class ProductView extends MkpkDockLayout  {
 		tab.setWidget(0, col, materialLabel);
 		tab.getCellFormatter().setStyleName(0, col, MKPK.CSS.mkpkTableHeader());
 		col++;
+
+		Label lengthLabel = new Label(MKPK.MSG.length());
+		lengthLabel.addStyleName(MKPK.CSS.mkpkTextRight());
+		tab.setWidget(0, col, lengthLabel);
+		tab.getCellFormatter().setStyleName(0, col, MKPK.CSS.mkpkTableHeader());
+		col++;
 		
 		Label widthLabel = new Label(MKPK.MSG.width());
 		widthLabel.addStyleName(MKPK.CSS.mkpkTextRight());
 		tab.setWidget(0, col, widthLabel);
-		tab.getCellFormatter().setStyleName(0, col, MKPK.CSS.mkpkTableHeader());
-		col++;
-		
-		Label lengthLabel = new Label(MKPK.MSG.length());
-		lengthLabel.addStyleName(MKPK.CSS.mkpkTextRight());
-		tab.setWidget(0, col, lengthLabel);
 		tab.getCellFormatter().setStyleName(0, col, MKPK.CSS.mkpkTableHeader());
 		col++;
 		
@@ -126,8 +126,8 @@ public class ProductView extends MkpkDockLayout  {
 		int row = tab.getRowCount();
 		MkpkTextBox nameBox = paintNameColumn(tab,row,0,product);
 		paintMaterialColumn(tab,row,1,product);
-		paintWidthColumn(tab, row, 2, product);
-		paintLengthColumn(tab, row, 3, product);
+		paintLengthColumn(tab, row, 2, product);
+		paintWidthColumn(tab, row, 3, product);
 		paintDeleteButton(tab,row,product);
 		Scheduler.get().scheduleDeferred(new ScheduledCommand() {
 			public void execute() {
