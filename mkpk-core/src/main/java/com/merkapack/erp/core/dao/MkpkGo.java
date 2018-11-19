@@ -24,7 +24,7 @@ public class MkpkGo {
 				configuration -> ClientDAO.getClients(ctx));
 	}
 	
-	public static LinkedList<Client> getClients(String query, DBContext ctx) {
+	public static LinkedList<Client> getClients(DBContext ctx, String query) {
 		return ctx.getDslContext().transactionResult(
 				configuration -> ClientDAO.getClients(ctx,query));
 	}

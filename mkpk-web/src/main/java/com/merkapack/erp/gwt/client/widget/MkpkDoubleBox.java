@@ -1,6 +1,7 @@
 package com.merkapack.erp.gwt.client.widget;
 
 import java.text.ParseException;
+import java.util.logging.Logger;
 
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.NativeEvent;
@@ -9,8 +10,8 @@ import com.google.gwt.event.dom.client.ErrorEvent;
 import com.google.gwt.event.dom.client.ErrorHandler;
 import com.google.gwt.event.dom.client.HasErrorHandlers;
 import com.google.gwt.event.dom.client.KeyCodes;
-import com.google.gwt.event.dom.client.KeyUpEvent;
-import com.google.gwt.event.dom.client.KeyUpHandler;
+import com.google.gwt.event.dom.client.KeyPressEvent;
+import com.google.gwt.event.dom.client.KeyPressHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.text.shared.AbstractRenderer;
 import com.google.gwt.text.shared.Parser;
@@ -22,7 +23,8 @@ import com.merkapack.watson.util.MkpkMathUtils;
 import com.merkapack.watson.util.MkpkStringUtils;
 
 public class MkpkDoubleBox extends ValueBox<Double> implements HasErrorHandlers{
-
+	Logger LOGGER = Logger.getLogger(MkpkDoubleBox.class.getName());
+	
 	public static final String EQUAL = MkpkStringUtils.EQUAL;
 	public static final int VISIBLE_LENGTH = 12;
 	public static final int PRECISION = 2;
@@ -68,10 +70,10 @@ public class MkpkDoubleBox extends ValueBox<Double> implements HasErrorHandlers{
 		setMaxLength(MAX_LENGTH);
 		setStyleName(MKPK.CSS.mkpkInputText());
 		addStyleName(MKPK.CSS.mkpkNumberBox());
-		addResolver();
-		addKeyUpHandler(new KeyUpHandler() {
+		addKeyPressHandler(new KeyPressHandler() {
+			
 			@Override
-			public void onKeyUp(KeyUpEvent event) {
+			public void onKeyPress(KeyPressEvent event) {
 				if ( !MkpkStringUtils.startsWith(getText(),EQUAL) ) {
 					removeStyleName(MKPK.CSS.mkpkInputCalc());
 					try {
@@ -79,26 +81,16 @@ public class MkpkDoubleBox extends ValueBox<Double> implements HasErrorHandlers{
 						removeStyleName(MKPK.CSS.mkpkInputError());
 					} catch (ParseException e) {
 						addStyleName(MKPK.CSS.mkpkInputError());
-						
 					}
-				}
-			}
-		});
-	}
-	
-	private final native double nativeEval(String expression) /*-{
-		return eval(expression);
-	}-*/;
-	private void addResolver() {
-		addKeyUpHandler(new KeyUpHandler() {
-			@Override
-			public void onKeyUp(KeyUpEvent event) {
-				if ( MkpkStringUtils.startsWith(getText(),EQUAL)) {
+				} else {
 					setMaxLength(Integer.MAX_VALUE);
 					addStyleName(MKPK.CSS.mkpkInputCalc());	
-					if ( event.getNativeKeyCode() == KeyCodes.KEY_ENTER) {
+					if ( event.getNativeEvent().getKeyCode() == KeyCodes.KEY_ENTER) {
 						String exp = MkpkStringUtils.substringAfter(getText(), MkpkDoubleBox.EQUAL);
+						event.preventDefault();
+						event.stopPropagation();
 						try {
+							LOGGER.severe("Calc value");							
 							setValue(nativeEval(exp), true, true);
 							setMaxLength(MAX_LENGTH);
 							removeStyleName(MKPK.CSS.mkpkInputError());
@@ -115,6 +107,10 @@ public class MkpkDoubleBox extends ValueBox<Double> implements HasErrorHandlers{
 			}
 		});
 	}
+	
+	private final native double nativeEval(String expression) /*-{
+		return eval(expression);
+	}-*/;
 	
 	private int getPrecision() {
 		return this.precision;

@@ -24,11 +24,9 @@ import com.merkapack.erp.core.model.Client;
 import com.merkapack.erp.core.model.Machine;
 import com.merkapack.erp.core.model.Material;
 import com.merkapack.erp.core.model.Planning;
-import com.merkapack.erp.core.model.Planning.PlanningCalculationStrategy;
 import com.merkapack.erp.core.model.Product;
 import com.merkapack.erp.core.model.Roll;
 import com.merkapack.erp.gwt.client.common.MKPK;
-import com.merkapack.erp.gwt.client.util.GWTDateUtils;
 import com.merkapack.erp.gwt.client.widget.MkpkButton;
 import com.merkapack.erp.gwt.client.widget.MkpkClientBox;
 import com.merkapack.erp.gwt.client.widget.MkpkConfirmDialog;
@@ -39,17 +37,16 @@ import com.merkapack.erp.gwt.client.widget.MkpkDoubleBox;
 import com.merkapack.erp.gwt.client.widget.MkpkIntegerBox;
 import com.merkapack.erp.gwt.client.widget.MkpkMachineBox;
 import com.merkapack.erp.gwt.client.widget.MkpkMaterialBox;
-import com.merkapack.erp.gwt.client.widget.MkpkMessageDialog;
-import com.merkapack.erp.gwt.client.widget.MkpkMessageDialog.MkpkMessageDialogCallback;
 import com.merkapack.erp.gwt.client.widget.MkpkProductBox;
 import com.merkapack.erp.gwt.client.widget.MkpkRollBox;
+import com.merkapack.erp.gwt.shared.PlanningRowCalculator;
+import com.merkapack.erp.gwt.shared.PlanningRowCalculator.Strategy;
 import com.merkapack.watson.util.MkpkMathUtils;
 import com.merkapack.watson.util.MkpkNumberUtils;
-import com.merkapack.watson.util.MkpkPair;
 
 public class PlanningView extends MkpkDockLayout  {
 	
-	//private static Logger LOGGER = Logger.getLogger(PlanningView.class.getName());
+	private static Logger LOGGER = Logger.getLogger(PlanningView.class.getName());
 	
 	private ScrollPanel content;
 	private FlexTable tab; 
@@ -122,6 +119,16 @@ public class PlanningView extends MkpkDockLayout  {
 		
 	}
 
+	private void paintTable( LinkedList<Planning> list) {
+		for (int i = 1; i < tab.getRowCount(); i++) {
+			tab.removeRow(i);	
+		}
+		for (Planning planning : list) {
+			addNewPlanningToList(planning);
+		}
+	}
+	
+	
 	private FlexTable getTable(Machine machine, Date date) {
 		tab = new FlexTable();
 		tab.setStyleName(MKPK.CSS.mkpkTable());
@@ -189,26 +196,13 @@ public class PlanningView extends MkpkDockLayout  {
 			public void onValueChange(ValueChangeEvent<Planning> event) {
 				Planning pl = event.getValue();
 				if (pl != null && pl.getClient() != null && pl.getOrder() == (tab.getRowCount()-1)) {
-					MkpkPair<Planning,Planning> pair = PlanningRowCalculator.spltIfNeeded( list, pl );
-					if (pair.getRight() != null ) {
-						planningRow.refresh(pair.getLeft());	
-						addNewPlanningToList(pair.getRight());
-					} 
-					PlanningRow	row = addNewPlanningToList( pl.getBlowsMinute()
-							, pair.getRight() != null?pair.getRight().getDate():pl.getDate());			
+					LinkedList<Planning> ret = PlanningRowCalculator.calculate( list );
+					paintTable( ret );
+					PlanningRow	row = addNewPlanningToList( pl.getBlowsMinute(), ret.getLast().getDate());			
 					Scheduler.get().scheduleDeferred(new ScheduledCommand() {
 						public void execute() {
-							if (pair.getRight() != null ) {
-								MkpkMessageDialog.show("Se ha duplicado la linea, debido a un exceso de horas."
-										, new MkpkMessageDialogCallback() {
-											@Override
-											public void onClose() {
-												row.setFocus(true);
-											}
-										});  
-							} else {
-								row.setFocus(true);
-							}
+							//content.scrollToBottom();
+							row.setFocus(true);
 						}
 					});
 				}
@@ -247,7 +241,7 @@ public class PlanningView extends MkpkDockLayout  {
 				@Override
 				public void onValueChange(ValueChangeEvent<Date> event) {
 					planning.setDate( date.getValue() );
-					planning.setStrategy(PlanningCalculationStrategy.AMOUNT_CHANGED);		
+					PlanningRowCalculator.calculate(planning, Strategy.AMOUNT_CHANGED);
 					fire(planning);
 				}
 			});
@@ -270,9 +264,11 @@ public class PlanningView extends MkpkDockLayout  {
 				public void onSelection(SelectionEvent<Product> event) {
 					Product p = event.getSelectedItem();
 					planning.setProduct(p);
+					planning.setWidth(p.getWidth());
+					planning.setLength(p.getLength());
 					planning.setMaterial(p.getMaterial());
 					material.setValue(p.getMaterial(),false);
-					planning.setStrategy(PlanningCalculationStrategy.AMOUNT_CHANGED);
+					PlanningRowCalculator.calculate(planning, Strategy.AMOUNT_CHANGED);
 					fire(planning);
 				}
 			});
@@ -285,7 +281,7 @@ public class PlanningView extends MkpkDockLayout  {
 				@Override
 				public void onSelection(SelectionEvent<Material> event) {
 					planning.setMaterial(event.getSelectedItem());
-					planning.setStrategy(PlanningCalculationStrategy.AMOUNT_CHANGED);
+					PlanningRowCalculator.calculate(planning, Strategy.AMOUNT_CHANGED);
 					fire(planning);
 				}
 			});
@@ -302,7 +298,7 @@ public class PlanningView extends MkpkDockLayout  {
 					planning.setRoll(r);
 					planning.setRollWidth(r.getWidth());
 					planning.setRollLength(r.getLength());
-					planning.setStrategy(PlanningCalculationStrategy.AMOUNT_CHANGED);
+					PlanningRowCalculator.calculate(planning, Strategy.AMOUNT_CHANGED);
 					fire(planning);
 				}
 			});
@@ -315,8 +311,9 @@ public class PlanningView extends MkpkDockLayout  {
 				
 				@Override
 				public void onValueChange(ValueChangeEvent<Double> event) {
+					LOGGER.severe("AMOUNT ...: " + amount.getValue());
 					planning.setAmount(amount.getValue());
-					planning.setStrategy(PlanningCalculationStrategy.AMOUNT_CHANGED);
+					PlanningRowCalculator.calculate(planning, Strategy.AMOUNT_CHANGED);
 					fire(planning);
 				}
 			});
@@ -337,7 +334,7 @@ public class PlanningView extends MkpkDockLayout  {
 				@Override
 				public void onValueChange(ValueChangeEvent<Double> event) {
 					planning.setMeters(meters.getValue());
-					planning.setStrategy(PlanningCalculationStrategy.METERS_CHANGED);
+					PlanningRowCalculator.calculate(planning, Strategy.METERS_CHANGED);
 					fire(planning);
 				}
 			});
@@ -358,7 +355,7 @@ public class PlanningView extends MkpkDockLayout  {
 				@Override
 				public void onValueChange(ValueChangeEvent<Double> event) {
 					planning.setBlowsMinute(blowsMinute.getValue());
-					planning.setStrategy(PlanningCalculationStrategy.AMOUNT_CHANGED);
+					PlanningRowCalculator.calculate(planning, Strategy.AMOUNT_CHANGED);
 					fire(planning);
 				}
 			});
@@ -373,7 +370,7 @@ public class PlanningView extends MkpkDockLayout  {
 				@Override
 				public void onValueChange(ValueChangeEvent<Double> event) {
 					planning.setMinutes(MkpkMathUtils.round(minutes.getValue() * 60));
-					planning.setStrategy(PlanningCalculationStrategy.TIME_CHANGED);		
+					PlanningRowCalculator.calculate(planning, Strategy.TIME_CHANGED);
 					fire(planning);
 				}
 			});
@@ -427,8 +424,8 @@ public class PlanningView extends MkpkDockLayout  {
 			date.setValue(planning.getDate(),false);
 			client.setValue(planning.getClient(),false,false);
 		}
+		
 		private void fire( Planning planning) {
-			PlanningRowCalculator.calculate(planning);
 			refresh(planning);
 			ValueChangeEvent.fire(PlanningRow.this, planning );
 		}
@@ -454,114 +451,6 @@ public class PlanningView extends MkpkDockLayout  {
 		@Override
 		public void setTabIndex(int index) {
 			date.setTabIndex(index);
-		}
-	}
-	
-	private static class PlanningRowCalculator {
-		
-		private static Logger LOGGER = Logger.getLogger(PlanningRowCalculator.class.getName());
-		private static final double MINUTES_BREAK = ((16*60) - (0.5*60));
-
-		private static void initialize(Planning planning) {
-			planning.setWidth(0);
-			planning.setLength(0);
-			planning.setRollWidth(0);
-			planning.setRollLength(0);
-			planning.setAmount(0);
-			planning.setMeters(0);
-			planning.setBlows(0);
-			planning.setMinutes(0);
-		}
-
-		public static MkpkPair<Planning,Planning> spltIfNeeded(LinkedList<Planning> list, Planning left) {
-			double minutes = 0;
-			for (Planning pl : list) {
-				if ( GWTDateUtils.compare(left.getDate(), pl.getDate()) == 0 ) {
-					minutes = minutes + pl.getMinutes();
-					LOGGER.severe("minutes ..: " + minutes);
-					if ( minutes > MINUTES_BREAK ) {
-						Planning right= left.clone();
-								
-						double minutes1 = minutes - MINUTES_BREAK;
-						left.setMinutes(minutes1);
-						left.setStrategy(PlanningCalculationStrategy.TIME_CHANGED);
-						calculate(left);
-						
-						double minutes2 = minutes - minutes1;
-						right.setOrder(right.getOrder() + 1);
-						right.setMinutes(minutes2);
-						right.setDate( new Date( left.getDate().getTime()) );
-						right.setDate( GWTDateUtils.addDays(right.getDate(), 1) );
-						right.setStrategy(PlanningCalculationStrategy.TIME_CHANGED);
-						calculate(right);
-						LOGGER.severe("Date change..: " + left.getDate());
-						return new MkpkPair<Planning, Planning>(left, right);			
-					}
-				}
-			}
-			return new MkpkPair<Planning, Planning>(left, null);
-		}
-
-		private static void calculate(Planning planning) {
-			if (basicCalculate(planning)) {
-				if (planning.getStrategy() == PlanningCalculationStrategy.TIME_CHANGED) {
-					calculateFromTime(planning);
-				} else if (planning.getStrategy() == PlanningCalculationStrategy.METERS_CHANGED) {
-					calculateFromMeters(planning);
-				} else {  // PlanningCalculationStrategy.AMOUNT_CHANGED or DEFAULT
-					calculateFromAmount(planning);
-				}
-			}
-		}
-
-		private static boolean basicCalculate(Planning planning) {
-			LOGGER.severe("basicCalculate");
-			if (planning.getProduct() == null) {
-				LOGGER.severe("Product null (return false)");
-				initialize(planning);
-				return false;
-			}
-			planning.setWidth(planning.getProduct().getWidth());
-			planning.setLength(planning.getProduct().getLength());
-			
-			if (planning.getMaterial() == null) {
-				LOGGER.severe("Material null");
-				if (planning.getProduct().getMaterial() == null) {
-					LOGGER.severe("No Material in product (return false)");
-					initialize(planning);
-					return false;
-				}
-				LOGGER.severe("Material set from product");
-				planning.setMaterial( planning.getProduct().getMaterial());
-			}
-			if (planning.getRoll() != null) {
-				LOGGER.severe("Roll is null");
-				planning.setRollWidth(planning.getRoll().getWidth());
-				planning.setRollLength(planning.getRoll().getLength());
-				planning.setBlowUnits( (int) MkpkMathUtils.round( planning.getRollWidth() / planning.getWidth(), 0) );
-			}
-			return !MkpkMathUtils.isZero(planning.getBlowUnits());
-		}
-
-		private static void calculateFromAmount(Planning planning) {
-			LOGGER.info("calculateFromAmount");
-			planning.setMeters( MkpkMathUtils.round((planning.getLength() * planning.getAmount()) / (1000 * planning.getBlowUnits())));
-			planning.setBlows(MkpkMathUtils.round(planning.getAmount() / planning.getBlowUnits()));
-			planning.setMinutes(MkpkMathUtils.round(planning.getBlows() / planning.getBlowsMinute()));
-		}
-		
-		private static void calculateFromTime(Planning planning) {
-			LOGGER.info("calculateFromTime");
-			planning.setBlows(MkpkMathUtils.round(planning.getBlowsMinute() * planning.getMinutes()));
-			planning.setAmount(MkpkMathUtils.round(planning.getBlows() * planning.getBlowUnits()));
-			planning.setMeters( MkpkMathUtils.round((planning.getLength() * planning.getAmount()) / (1000 * planning.getBlowUnits())));
-		}
-		
-		private static void calculateFromMeters(Planning planning) {
-			LOGGER.info("calculateFromMeters");
-			planning.setAmount(MkpkMathUtils.round( (planning.getMeters() * planning.getBlowUnits() * 1000) / planning.getLength()));
-			planning.setBlows(MkpkMathUtils.round(planning.getAmount() / planning.getBlowUnits()));
-			planning.setMinutes(MkpkMathUtils.round(planning.getBlows() / planning.getBlowsMinute()));
 		}
 	}
 }

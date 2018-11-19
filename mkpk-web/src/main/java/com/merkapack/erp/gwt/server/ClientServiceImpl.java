@@ -36,7 +36,7 @@ public class ClientServiceImpl extends StatelessRemoteServiceServlet implements 
 		DBContext ctx = null;
 		try {
 			ctx = MkpkDatasource.getDBContext(DOMAIN, USER);
-			return MkpkGo.getClients(query,ctx);
+			return MkpkGo.getClients(ctx,query);
 		} catch (Throwable t) {
 			t.printStackTrace();
 			throw new MkpkCoreException("Se ha producido un error ["+ t.getMessage() +"]", t);

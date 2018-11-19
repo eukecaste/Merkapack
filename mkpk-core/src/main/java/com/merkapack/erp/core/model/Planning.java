@@ -5,12 +5,6 @@ import java.util.Date;
 
 public class Planning implements Serializable, HasAudit, Cloneable {
 	
-	public static enum PlanningCalculationStrategy implements Serializable {
-		AMOUNT_CHANGED,
-		METERS_CHANGED,
-		TIME_CHANGED
-	}
-	
 	private static final long serialVersionUID = -5728018105374452335L;
 	
 	private Integer id;
@@ -40,7 +34,6 @@ public class Planning implements Serializable, HasAudit, Cloneable {
 	private Date modificationDate;
 	
 	private boolean dirty = true;
-	private PlanningCalculationStrategy strategy; 
 	public Integer getId() {
 		return id;
 	}
@@ -189,13 +182,6 @@ public class Planning implements Serializable, HasAudit, Cloneable {
 	}
 	public Planning setDirty(boolean dirty) {
 		this.dirty = dirty;
-		return this;
-	}
-	public PlanningCalculationStrategy getStrategy() {
-		return strategy;
-	}
-	public Planning setStrategy(PlanningCalculationStrategy strategy) {
-		this.strategy = strategy;
 		return this;
 	}
 	// ---------------------------------------------------------- AUDIT
