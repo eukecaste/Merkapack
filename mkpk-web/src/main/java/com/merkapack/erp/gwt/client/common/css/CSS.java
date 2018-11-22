@@ -9,6 +9,7 @@ public interface CSS extends CssResource {
 	@ClassName("mkpk-text-box-error")		String mkpkTextBoxError();
 	@ClassName("mkpk-number-box")			String mkpkNumberBox();
 	@ClassName("mkpk-number-label")			String mkpkNumberLabel();
+	@ClassName("mkpk-button")				String mkpkButton();
 	@ClassName("mkpk-input-calc")			String mkpkInputCalc();
 	@ClassName("mkpk-input-error")			String mkpkInputError();
 	@ClassName("mkpk-value-changed") 		String mkpkValueChanged();
@@ -66,62 +67,34 @@ public interface CSS extends CssResource {
 	@ClassName("mkpk-app-title")
 	String mkpkAppTitle();
 
-	@ClassName("mkpk-img-logo")
-	String mkpkImgLogo();
+	@ClassName("mkpk-img-logo")				String mkpkImgLogo();
+	@ClassName("mkpk-img-manufacturing")	String mkpkImgManufacturing();
+	@ClassName("mkpk-img-planning")			String mkpkImgPlanning();
+	@ClassName("mkpk-img-stats")			String mkpkImgStats();
+	
+	@ClassName("mkpk-button-check-list")	String mkpkButtonCheckList();
+	@ClassName("mkpk-button-add-list")		String mkpkButtonAddList();
+	
+	@ClassName("mkpk-icon-bullet")		String mkpkIconBullet();
+	@ClassName("mkpk-icon-menu")		String mkpkIconMenu();
+	@ClassName("mkpk-icon-cancel")		String mkpkIconCancel();
+	@ClassName("mkpk-icon-plus")		String mkpkIconPlus();
+	@ClassName("mkpk-icon-delete")		String mkpkIconDelete();
+	@ClassName("mkpk-icon-accept")		String mkpkIconAccept();
 
-	@ClassName("mkpk-img-manufacturing")
-	String mkpkImgManufacturing();
-
-	@ClassName ("mkpk-img-planning")
-	String mkpkImgPlanning();
-
-	@ClassName("mkpk-img-stats")
-	String mkpkImgStats();
+	@ClassName("mkpk-menu")		String mkpkMenu();
+	@ClassName("mkpk-close")	String mkpkClose();
 	
-	@ClassName("mkpk-icon-bullet")
-	String mkpkIconBullet();
-
-	@ClassName("mkpk-icon-menu")
-	String mkpkIconMenu();
-
-	@ClassName("mkpk-icon-cancel")
-	String mkpkIconCancel();
-
-	@ClassName("mkpk-icon-plus")
-	String mkpkIconPlus();
+	@ClassName("mkpk-cd-panel")		String mkpkCDPanel();
+	@ClassName("mkpk-cd-header")	String mkpkCDHeader();
+	@ClassName("mkpk-cd-title")		String mkpkCDTitle();
+	@ClassName("mkpk-cd-close")		String mkpkCDClose();
 	
-	@ClassName("mkpk-icon-delete")
-	String mkpkIconDelete();
+	@ClassName("mkpk-confirm-dialog")				String mkpkConfirmDialog();
+	@ClassName("mkpk-confirm-dialog-msg")			String mkpkConfirmDialogMsg();
+	@ClassName("mkpk-confirm-dialog-ok-button")		String mkpkConfirmDialogOkButton();
+	@ClassName("mkpk-confirm-dialog-cancel-button")	String mkpkConfirmDialogCancelButton();
 	
-	@ClassName("mkpk-menu")
-	String mkpkMenu();
-	
-	@ClassName("mkpk-close")
-	String mkpkClose();
-	
-	@ClassName("mkpk-cd-panel")
-	String mkpkCDPanel();
-	
-	@ClassName("mkpk-cd-header")
-	String mkpkCDHeader();
-	
-	@ClassName("mkpk-cd-title")
-	String mkpkCDTitle();
-	
-	@ClassName("mkpk-cd-close")
-	String mkpkCDClose();
-	
-	@ClassName("mkpk-confirm-dialog")
-	String mkpkConfirmDialog();
-
-	@ClassName("mkpk-confirm-dialog-msg")
-	String mkpkConfirmDialogMsg();
-
-	@ClassName("mkpk-confirm-dialog-ok-button")
-	String mkpkConfirmDialogOkButton();
-	
-	@ClassName("mkpk-confirm-dialog-cancel-button")
-	String mkpkConfirmDialogCancelButton();
 	
 }
 

@@ -6,8 +6,14 @@ import com.merkapack.erp.gwt.client.common.MKPK;
 public class MkpkButton extends Button {
 	
 	public MkpkButton() {
-		super();
-		setStyleName(MKPK.CSS.mkpkNoBorder());
+		this( false );
 	}
 	
+	public MkpkButton( boolean border) {
+		super();
+		setStyleName(MKPK.CSS.mkpkButton());
+		if (border) {
+			addStyleName(MKPK.CSS.mkpkBorder());
+		}
+	}
 }

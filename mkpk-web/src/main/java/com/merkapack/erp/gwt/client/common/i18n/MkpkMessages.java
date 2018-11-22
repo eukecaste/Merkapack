@@ -124,5 +124,10 @@ public interface MkpkMessages extends Messages {
 	
 	@DefaultMessage("Comentarios")
 	String comments();
-
+	
+	@DefaultMessage("Chequear plan")
+	String checkPlanning();
+	
+	@DefaultMessage("Nueva l\u00EDnea")
+	String newLine();
 }

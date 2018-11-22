@@ -44,36 +44,39 @@ import com.merkapack.erp.gwt.shared.PlanningRowCalculator.Strategy;
 import com.merkapack.watson.util.MkpkMathUtils;
 import com.merkapack.watson.util.MkpkNumberUtils;
 
-public class PlanningView extends MkpkDockLayout  {
-	
+public class PlanningView extends MkpkDockLayout {
+
 	private static Logger LOGGER = Logger.getLogger(PlanningView.class.getName());
-	
+
 	private ScrollPanel content;
-	private FlexTable tab; 
+	private FlexTable tab;
+	private LinkedList<PlanningRow> rows;
 	private LinkedList<Planning> list;
-	
+	private MkpkMachineBox machine;
+	private MkpkDateBox startDate;
+
 	public PlanningView() {
 		FlowPanel headerPanel = new FlowPanel();
-		
+
 		headerPanel.setStyleName(MKPK.CSS.mkpkBorderBottom());
-		MkpkMachineBox machine = new MkpkMachineBox();
-		MkpkDateBox startDate = new MkpkDateBox();
-		startDate.setValue( new Date(), false );
-		
+		machine = new MkpkMachineBox();
+		startDate = new MkpkDateBox();
+		startDate.setValue(new Date(), false);
+
 		InlineLabel startDateLabel = new InlineLabel(MKPK.MSG.startDate());
 		startDateLabel.setStyleName(MKPK.CSS.mkpkMarginRight());
 		startDateLabel.addStyleName(MKPK.CSS.mkpkMarginLeft());
 		startDateLabel.addStyleName(MKPK.CSS.mkpkBold());
-		
+
 		startDate.addValueChangeHandler(new ValueChangeHandler<Date>() {
-			
+
 			@Override
 			public void onValueChange(ValueChangeEvent<Date> event) {
 				if (machine.getSelected() != null && startDate.getValue() != null) {
 					content = new ScrollPanel();
 					add(content);
-					content.setWidget(getTable(machine.getSelected(), startDate.getValue()) );
-					PlanningRow row = addNewPlanningToList(machine.getSelected().getBlows(), startDate.getValue());
+					content.setWidget(getTable(machine.getSelected(), startDate.getValue()));
+					PlanningRow row = paintTable();
 					Scheduler.get().scheduleDeferred(new ScheduledCommand() {
 						public void execute() {
 							row.setFocus(true);
@@ -89,14 +92,14 @@ public class PlanningView extends MkpkDockLayout  {
 		machineLabel.addStyleName(MKPK.CSS.mkpkBold());
 
 		machine.addSelectionHandler(new SelectionHandler<Machine>() {
-			
+
 			@Override
 			public void onSelection(SelectionEvent<Machine> event) {
 				if (machine.getSelected() != null && startDate.getValue() != null) {
 					content = new ScrollPanel();
 					add(content);
-					content.setWidget(getTable(machine.getSelected(), startDate.getValue()) );
-					PlanningRow row = addNewPlanningToList(machine.getSelected().getBlows(), startDate.getValue());
+					content.setWidget(getTable(machine.getSelected(), startDate.getValue()));
+					PlanningRow row = paintTable();
 					Scheduler.get().scheduleDeferred(new ScheduledCommand() {
 						public void execute() {
 							row.setFocus(true);
@@ -105,111 +108,144 @@ public class PlanningView extends MkpkDockLayout  {
 				}
 			}
 		});
+		
+		MkpkButton checkButton = new MkpkButton();
+		checkButton.addStyleName(MKPK.CSS.mkpkButtonCheckList());
+		checkButton.addStyleName(MKPK.CSS.mkpkMarginLeft());
+		checkButton.setTitle(MKPK.MSG.checkPlanning());
+		checkButton.setText(MKPK.MSG.checkPlanning());
+		checkButton.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				LinkedList<Planning> ret = PlanningRowCalculator.calculate(list);
+				list = ret;
+				PlanningRow row = paintTable();
+				Scheduler.get().scheduleDeferred(new ScheduledCommand() {
+					public void execute() {
+						row.setFocus(true);
+					}
+				});
+			}
+		});
+		
+		MkpkButton newLineButton = new MkpkButton();
+		newLineButton.addStyleName(MKPK.CSS.mkpkButtonAddList());
+		newLineButton.addStyleName(MKPK.CSS.mkpkMarginLeft());
+		newLineButton.setTitle(MKPK.MSG.newLine());
+		newLineButton.setText(MKPK.MSG.newLine());
+		newLineButton.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				PlanningRow row = addNewPlanningToList();
+				Scheduler.get().scheduleDeferred(new ScheduledCommand() {
+					public void execute() {
+						row.setFocus(true);
+					}
+				});
+			}
+		});
+
 		headerPanel.add(startDateLabel);
 		headerPanel.add(startDate);
 		headerPanel.add(machineLabel);
 		headerPanel.add(machine);
-		addNorth(headerPanel, 35 );
-		
+		headerPanel.add(checkButton);
+		headerPanel.add(newLineButton);
+		addNorth(headerPanel, 35);
+
 		Scheduler.get().scheduleDeferred(new ScheduledCommand() {
 			public void execute() {
 				machine.setFocus(true);
 			}
 		});
-		
+
 	}
 
-	private void paintTable( LinkedList<Planning> list) {
-		for (int i = 1; i < tab.getRowCount(); i++) {
-			tab.removeRow(i);	
-		}
-		for (Planning planning : list) {
+	private PlanningRow paintTable() {
+		rows = new LinkedList<PlanningView.PlanningRow>();
+		tab.removeAllRows();
+		paintHeader();
+		for (Planning planning : list ) {
 			addNewPlanningToList(planning);
 		}
+		if (list.isEmpty()) {
+			addNewPlanningToList();
+		}
+		return rows.getLast();
 	}
-	
-	
+
 	private FlexTable getTable(Machine machine, Date date) {
+		list = new LinkedList<Planning>();
+		rows = new LinkedList<PlanningRow>();
 		tab = new FlexTable();
 		tab.setStyleName(MKPK.CSS.mkpkTable());
 		tab.addStyleName(MKPK.CSS.mkpkWidthAll());
-		tab.getColumnFormatter().setWidth( 0, "1%");
-		tab.getColumnFormatter().setWidth( 1, "30px");
-		tab.getColumnFormatter().setWidth( 2, "1%");
-		tab.getColumnFormatter().setWidth( 3, "1%");
-		tab.getColumnFormatter().setWidth( 4, "1%");
-		tab.getColumnFormatter().setWidth( 5, "1%");
-		tab.getColumnFormatter().setWidth( 6, "1%");
-		tab.getColumnFormatter().setWidth( 7, "1%");
-		tab.getColumnFormatter().setWidth( 8, "1%%");
-		tab.getColumnFormatter().setWidth( 9, "1%");
+		tab.getColumnFormatter().setWidth(0, "1%");
+		tab.getColumnFormatter().setWidth(1, "30px");
+		tab.getColumnFormatter().setWidth(2, "1%");
+		tab.getColumnFormatter().setWidth(3, "1%");
+		tab.getColumnFormatter().setWidth(4, "1%");
+		tab.getColumnFormatter().setWidth(5, "1%");
+		tab.getColumnFormatter().setWidth(6, "1%");
+		tab.getColumnFormatter().setWidth(7, "1%");
+		tab.getColumnFormatter().setWidth(8, "1%%");
+		tab.getColumnFormatter().setWidth(9, "1%");
 		tab.getColumnFormatter().setWidth(10, "1%");
 		tab.getColumnFormatter().setWidth(11, "1%");
 		tab.getColumnFormatter().setWidth(12, "auto");
 		tab.getColumnFormatter().setWidth(13, "1%");
-		
-		
-		String[] labels = new String[] {
-			 MKPK.MSG.date() 
-			,"#"
-			,MKPK.MSG.measure()
-			,MKPK.MSG.material()
-			,MKPK.MSG.roll()
-			,MKPK.MSG.unit() 
-			,MKPK.MSG.blowUnits()
-			,MKPK.MSG.meters()
-			,MKPK.MSG.blows()
-			,MKPK.MSG.blowsMinutes()
-			,MKPK.MSG.time()
-			,MKPK.MSG.client()
-			,MKPK.MSG.comments()
-			,"X"
-			};
+		paintHeader();
+		return tab;
+	}
+
+	private void paintHeader() {
+		String[] labels = new String[] { MKPK.MSG.date(), "#", MKPK.MSG.measure(), MKPK.MSG.material(), MKPK.MSG.roll(),
+				MKPK.MSG.unit(), MKPK.MSG.blowUnits(), MKPK.MSG.meters(), MKPK.MSG.blows(), MKPK.MSG.blowsMinutes(),
+				MKPK.MSG.time(), MKPK.MSG.client(), MKPK.MSG.comments(), "X" };
 		for (int col = 0; col < labels.length; col++) {
-			Label label = new Label( labels[col]);
+			Label label = new Label(labels[col]);
 			tab.setWidget(0, col, label);
 			tab.getCellFormatter().setStyleName(0, col, MKPK.CSS.mkpkTableHeader());
 		}
-		list = new LinkedList<Planning>();
-		return tab;		
 	}
-	
-	private PlanningRow addNewPlanningToList(double blowsMinute, Date date) {
+
+	private PlanningRow addNewPlanningToList() {
 		Planning planning = new Planning();
-		planning.setBlowsMinute( blowsMinute );
-		planning.setDate( date );
+		planning.setBlowsMinute(machine.getSelected().getBlows());
+		planning.setDate(startDate.getValue());
 		int order = 0;
 		for (Planning pl : list) {
-			order = order>pl.getOrder()?order:pl.getOrder();
+			order = order > pl.getOrder() ? order : pl.getOrder();
 		}
 		order++;
 		planning.setOrder(order);
-		return addNewPlanningToList(planning);	
+		list.add(planning);
+		return addNewPlanningToList(planning);
 	}
-
+	
 	private PlanningRow addNewPlanningToList(Planning planning) {
-		list.add(planning);	
-		PlanningRow	planningRow = new PlanningRow();
-		planningRow.addValueChangeHandler( new ValueChangeHandler<Planning>() {
-			
-			@Override
-			public void onValueChange(ValueChangeEvent<Planning> event) {
-				Planning pl = event.getValue();
-				if (pl != null && pl.getClient() != null && pl.getOrder() == (tab.getRowCount()-1)) {
-					LinkedList<Planning> ret = PlanningRowCalculator.calculate( list );
-					paintTable( ret );
-					PlanningRow	row = addNewPlanningToList( pl.getBlowsMinute(), ret.getLast().getDate());			
-					Scheduler.get().scheduleDeferred(new ScheduledCommand() {
-						public void execute() {
-							//content.scrollToBottom();
-							row.setFocus(true);
-						}
-					});
-				}
-			}
-		});
+		PlanningRow planningRow = new PlanningRow();
+		rows.add(planningRow);
 		planningRow.paint(planning, tab, tab.getRowCount());
 		return planningRow;
+//		planningRow.addValueChangeHandler(new ValueChangeHandler<Planning>() {
+//
+//			@Override
+//			public void onValueChange(ValueChangeEvent<Planning> event) {
+//				Planning pl = event.getValue();
+//				if (pl != null && pl.getClient() != null && pl.getOrder() == (tab.getRowCount() - 1)) {
+//					PlanningRowCalculator.calculate(list);
+//					PlanningRow row = paintTable();
+//					Scheduler.get().scheduleDeferred(new ScheduledCommand() {
+//						public void execute() {
+//							row.setFocus(true);
+//						}
+//					});
+//				}
+//			}
+//		});
 	}
 
 	private class PlanningRow extends FlowPanel implements HasValueChangeHandlers<Planning>, Focusable {
@@ -217,7 +253,7 @@ public class PlanningView extends MkpkDockLayout  {
 		private MkpkDateBox date = new MkpkDateBox();
 		private MkpkProductBox product = new MkpkProductBox();
 		private MkpkMaterialBox material = new MkpkMaterialBox();
-		private MkpkButton deleteButton = new MkpkButton();		
+		private MkpkButton deleteButton = new MkpkButton();
 		private MkpkRollBox roll = new MkpkRollBox();
 		private MkpkDoubleBox amount = new MkpkDoubleBox();
 		private MkpkIntegerBox blowUnits = new MkpkIntegerBox();
@@ -231,16 +267,16 @@ public class PlanningView extends MkpkDockLayout  {
 		public PlanningRow() {
 			super();
 		}
-		
-		public void paint(Planning planning,FlexTable tab, int row ) {	
-			
+
+		public void paint(Planning planning, FlexTable tab, int row) {
+
 			int col = 0;
-			
+
 			// DIA
 			date.addValueChangeHandler(new ValueChangeHandler<Date>() {
 				@Override
 				public void onValueChange(ValueChangeEvent<Date> event) {
-					planning.setDate( date.getValue() );
+					planning.setDate(date.getValue());
 					PlanningRowCalculator.calculate(planning, Strategy.AMOUNT_CHANGED);
 					fire(planning);
 				}
@@ -249,17 +285,17 @@ public class PlanningView extends MkpkDockLayout  {
 			++col;
 
 			// ORDER
-			Label orderLabel = new Label( MkpkNumberUtils.toString(planning.getOrder()));
+			Label orderLabel = new Label(MkpkNumberUtils.toString(planning.getOrder()));
 			add(orderLabel);
 			tab.setWidget(row, col, this);
 			tab.getCellFormatter().addStyleName(row, col, MKPK.CSS.mkpkTextCenter());
 			col++;
-			
+
 			// PRODUCT
 			product.setVisibleLength(10);
 			tab.setWidget(row, col, product);
 			product.addSelectionHandler(new SelectionHandler<Product>() {
-				
+
 				@Override
 				public void onSelection(SelectionEvent<Product> event) {
 					Product p = event.getSelectedItem();
@@ -267,13 +303,13 @@ public class PlanningView extends MkpkDockLayout  {
 					planning.setWidth(p.getWidth());
 					planning.setLength(p.getLength());
 					planning.setMaterial(p.getMaterial());
-					material.setValue(p.getMaterial(),false);
+					material.setValue(p.getMaterial(), false);
 					PlanningRowCalculator.calculate(planning, Strategy.AMOUNT_CHANGED);
 					fire(planning);
 				}
 			});
 			++col;
-			
+
 			// MATERIAL
 			material.setVisibleLength(10);
 			tab.setWidget(row, col, material);
@@ -286,12 +322,12 @@ public class PlanningView extends MkpkDockLayout  {
 				}
 			});
 			++col;
-			
+
 			// BOBINA
 			roll.setVisibleLength(10);
 			tab.setWidget(row, col, roll);
 			roll.addSelectionHandler(new SelectionHandler<Roll>() {
-				
+
 				@Override
 				public void onSelection(SelectionEvent<Roll> event) {
 					Roll r = event.getSelectedItem();
@@ -303,12 +339,12 @@ public class PlanningView extends MkpkDockLayout  {
 				}
 			});
 			++col;
-			
+
 			// UNIDAD
 			amount.setVisibleLength(5);
 			tab.setWidget(row, col, amount);
 			amount.addValueChangeHandler(new ValueChangeHandler<Double>() {
-				
+
 				@Override
 				public void onValueChange(ValueChangeEvent<Double> event) {
 					LOGGER.severe("AMOUNT ...: " + amount.getValue());
@@ -317,20 +353,20 @@ public class PlanningView extends MkpkDockLayout  {
 					fire(planning);
 				}
 			});
-			
+
 			++col;
 			// UNIDADES GOLPES
 			blowUnits.addStyleName(MKPK.CSS.mkpkPaddingLeft2px());
 			blowUnits.setEnabled(false);
 			blowUnits.setVisibleLength(4);
 			tab.setWidget(row, col, blowUnits);
-			
+
 			++col;
 			// METROS
 			meters.setVisibleLength(5);
 			tab.setWidget(row, col, meters);
 			meters.addValueChangeHandler(new ValueChangeHandler<Double>() {
-				
+
 				@Override
 				public void onValueChange(ValueChangeEvent<Double> event) {
 					planning.setMeters(meters.getValue());
@@ -338,7 +374,7 @@ public class PlanningView extends MkpkDockLayout  {
 					fire(planning);
 				}
 			});
-			
+
 			++col;
 			// GOLPES
 			blows.addStyleName(MKPK.CSS.mkpkPaddingLeft2px());
@@ -346,12 +382,12 @@ public class PlanningView extends MkpkDockLayout  {
 			blows.setVisibleLength(6);
 			tab.setWidget(row, col, blows);
 			++col;
-			
+
 			// GOLPES MINUTO
 			blowsMinute.setVisibleLength(5);
 			tab.setWidget(row, col, blowsMinute);
 			blowsMinute.addValueChangeHandler(new ValueChangeHandler<Double>() {
-				
+
 				@Override
 				public void onValueChange(ValueChangeEvent<Double> event) {
 					planning.setBlowsMinute(blowsMinute.getValue());
@@ -359,14 +395,14 @@ public class PlanningView extends MkpkDockLayout  {
 					fire(planning);
 				}
 			});
-			
+
 			++col;
-			
+
 			// TIEMPO
 			minutes.setVisibleLength(5);
 			tab.setWidget(row, col, minutes);
 			minutes.addValueChangeHandler(new ValueChangeHandler<Double>() {
-				
+
 				@Override
 				public void onValueChange(ValueChangeEvent<Double> event) {
 					planning.setMinutes(MkpkMathUtils.round(minutes.getValue() * 60));
@@ -375,7 +411,7 @@ public class PlanningView extends MkpkDockLayout  {
 				}
 			});
 			++col;
-			
+
 			// CLIENTE
 			client.setVisibleLength(10);
 			tab.setWidget(row, col, client);
@@ -387,7 +423,7 @@ public class PlanningView extends MkpkDockLayout  {
 				}
 			});
 			++col;
-			
+
 			// COMENTARIOS
 			tab.setWidget(row, col, comment);
 			++col;
@@ -399,49 +435,56 @@ public class PlanningView extends MkpkDockLayout  {
 				@Override
 				public void onClick(ClickEvent event) {
 					MkpkConfirmDialog cd = new MkpkConfirmDialog();
-					cd.confirm(MKPK.MSG.deleteConfirmation(), MKPK.MSG.delete(),new MkpkConfirmDialogCallback() {
-						@Override public void onCancel() {}
-						@Override public void onAccept() {}
+					cd.confirm(MKPK.MSG.deleteConfirmation(), MKPK.MSG.delete(), new MkpkConfirmDialogCallback() {
+						@Override
+						public void onCancel() {
+						}
+
+						@Override
+						public void onAccept() {
+						}
 					});
-					
+
 				}
 			});
 			tab.setWidget(row, col, deleteButton);
 			tab.getCellFormatter().addStyleName(row, col, MKPK.CSS.mkpkTextCenter());
 			refresh(planning);
 		}
-		
-		public void refresh( Planning planning) {
-			product.setValue(planning.getProduct(),false,false);
-			material.setValue(planning.getMaterial(),false,false);
-			roll.setValue(planning.getRoll(),false,false);
-			amount.setValue(planning.getAmount(),false,false);
-			blowUnits.setValue(planning.getBlowUnits(),false,false);
-			meters.setValue(planning.getMeters(),false,false);
-			blows.setValue(planning.getBlows(),false,false);
-			blowsMinute.setValue(planning.getBlowsMinute(),false,false);
-			minutes.setValue(planning.getMinutes() / 60 ,false,false);
-			date.setValue(planning.getDate(),false);
-			client.setValue(planning.getClient(),false,false);
+
+		public void refresh(Planning planning) {
+			LOGGER.severe("refresh ..: " + planning.getOrder() + " -- " + planning.getMeters()); 
+			product.setValue(planning.getProduct(), false, false);
+			material.setValue(planning.getMaterial(), false, false);
+			roll.setValue(planning.getRoll(), false, false);
+			amount.setValue(planning.getAmount(), false, false);
+			blowUnits.setValue(planning.getBlowUnits(), false, false);
+			meters.setValue(planning.getMeters(), false, false);
+			blows.setValue(planning.getBlows(), false, false);
+			blowsMinute.setValue(planning.getBlowsMinute(), false, false);
+			minutes.setValue(planning.getMinutes() / 60, false, false);
+			date.setValue(planning.getDate(), false);
+			client.setValue(planning.getClient(), false, false);
 		}
-		
-		private void fire( Planning planning) {
+
+		private void fire(Planning planning) {
 			refresh(planning);
-			ValueChangeEvent.fire(PlanningRow.this, planning );
+			ValueChangeEvent.fire(PlanningRow.this, planning);
 		}
+
 		@Override
-        public HandlerRegistration addValueChangeHandler(ValueChangeHandler<Planning> handler) {
-                return super.addHandler(handler, ValueChangeEvent.getType());
-        }
+		public HandlerRegistration addValueChangeHandler(ValueChangeHandler<Planning> handler) {
+			return super.addHandler(handler, ValueChangeEvent.getType());
+		}
 
 		@Override
 		public int getTabIndex() {
-			// TODO Auto-generated method stub
-			return date.getTabIndex();
+			return product.getTabIndex();
 		}
 
 		@Override
-		public void setAccessKey(char key) {}
+		public void setAccessKey(char key) {
+		}
 
 		@Override
 		public void setFocus(boolean focused) {
@@ -450,8 +493,7 @@ public class PlanningView extends MkpkDockLayout  {
 
 		@Override
 		public void setTabIndex(int index) {
-			date.setTabIndex(index);
+			product.setTabIndex(index);
 		}
 	}
 }
-

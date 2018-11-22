@@ -18,6 +18,15 @@ input[type="checkbox"]:focus+label {
 input[type="text"] {
 	border: 1px solid #808080 !important;
 }
+.mkpk-button{
+	border: none;
+	padding: 3px 2px 3px 22px;
+	height: auto;
+	cursor: pointer;
+}
+.mkpk-button:hover{
+	background-color: #eee;
+}
 .mkpk-text-box-error{
 	border: 1px solid red !important;
 }
@@ -155,6 +164,9 @@ input[type="text"] {
 @sprite .mkpk-icon-plus 	{width: auto; gwt-image: "mkpkIconPlus";}
 @sprite .mkpk-icon-cancel 	{width: auto; gwt-image: "mkpkIconCancel";}
 @sprite .mkpk-icon-delete 	{width: auto; gwt-image: "mkpkIconDelete";}
+@sprite .mkpk-icon-accept 	{width: auto; gwt-image: "mkpkIconAccept";}
+@sprite .mkpk-button-check-list {width: auto; gwt-image: "mkpkButtonCheckList";}
+@sprite .mkpk-button-add-list 	{width: auto; gwt-image: "mkpkButtonAddList";}
 
 .mkpk-table {
 	margin-top: 1em;

@@ -5,10 +5,10 @@ import java.util.LinkedList;
 
 import org.junit.Test;
 
+import com.ibm.icu.text.SimpleDateFormat;
 import com.merkapack.erp.core.basic.DBContext;
 import com.merkapack.erp.core.basic.MkpkDatasource;
 import com.merkapack.erp.core.dao.MkpkGo;
-import com.merkapack.erp.core.model.Client;
 import com.merkapack.erp.core.model.Machine;
 import com.merkapack.erp.core.model.Planning;
 import com.merkapack.erp.core.model.Product;
@@ -21,6 +21,7 @@ public class PlanningCalculatorTest {
 	
 	private static final int DOMAIN = 1;
 	private static final String USER = "admin";
+	SimpleDateFormat FORMATTER = new SimpleDateFormat("dd/MM/yyyy");
 
 	@Test
 	public void testCalculator() {
@@ -49,16 +50,22 @@ public class PlanningCalculatorTest {
 		pl.setRollWidth(r.getWidth());
 		pl.setRollLength(r.getLength());
 		
-		pl.setAmount(500000);
-		PlanningRowCalculator.calculate(pl, Strategy.AMOUNT_CHANGED);
+		pl.setMeters(7500);
+		PlanningRowCalculator.calculate(pl, Strategy.METERS_CHANGED);
 		
-		LinkedList<Client> clients = MkpkGo.getClients(ctx, "VAC");
-		Client c = clients.get(0);
-		pl.setClient(c);
+		pl.setClient(MkpkGo.getClients(ctx, "VAC").get(0));
+
+		Planning pl2 = pl.clone();
+		pl2.setOrder(2);
+		pl2.setMeters(12005);
+		PlanningRowCalculator.calculate(pl2, Strategy.METERS_CHANGED);
+		
+		pl.setClient(MkpkGo.getClients(ctx, "PAC").get(0));
+		
 		
 		LinkedList<Planning> list = new LinkedList<Planning>();
 		list.add(pl);
-		
+		list.add(pl2);
 		
 		LinkedList<Planning> ret = PlanningRowCalculator.calculate(list);
 		for( Planning pln : ret ) {
@@ -71,12 +78,12 @@ public class PlanningCalculatorTest {
 	}
 	
 	private void shortPrint( Planning pl) {
-		String line = "\torder ..." +  pl.getOrder() + 
-				"\tdate ..." +  pl.getDate() + 
-				"\tmeters ..." + pl.getMeters() + 
-				"\tminutes ..." + pl.getMinutes() + " --- " + MkpkMathUtils.round(pl.getMinutes() / 60) + " Horas"
-			;
-			System.out.println(line);
+		String line = "" +  pl.getOrder() + "  -"  
+			+ "\t" + FORMATTER.format( pl.getDate())  
+			+ "\t" + pl.getMeters() + " mts." 
+			+ "\t" + pl.getMinutes() + "' (" + MkpkMathUtils.round(pl.getMinutes() / 60) + " Horas" + ")"
+		;
+		System.out.println(line);
 	}
 
 	private void print( Planning pl) {
