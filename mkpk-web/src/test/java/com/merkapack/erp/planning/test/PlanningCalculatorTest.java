@@ -49,23 +49,21 @@ public class PlanningCalculatorTest {
 		pl.setRoll(r);
 		pl.setRollWidth(r.getWidth());
 		pl.setRollLength(r.getLength());
-		
-		pl.setMeters(7500);
-		PlanningRowCalculator.calculate(pl, Strategy.METERS_CHANGED);
-		
 		pl.setClient(MkpkGo.getClients(ctx, "VAC").get(0));
 
-		Planning pl2 = pl.clone();
-		pl2.setOrder(2);
-		pl2.setMeters(12005);
-		PlanningRowCalculator.calculate(pl2, Strategy.METERS_CHANGED);
+		pl.setMinutes(17*60);
+		PlanningRowCalculator.calculate(pl, Strategy.TIME_CHANGED);
 		
-		pl.setClient(MkpkGo.getClients(ctx, "PAC").get(0));
-		
+
+//		Planning pl2 = pl.clone();
+//		pl2.setOrder(2);
+//		pl2.setClient(MkpkGo.getClients(ctx, "PAC").get(0));
+//		pl2.setMeters(12005);
+//		PlanningRowCalculator.calculate(pl2, Strategy.METERS_CHANGED);
 		
 		LinkedList<Planning> list = new LinkedList<Planning>();
 		list.add(pl);
-		list.add(pl2);
+//		list.add(pl2);
 		
 		LinkedList<Planning> ret = PlanningRowCalculator.calculate(list);
 		for( Planning pln : ret ) {

@@ -27,6 +27,7 @@ import com.merkapack.erp.core.model.Planning;
 import com.merkapack.erp.core.model.Product;
 import com.merkapack.erp.core.model.Roll;
 import com.merkapack.erp.gwt.client.common.MKPK;
+import com.merkapack.erp.gwt.client.util.GWTDateUtils;
 import com.merkapack.erp.gwt.client.widget.MkpkButton;
 import com.merkapack.erp.gwt.client.widget.MkpkClientBox;
 import com.merkapack.erp.gwt.client.widget.MkpkConfirmDialog;
@@ -118,18 +119,12 @@ public class PlanningView extends MkpkDockLayout {
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				LinkedList<Planning> ret = PlanningRowCalculator.calculate(list);
-				list = ret;
-				PlanningRow row = paintTable();
-				Scheduler.get().scheduleDeferred(new ScheduledCommand() {
-					public void execute() {
-						row.setFocus(true);
-					}
-				});
+				checkList();
 			}
 		});
 		
 		MkpkButton newLineButton = new MkpkButton();
+		newLineButton.setAccessKey('N');
 		newLineButton.addStyleName(MKPK.CSS.mkpkButtonAddList());
 		newLineButton.addStyleName(MKPK.CSS.mkpkMarginLeft());
 		newLineButton.setTitle(MKPK.MSG.newLine());
@@ -161,6 +156,17 @@ public class PlanningView extends MkpkDockLayout {
 			}
 		});
 
+	}
+
+	protected void checkList() {
+		LinkedList<Planning> ret = PlanningRowCalculator.calculate(list);
+		list = ret;
+		PlanningRow row = paintTable();
+		Scheduler.get().scheduleDeferred(new ScheduledCommand() {
+			public void execute() {
+				row.setFocus(true);
+			}
+		});
 	}
 
 	private PlanningRow paintTable() {
@@ -442,6 +448,9 @@ public class PlanningView extends MkpkDockLayout {
 
 						@Override
 						public void onAccept() {
+							list.remove(planning);
+							rows.remove(PlanningRow.this);
+							checkList();
 						}
 					});
 
@@ -449,6 +458,7 @@ public class PlanningView extends MkpkDockLayout {
 			});
 			tab.setWidget(row, col, deleteButton);
 			tab.getCellFormatter().addStyleName(row, col, MKPK.CSS.mkpkTextCenter());
+			
 			refresh(planning);
 		}
 
@@ -465,6 +475,14 @@ public class PlanningView extends MkpkDockLayout {
 			minutes.setValue(planning.getMinutes() / 60, false, false);
 			date.setValue(planning.getDate(), false);
 			client.setValue(planning.getClient(), false, false);
+			if (list != null && !list.isEmpty()) {
+				Date startDate = list.get(0).getDate();
+				Date currentDate = planning.getDate();
+				int days = GWTDateUtils.getDaysBetween(startDate, currentDate);
+				if (days % 2 == 0) {
+					date.getElement().getStyle().setBackgroundColor("#DDD");
+				}
+			}
 		}
 
 		private void fire(Planning planning) {

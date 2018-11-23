@@ -61,8 +61,9 @@ public interface CSS extends CssResource {
 	@ClassName("mkpk-border-right")		String mkpkBorderRight();
 	@ClassName("mkpk-border-left")		String mkpkBorderLeft();
 	
-	@ClassName("mkpk-table")			String mkpkTable();
-	@ClassName("mkpk-table-header")		String mkpkTableHeader();
+	@ClassName("mkpk-table")				String mkpkTable();
+	@ClassName("mkpk-table-header")			String mkpkTableHeader();
+	@ClassName("mkpk-table-odd-background")	String mkpkOddBakcground();
 	
 	@ClassName("mkpk-app-title")
 	String mkpkAppTitle();
@@ -94,6 +95,7 @@ public interface CSS extends CssResource {
 	@ClassName("mkpk-confirm-dialog-msg")			String mkpkConfirmDialogMsg();
 	@ClassName("mkpk-confirm-dialog-ok-button")		String mkpkConfirmDialogOkButton();
 	@ClassName("mkpk-confirm-dialog-cancel-button")	String mkpkConfirmDialogCancelButton();
+	
 	
 	
 }

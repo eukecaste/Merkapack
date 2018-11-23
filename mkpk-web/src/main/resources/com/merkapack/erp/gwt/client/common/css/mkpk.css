@@ -181,6 +181,9 @@ input[type="text"] {
 	text-align: center;
 	background-color: lightgray;
 }
+.mkpk-table-odd-background {
+	background-color: #DDD;
+}
 
 .mkpk-table td {
 	border: solid #888 1px;
