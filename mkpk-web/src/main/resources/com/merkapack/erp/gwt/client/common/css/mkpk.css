@@ -167,6 +167,7 @@ input[type="text"] {
 @sprite .mkpk-icon-accept 	{width: auto; gwt-image: "mkpkIconAccept";}
 @sprite .mkpk-button-check-list {width: auto; gwt-image: "mkpkButtonCheckList";}
 @sprite .mkpk-button-add-list 	{width: auto; gwt-image: "mkpkButtonAddList";}
+@sprite .mkpk-button-upload 	{width: auto; gwt-image: "mkpkButtonUpload";}
 
 .mkpk-table {
 	margin-top: 1em;

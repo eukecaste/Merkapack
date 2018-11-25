@@ -7,17 +7,48 @@ import java.sql.Timestamp;
 import java.util.LinkedList;
 import java.util.stream.Collectors;
 
+import org.jooq.Condition;
+import org.jooq.Record;
+import org.jooq.SelectOnConditionStep;
+
 import com.merkapack.erp.core.basic.DBContext;
 import com.merkapack.erp.core.dao.jooq.Mapper.ProductMapper;
+import com.merkapack.erp.core.model.Filter.ProductFilter;
+import com.merkapack.erp.core.model.Filter.Property;
 import com.merkapack.erp.core.model.Product;
+import com.merkapack.erp.core.model.Properties.ProductProperties;
 import com.merkapack.watson.util.MkpkStringUtils;
 
 public class ProductDAO {
 	
-	public static Product getProduct(DBContext ctx, Integer id) {
+	private static final ProductPropertiesDAO PRODUCT_PROPERTIES = new ProductPropertiesDAO();
+	
+	protected static class ProductPropertiesDAO implements ProductProperties {
+		protected Condition[] getConditions(ProductFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			if (filterDAO == null) return new Condition[0];
+			return new Condition[] { filterDAO.getCondition() };
+		}
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<Integer>(PRODUCT.ID);} 
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<Integer>(PRODUCT.DOMAIN);}
+		@Override public Property<String> getNameProperty() {return new FilterDAO.PropertyDAO<String>(PRODUCT.NAME);}
+		@Override public Property<Integer> getMaterialIdProperty() {return new FilterDAO.PropertyDAO<Integer>(MATERIAL.ID);} 
+		@Override public Property<String> getMaterialNameProperty() {return new FilterDAO.PropertyDAO<String>(MATERIAL.NAME);}
+		@Override public Property<Double> getWidthProperty() {return new FilterDAO.PropertyDAO<Double>(PRODUCT.WIDTH);}
+		@Override public Property<Double> getLengthProperty() {return new FilterDAO.PropertyDAO<Double>(PRODUCT.LENGTH);}
+		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<String>(PRODUCT.CREATION_USER);}
+		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.PropertyDAO<Timestamp>(PRODUCT.CREATION_DATE);}
+		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<String>(PRODUCT.NAME);}
+		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.PropertyDAO<Timestamp>(PRODUCT.MODIFICATION_DATE);}
+	}
+	private static SelectOnConditionStep<Record> getSelect(DBContext ctx) {
 		return ctx.getDslContext().select()
-			.from( PRODUCT )
-			.join(MATERIAL).on(PRODUCT.MATERIAL.eq(MATERIAL.ID))
+				.from( PRODUCT )
+				.join(MATERIAL).on(PRODUCT.MATERIAL.eq(MATERIAL.ID));
+	}
+	
+	public static Product getProduct(DBContext ctx, Integer id) {
+		return getSelect(ctx)
 			.where(PRODUCT.ID.eq(id))
 			.fetch()
 			.stream()
@@ -25,28 +56,34 @@ public class ProductDAO {
 			.findFirst()
 			.orElse(null);
 	}
+	
+	public static LinkedList<Product> getProducts(DBContext ctx, ProductFilter filter){
+		return getSelect(ctx)
+			.where(PRODUCT_PROPERTIES.getConditions(filter))
+			.fetch()
+			.stream()
+			.map( new ProductMapper() )
+			.collect(Collectors.toCollection(LinkedList::new));
+	}
+	
 	public static LinkedList<Product> getProducts(DBContext ctx) {
-		return ctx.getDslContext().select()
-			.from( PRODUCT )
-			.join(MATERIAL).on(PRODUCT.MATERIAL.eq(MATERIAL.ID))
+		return getSelect(ctx)
 			.orderBy(PRODUCT.NAME)
 			.fetch()
 			.stream()
 			.map( new ProductMapper() )
 			.collect(Collectors.toCollection(LinkedList::new));
 	}
+	
 	public static LinkedList<Product> getProducts(DBContext ctx, String query) {
-		
 		query = MkpkStringUtils.prependIfMissing(query, "%");
 		query = MkpkStringUtils.appendIfMissing(query, "%");
-		return ctx.getDslContext().select()
-				.from( PRODUCT )
-				.join(MATERIAL).on(PRODUCT.MATERIAL.eq(MATERIAL.ID))
-				.where(PRODUCT.NAME.like(query))
-				.fetch()
-				.stream()
-				.map( new ProductMapper() )
-				.collect(Collectors.toCollection(LinkedList::new));
+		return getSelect(ctx)
+			.where(PRODUCT.NAME.like(query))
+			.fetch()
+			.stream()
+			.map( new ProductMapper() )
+			.collect(Collectors.toCollection(LinkedList::new));
 	}
 	public static Product save(DBContext ctx, Product product) {
 		if (product.getId() == null) {

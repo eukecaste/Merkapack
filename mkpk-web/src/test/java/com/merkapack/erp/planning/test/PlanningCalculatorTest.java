@@ -37,8 +37,8 @@ public class PlanningCalculatorTest {
 		pl.setMachine(m);
 		pl.setBlowsMinute(m.getBlows());
 		
-		LinkedList<Product> products = MkpkGo.getProducts(ctx, "170");
-		Product p = products.get(0);
+		Product p  = MkpkGo.getProducts(ctx, "170x250").get(0);
+		
 		pl.setProduct(p);
 		pl.setWidth(p.getWidth());
 		pl.setLength(p.getLength());

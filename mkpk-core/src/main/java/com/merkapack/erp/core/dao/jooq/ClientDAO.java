@@ -6,15 +6,43 @@ import java.sql.Timestamp;
 import java.util.LinkedList;
 import java.util.stream.Collectors;
 
+import org.jooq.Condition;
+import org.jooq.Record;
+import org.jooq.SelectJoinStep;
+
 import com.merkapack.erp.core.basic.DBContext;
 import com.merkapack.erp.core.dao.jooq.Mapper.ClientMapper;
 import com.merkapack.erp.core.model.Client;
+import com.merkapack.erp.core.model.Filter.ClientFilter;
+import com.merkapack.erp.core.model.Filter.Property;
+import com.merkapack.erp.core.model.Properties.ClientProperties;
 import com.merkapack.watson.util.MkpkStringUtils;
 
 public class ClientDAO {
-	public static Client getClient(DBContext ctx, Integer id) {
+	private static final ClientPropertiesDAO CLIENT_PROPERTIES = new ClientPropertiesDAO();
+
+	protected static class ClientPropertiesDAO implements ClientProperties {
+		protected Condition[] getConditions(ClientFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			if (filterDAO == null) return new Condition[0];
+			return new Condition[] { filterDAO.getCondition() };
+		}
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<Integer>(CLIENT.ID);} 
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<Integer>(CLIENT.DOMAIN);}
+		@Override public Property<String> getNameProperty() {return new FilterDAO.PropertyDAO<String>(CLIENT.NAME);}
+		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<String>(CLIENT.CREATION_USER);}
+		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.PropertyDAO<Timestamp>(CLIENT.CREATION_DATE);}
+		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<String>(CLIENT.NAME);}
+		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.PropertyDAO<Timestamp>(CLIENT.MODIFICATION_DATE);}
+	}
+	
+	private static SelectJoinStep<Record> getSelect(DBContext ctx) {
 		return ctx.getDslContext().select()
-			.from( CLIENT )
+				.from( CLIENT );
+	}
+
+	public static Client getClient(DBContext ctx, Integer id) {
+		return getSelect(ctx)
 			.where(CLIENT.ID.eq(id))
 			.fetch()
 			.stream()
@@ -23,8 +51,15 @@ public class ClientDAO {
 			.orElse(null);
 	}
 	public static LinkedList<Client> getClients(DBContext ctx) {
-		return ctx.getDslContext().select()
-			.from( CLIENT )
+		return getSelect(ctx)
+			.fetch()
+			.stream()
+			.map( new ClientMapper() )
+			.collect(Collectors.toCollection(LinkedList::new));
+	}
+	public static LinkedList<Client> getClients(DBContext ctx, ClientFilter filter) {
+		return getSelect(ctx)
+			.where(CLIENT_PROPERTIES.getConditions(filter))
 			.fetch()
 			.stream()
 			.map( new ClientMapper() )
@@ -33,8 +68,7 @@ public class ClientDAO {
 	public static LinkedList<Client> getClients(DBContext ctx, String query) {
 		query = MkpkStringUtils.prependIfMissing(query, "%");
 		query = MkpkStringUtils.appendIfMissing(query, "%");
-		return ctx.getDslContext().select()
-				.from( CLIENT )
+		return getSelect(ctx)
 				.where(CLIENT.NAME.like(query))
 				.fetch()
 				.stream()

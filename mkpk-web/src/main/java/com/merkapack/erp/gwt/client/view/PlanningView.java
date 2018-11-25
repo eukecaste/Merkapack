@@ -14,9 +14,11 @@ import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.user.client.ui.FileUpload;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Focusable;
+import com.google.gwt.user.client.ui.Hidden;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
@@ -55,14 +57,21 @@ public class PlanningView extends MkpkDockLayout {
 	private LinkedList<Planning> list;
 	private MkpkMachineBox machine;
 	private MkpkDateBox startDate;
-
+	
+	private FileUpload fileUpload;
+	
 	public PlanningView() {
 		FlowPanel headerPanel = new FlowPanel();
-
+		
 		headerPanel.setStyleName(MKPK.CSS.mkpkBorderBottom());
 		machine = new MkpkMachineBox();
 		startDate = new MkpkDateBox();
 		startDate.setValue(new Date(), false);
+
+		MkpkButton checkButton = new MkpkButton();
+		MkpkButton newLineButton = new MkpkButton();
+//		MkpkButton uploadButton = new MkpkButton();
+		fileUpload = new FileUpload();
 
 		InlineLabel startDateLabel = new InlineLabel(MKPK.MSG.startDate());
 		startDateLabel.setStyleName(MKPK.CSS.mkpkMarginRight());
@@ -77,6 +86,10 @@ public class PlanningView extends MkpkDockLayout {
 					content = new ScrollPanel();
 					add(content);
 					content.setWidget(getTable(machine.getSelected(), startDate.getValue()));
+					checkButton.setEnabled(true);
+					newLineButton.setEnabled(true);
+//					uploadButton.setEnabled(true);
+					fileUpload.setEnabled(true);
 					PlanningRow row = paintTable();
 					Scheduler.get().scheduleDeferred(new ScheduledCommand() {
 						public void execute() {
@@ -100,6 +113,10 @@ public class PlanningView extends MkpkDockLayout {
 					content = new ScrollPanel();
 					add(content);
 					content.setWidget(getTable(machine.getSelected(), startDate.getValue()));
+					checkButton.setEnabled(true);
+					newLineButton.setEnabled(true);
+//					uploadButton.setEnabled(true);
+					fileUpload.setEnabled(true);
 					PlanningRow row = paintTable();
 					Scheduler.get().scheduleDeferred(new ScheduledCommand() {
 						public void execute() {
@@ -110,7 +127,7 @@ public class PlanningView extends MkpkDockLayout {
 			}
 		});
 		
-		MkpkButton checkButton = new MkpkButton();
+		checkButton.setEnabled(false);
 		checkButton.addStyleName(MKPK.CSS.mkpkButtonCheckList());
 		checkButton.addStyleName(MKPK.CSS.mkpkMarginLeft());
 		checkButton.setTitle(MKPK.MSG.checkPlanning());
@@ -123,7 +140,7 @@ public class PlanningView extends MkpkDockLayout {
 			}
 		});
 		
-		MkpkButton newLineButton = new MkpkButton();
+		newLineButton.setEnabled(false);
 		newLineButton.setAccessKey('N');
 		newLineButton.addStyleName(MKPK.CSS.mkpkButtonAddList());
 		newLineButton.addStyleName(MKPK.CSS.mkpkMarginLeft());
@@ -142,12 +159,27 @@ public class PlanningView extends MkpkDockLayout {
 			}
 		});
 
+		fileUpload.setEnabled(false);
+		fileUpload.addStyleName(MKPK.CSS.mkpkButtonUpload());
+		fileUpload.addStyleName(MKPK.CSS.mkpkMarginLeft());
+		fileUpload.setTitle(MKPK.MSG.uploadFile());
+		//fileUpload.setText(MKPK.MSG.uploadFile());
+		//		uploadButton.addClickHandler(new ClickHandler() {
+		//			
+		//			@Override
+		//			public void onClick(ClickEvent event) {
+		//				upload();
+		//			}
+		//		});
+		
 		headerPanel.add(startDateLabel);
 		headerPanel.add(startDate);
 		headerPanel.add(machineLabel);
 		headerPanel.add(machine);
 		headerPanel.add(checkButton);
 		headerPanel.add(newLineButton);
+		//headerPanel.add(uploadButton);
+		headerPanel.add(fileUpload);
 		addNorth(headerPanel, 35);
 
 		Scheduler.get().scheduleDeferred(new ScheduledCommand() {
@@ -156,6 +188,10 @@ public class PlanningView extends MkpkDockLayout {
 			}
 		});
 
+	}
+
+	protected void upload() {
+		fileUpload.click();
 	}
 
 	protected void checkList() {
@@ -312,6 +348,11 @@ public class PlanningView extends MkpkDockLayout {
 					material.setValue(p.getMaterial(), false);
 					PlanningRowCalculator.calculate(planning, Strategy.AMOUNT_CHANGED);
 					fire(planning);
+					Scheduler.get().scheduleDeferred(new ScheduledCommand() {
+						public void execute() {
+							roll.setFocus(true);
+						}
+					});
 				}
 			});
 			++col;
@@ -357,6 +398,11 @@ public class PlanningView extends MkpkDockLayout {
 					planning.setAmount(amount.getValue());
 					PlanningRowCalculator.calculate(planning, Strategy.AMOUNT_CHANGED);
 					fire(planning);
+					Scheduler.get().scheduleDeferred(new ScheduledCommand() {
+						public void execute() {
+							client.setFocus(true);
+						}
+					});
 				}
 			});
 
@@ -378,6 +424,11 @@ public class PlanningView extends MkpkDockLayout {
 					planning.setMeters(meters.getValue());
 					PlanningRowCalculator.calculate(planning, Strategy.METERS_CHANGED);
 					fire(planning);
+					Scheduler.get().scheduleDeferred(new ScheduledCommand() {
+						public void execute() {
+							client.setFocus(true);
+						}
+					});
 				}
 			});
 

@@ -13,6 +13,9 @@ import com.merkapack.erp.core.model.Machine;
 import com.merkapack.erp.core.model.Material;
 import com.merkapack.erp.core.model.Product;
 import com.merkapack.erp.core.model.Roll;
+import com.merkapack.erp.core.model.Filter.ClientFilter;
+import com.merkapack.erp.core.model.Filter.ProductFilter;
+import com.merkapack.erp.core.model.Filter.RollFilter;
 
 public class MkpkGo {
 	
@@ -29,6 +32,11 @@ public class MkpkGo {
 				configuration -> ClientDAO.getClients(ctx,query));
 	}
 	
+	public static LinkedList<Client> getClients(DBContext ctx, ClientFilter filter) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> ClientDAO.getClients(ctx,filter));
+	}
+
 	public static Client save(DBContext ctx,Client client) {
 		return ctx.getDslContext().transactionResult(
 				configuration -> ClientDAO.save(ctx,client));
@@ -89,6 +97,10 @@ public class MkpkGo {
 		return ctx.getDslContext().transactionResult(
 				configuration -> ProductDAO.getProducts(ctx));
 	}
+	public static LinkedList<Product> getProducts(DBContext ctx, ProductFilter filter) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> ProductDAO.getProducts(ctx,filter));
+	}
 	
 	public static LinkedList<Product> getProducts(DBContext ctx,String query) {
 		return ctx.getDslContext().transactionResult(
@@ -115,6 +127,11 @@ public class MkpkGo {
 	public static LinkedList<Roll> getRolls(DBContext ctx,String query) {
 		return ctx.getDslContext().transactionResult(
 				configuration -> RollDAO.getRolls(ctx,query));
+	}
+
+	public static LinkedList<Roll> getRolls(DBContext ctx, RollFilter filter) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> RollDAO.getRolls(ctx,filter));
 	}
 
 	public static Roll save(DBContext ctx,Roll roll) {

@@ -130,4 +130,7 @@ public interface MkpkMessages extends Messages {
 	
 	@DefaultMessage("Nueva l\u00EDnea")
 	String newLine();
+	
+	@DefaultMessage("Subir fichero")
+	String uploadFile();
 }

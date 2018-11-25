@@ -75,6 +75,7 @@ public interface CSS extends CssResource {
 	
 	@ClassName("mkpk-button-check-list")	String mkpkButtonCheckList();
 	@ClassName("mkpk-button-add-list")		String mkpkButtonAddList();
+	@ClassName("mkpk-button-upload")		String mkpkButtonUpload();
 	
 	@ClassName("mkpk-icon-bullet")		String mkpkIconBullet();
 	@ClassName("mkpk-icon-menu")		String mkpkIconMenu();
