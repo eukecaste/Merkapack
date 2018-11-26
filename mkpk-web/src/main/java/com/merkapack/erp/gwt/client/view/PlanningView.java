@@ -4,8 +4,11 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.logging.Logger;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
@@ -14,11 +17,13 @@ import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.http.client.URL;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.FileUpload;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Focusable;
-import com.google.gwt.user.client.ui.Hidden;
+import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
@@ -58,6 +63,7 @@ public class PlanningView extends MkpkDockLayout {
 	private MkpkMachineBox machine;
 	private MkpkDateBox startDate;
 	
+	final FormPanel form;
 	private FileUpload fileUpload;
 	
 	public PlanningView() {
@@ -70,14 +76,16 @@ public class PlanningView extends MkpkDockLayout {
 
 		MkpkButton checkButton = new MkpkButton();
 		MkpkButton newLineButton = new MkpkButton();
-//		MkpkButton uploadButton = new MkpkButton();
+		MkpkButton uploadButton = new MkpkButton();
 		fileUpload = new FileUpload();
+		fileUpload.setStyleName(MKPK.CSS.mkpkDisplayNone());
 
 		InlineLabel startDateLabel = new InlineLabel(MKPK.MSG.startDate());
 		startDateLabel.setStyleName(MKPK.CSS.mkpkMarginRight());
 		startDateLabel.addStyleName(MKPK.CSS.mkpkMarginLeft());
 		startDateLabel.addStyleName(MKPK.CSS.mkpkBold());
 
+		
 		startDate.addValueChangeHandler(new ValueChangeHandler<Date>() {
 
 			@Override
@@ -88,8 +96,7 @@ public class PlanningView extends MkpkDockLayout {
 					content.setWidget(getTable(machine.getSelected(), startDate.getValue()));
 					checkButton.setEnabled(true);
 					newLineButton.setEnabled(true);
-//					uploadButton.setEnabled(true);
-					fileUpload.setEnabled(true);
+					uploadButton.setEnabled(true);
 					PlanningRow row = paintTable();
 					Scheduler.get().scheduleDeferred(new ScheduledCommand() {
 						public void execute() {
@@ -115,8 +122,7 @@ public class PlanningView extends MkpkDockLayout {
 					content.setWidget(getTable(machine.getSelected(), startDate.getValue()));
 					checkButton.setEnabled(true);
 					newLineButton.setEnabled(true);
-//					uploadButton.setEnabled(true);
-					fileUpload.setEnabled(true);
+					uploadButton.setEnabled(true);
 					PlanningRow row = paintTable();
 					Scheduler.get().scheduleDeferred(new ScheduledCommand() {
 						public void execute() {
@@ -159,18 +165,31 @@ public class PlanningView extends MkpkDockLayout {
 			}
 		});
 
-		fileUpload.setEnabled(false);
-		fileUpload.addStyleName(MKPK.CSS.mkpkButtonUpload());
-		fileUpload.addStyleName(MKPK.CSS.mkpkMarginLeft());
-		fileUpload.setTitle(MKPK.MSG.uploadFile());
-		//fileUpload.setText(MKPK.MSG.uploadFile());
-		//		uploadButton.addClickHandler(new ClickHandler() {
-		//			
-		//			@Override
-		//			public void onClick(ClickEvent event) {
-		//				upload();
-		//			}
-		//		});
+		uploadButton.setEnabled(false);
+		uploadButton.addStyleName(MKPK.CSS.mkpkButtonUpload());
+		uploadButton.addStyleName(MKPK.CSS.mkpkMarginLeft());
+		uploadButton.setTitle(MKPK.MSG.uploadFile());
+		uploadButton.setText(MKPK.MSG.uploadFile());
+		uploadButton.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				fileUpload.click();
+			}
+		});
+		fileUpload.addChangeHandler(new ChangeHandler() {
+			
+			@Override
+			public void onChange(ChangeEvent event) {
+				String filename = fileUpload.getFilename();
+				if (filename.length() == 0) {
+					Window.alert("No File Specified!");
+				} else {
+					String url = URL.encode(GWT.getModuleBaseURL() + "/MkpkPlanningUpload");
+					uploadFile(fileUpload.getFilename(), url);
+				}
+			}
+		});
 		
 		headerPanel.add(startDateLabel);
 		headerPanel.add(startDate);
@@ -178,21 +197,45 @@ public class PlanningView extends MkpkDockLayout {
 		headerPanel.add(machine);
 		headerPanel.add(checkButton);
 		headerPanel.add(newLineButton);
-		//headerPanel.add(uploadButton);
-		headerPanel.add(fileUpload);
-		addNorth(headerPanel, 35);
+		headerPanel.add(uploadButton);
 
+		form = new FormPanel();
+		form.add(fileUpload);
+		headerPanel.add(form); 
+		addNorth(headerPanel, 35);
+		
 		Scheduler.get().scheduleDeferred(new ScheduledCommand() {
 			public void execute() {
 				machine.setFocus(true);
 			}
 		});
-
 	}
 
-	protected void upload() {
-		fileUpload.click();
-	}
+	
+	public static native void uploadFile(String file, String url) /*-{
+	 	$wnd.alert("uploadFile");
+	    var xhr = new XMLHttpRequest();
+	    xhr.file = file; // not necessary if you create scopes like this
+	    xhr.addEventListener('progress', function(e) {
+	        var done = e.position || e.loaded, total = e.totalSize || e.total;
+	        console.log('xhr progress: ' + (Math.floor(done/total*1000)/10) + '%');
+	    }, false);
+	    if ( xhr.upload ) {
+	        xhr.upload.onprogress = function(e) {
+	            var done = e.position || e.loaded, total = e.totalSize || e.total;
+	            console.log('xhr.upload progress: ' + done + ' / ' + total + ' = ' + (Math.floor(done/total*1000)/10) + '%');
+	        };
+	    }
+	    xhr.onreadystatechange = function(e) {
+	        if ( 4 == this.readyState ) {
+	            console.log(['xhr upload complete', e]);
+	        }
+	    };
+	    xhr.open('post', url, true);
+	    xhr.setRequestHeader("Content-Type","multipart/form-data");
+	    xhr.send(file); 
+	
+	}-*/;	
 
 	protected void checkList() {
 		LinkedList<Planning> ret = PlanningRowCalculator.calculate(list);

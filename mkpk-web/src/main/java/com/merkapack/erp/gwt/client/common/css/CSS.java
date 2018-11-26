@@ -15,7 +15,10 @@ public interface CSS extends CssResource {
 	@ClassName("mkpk-value-changed") 		String mkpkValueChanged();
 	@ClassName("mkpk-error-label") 			String mkpkErrorLabel();
 
-	@ClassName("mkpk-pointer") 		String mkpkPointer();
+	
+	@ClassName("mkpk-display-none") 	String mkpkDisplayNone();
+	@ClassName("mkpk-display-block") 	String mkpkDisplayBlock();
+	@ClassName("mkpk-pointer") 			String mkpkPointer();
 	
 	@ClassName("mkpk-font-smaller")	String mkpkFontSmaller();
 	@ClassName("mkpk-bold") 		String mkpkBold();
@@ -96,8 +99,6 @@ public interface CSS extends CssResource {
 	@ClassName("mkpk-confirm-dialog-msg")			String mkpkConfirmDialogMsg();
 	@ClassName("mkpk-confirm-dialog-ok-button")		String mkpkConfirmDialogOkButton();
 	@ClassName("mkpk-confirm-dialog-cancel-button")	String mkpkConfirmDialogCancelButton();
-	
-	
 	
 }
 

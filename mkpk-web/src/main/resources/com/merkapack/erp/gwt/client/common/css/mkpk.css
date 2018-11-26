@@ -72,7 +72,9 @@ input[type="text"] {
 	margin-right: 1em;
 }
 
-.mkpk-pointer{	cursor: pointer;}
+.mkpk-display-none	{ display: none;}
+.mkpk-display-block	{ display: block;}
+.mkpk-pointer		{ cursor: pointer;}
 
 .mkpk-font-smaller {font-size: 0.9em;}
 
