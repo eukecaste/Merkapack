@@ -32,7 +32,7 @@ public class MkpkDockLayout extends DockLayoutPanel implements EntryPoint {
 		
 		setStyleName(MKPK.CSS.mkpkNoMargin()); 
 		addStyleName(MKPK.CSS.mkpkNoPadding());
-		addNorth(getHeader(), 120);
+		addNorth(getHeader(), 70);
 		addSouth(getFooter(), 25);
 		sidebar = getSidebar();
 		addEast(sidebar, 0);
@@ -50,6 +50,8 @@ public class MkpkDockLayout extends DockLayoutPanel implements EntryPoint {
 		tabHeader.addStyleName(MKPK.CSS.mkpkBorderBottom());
 		
 		Image logoImage = new Image(MKPK.RESOURCES.mkpkLogo());
+		logoImage.setWidth("150%");
+		logoImage.setHeight("150%");
 		logoImage.addStyleName(MKPK.CSS.mkpkPointer());
 		logoImage.addClickHandler(new ClickHandler() {
 			

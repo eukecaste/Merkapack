@@ -3,7 +3,6 @@ package com.merkapack.erp.gwt.shared;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.LinkedList;
-import java.util.logging.Logger;
 
 import com.merkapack.erp.core.model.Planning;
 import com.merkapack.erp.gwt.client.util.GWTDateUtils;
@@ -12,13 +11,13 @@ import com.merkapack.watson.util.MkpkPair;
 
 public class PlanningRowCalculator {
 
-	private static Logger LOGGER = Logger.getLogger(PlanningRowCalculator.class.getName());
+	//private static Logger LOGGER = Logger.getLogger(PlanningRowCalculator.class.getName());
 	private static final double MINUTES_BREAK = ((16 * 60) - (0.5 * 60));
 
 	public static enum Strategy implements Serializable {
 		AMOUNT_CHANGED {
 			public void specialCalculate(Planning pl) {
-				LOGGER.severe("calculateFromAmount ..:" + pl.getAmount());
+				//LOGGER.severe("calculateFromAmount ..:" + pl.getAmount());
 				pl.setMeters(MkpkMathUtils.round((pl.getLength() * pl.getAmount()) / (1000 * pl.getBlowUnits())));
 				pl.setBlows(MkpkMathUtils.round(pl.getAmount() / pl.getBlowUnits()));
 				pl.setMinutes(MkpkMathUtils.round(pl.getBlows() / pl.getBlowsMinute()));
@@ -26,7 +25,7 @@ public class PlanningRowCalculator {
 		},
 		METERS_CHANGED {
 			public void specialCalculate(Planning pl) {
-				LOGGER.severe("calculateFromMeters ..:" + pl.getMeters());
+				//LOGGER.severe("calculateFromMeters ..:" + pl.getMeters());
 				double amount = MkpkMathUtils.round((pl.getMeters() * pl.getBlowUnits() * 1000) / pl.getLength());
 				pl.setBlows(MkpkMathUtils.floor(amount / pl.getBlowUnits(), 0));
 				pl.setAmount( MkpkMathUtils.round(pl.getBlows() * pl.getBlowUnits()) );
@@ -37,7 +36,7 @@ public class PlanningRowCalculator {
 		},
 		TIME_CHANGED {
 			public void specialCalculate(Planning pl) {
-				LOGGER.severe("calculateFromTime ..:" + pl.getMinutes());
+				//LOGGER.severe("calculateFromTime ..:" + pl.getMinutes());
 				//blows = MkpkMathUtils.floor( blows / pl.getBlowUnits(), 0); 
 				pl.setBlows( MkpkMathUtils.floor(pl.getBlowsMinute() * pl.getMinutes(),0) );
 				pl.setAmount(MkpkMathUtils.round(pl.getBlows() * pl.getBlowUnits()));
@@ -55,9 +54,9 @@ public class PlanningRowCalculator {
 		}
 
 		protected boolean basicCalculate(Planning planning) {
-			LOGGER.info("basicCalculate");
+			//LOGGER.info("basicCalculate");
 			if (planning.getProduct() == null) {
-				LOGGER.info("Product null (return false)");
+				//LOGGER.info("Product null (return false)");
 				initialize(planning);
 				return false;
 			}
@@ -65,20 +64,21 @@ public class PlanningRowCalculator {
 			planning.setLength(planning.getProduct().getLength());
 
 			if (planning.getMaterial() == null) {
-				LOGGER.info("Material null");
+				//LOGGER.info("Material null");
 				if (planning.getProduct().getMaterial() == null) {
-					LOGGER.info("No Material in product (return false)");
+					//LOGGER.info("No Material in product (return false)");
 					initialize(planning);
 					return false;
 				}
-				LOGGER.info("Material set from product");
+				//LOGGER.info("Material set from product");
 				planning.setMaterial(planning.getProduct().getMaterial());
 			}
 			if (planning.getRoll() != null) {
-				LOGGER.info("Roll is null");
 				planning.setRollWidth(planning.getRoll().getWidth());
 				planning.setRollLength(planning.getRoll().getLength());
 				planning.setBlowUnits((int) MkpkMathUtils.round(planning.getRollWidth() / planning.getWidth(), 0));
+			} else {
+				//LOGGER.info("Roll is null");
 			}
 			return !MkpkMathUtils.isZero(planning.getBlowUnits());
 		}
@@ -119,8 +119,10 @@ public class PlanningRowCalculator {
 	
 	public static LinkedList<Planning> calculate(LinkedList<Planning> list) {
 		boolean goOn = true;
+		//LOGGER.severe("Start calculate");
 		while (goOn) {
 			goOn = false;
+			//LOGGER.severe("List size ..: " + list.size());		
 			for (int i = 0; i < list.size(); i++) {
 				Planning pl = list.get(i);
 				pl.setOrder(i+1);
@@ -128,29 +130,11 @@ public class PlanningRowCalculator {
 				goOn = (shiftList(i,list, splitLineMeters(pl)));
 				// Se dividen las líneas cuyos metros son mayores que los de la bobina.
 				goOn = !goOn && (shiftList(i,list, splitLineTime(pl)));
-				// Se dividen las líneas cuyos acumulado de horas supera la jornada laboral.
-				goOn = !goOn && (shiftList(i,list, splitGroupTime(list)));
 				if (goOn) break;
 			}
 		}
-		if (list != null && !list.isEmpty()) {
-			double minutes = 0;
-			Date date = new Date(list.get(0).getDate().getTime());
-			for (Planning pl : list) {
-				if (GWTDateUtils.compare(pl.getDate(), date) < 0) {
-					pl.setDate(new Date(date.getTime()));
-				}
-				if (GWTDateUtils.compare(pl.getDate(),date) <= 0) {
-					minutes = minutes + pl.getMinutes();
-				}
-				if (minutes > MINUTES_BREAK) {
-					pl.setDate(new Date(date.getTime()));
-					pl.setDate(GWTDateUtils.addDays(pl.getDate(), 1));
-					date = GWTDateUtils.addDays(date, 1);
-					minutes = pl.getMinutes();
-				}
-			}
-		}
+		// Se dividen las líneas cuyos acumulado de horas supera la jornada laboral.
+		splitGroupTime(list);
 		return list;
 	}
 	
@@ -172,7 +156,7 @@ public class PlanningRowCalculator {
 	}
 
 	public static MkpkPair<Planning,Planning> splitLineTime(Planning pl) {
-		if (pl.getMinutes() > MINUTES_BREAK ) {
+		if (pl.getMinutes() >= MINUTES_BREAK ) {
 			Planning left = pl.clone();
 			left.setMinutes(MINUTES_BREAK);
 			calculate(left, Strategy.TIME_CHANGED);
@@ -189,8 +173,9 @@ public class PlanningRowCalculator {
 		return null;
 	}
 	
-	public static MkpkPair<Planning,Planning> splitGroupTime(LinkedList<Planning> list) {
+	public static void splitGroupTime(LinkedList<Planning> list) {
 		if (list != null && !list.isEmpty()) {
+
 			double minutes = 0;
 			Date date = new Date(list.get(0).getDate().getTime());
 			for (int i = 0; i < list.size(); i++) {
@@ -198,10 +183,10 @@ public class PlanningRowCalculator {
 				if (GWTDateUtils.compare(pl.getDate(), date) < 0) {
 					pl.setDate(new Date(date.getTime()));
 				}
-				if (GWTDateUtils.compare(pl.getDate(),date) <= 0) {
+				if (GWTDateUtils.compare(pl.getDate(), date) <= 0) {
 					minutes = minutes + pl.getMinutes();
 				}
-				if (minutes > MINUTES_BREAK) {
+				if (minutes >= MINUTES_BREAK) {
 					double typedMinutes = pl.getMinutes();
 					Planning left = pl.clone();
 					Planning right = pl.clone();
@@ -216,11 +201,13 @@ public class PlanningRowCalculator {
 					right.setDate(new Date(left.getDate().getTime()));
 					right.setDate(GWTDateUtils.addDays(right.getDate(), 1));
 					calculate(right, Strategy.TIME_CHANGED);
-					LOGGER.severe("Date change..: " + left.getDate());
-					return new MkpkPair<Planning,Planning>(left,right);
+//					 LOGGER.severe("Date change..: " + left.getDate());
+					shiftList(i, list, new MkpkPair<Planning, Planning>(left, right));
+					++i;
+					minutes = right.getMinutes();
+					date = new Date(right.getDate().getTime());
 				}
 			}
 		}
-		return null;
 	}
 }

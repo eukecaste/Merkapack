@@ -52,7 +52,6 @@ public class Client implements Serializable, HasAudit {
 	}
 	
 	// ---------------------------------------------------------- AUDIT
-	@Override
 	public String getCreationUser() {
 		return creationUser;
 	}
@@ -60,7 +59,6 @@ public class Client implements Serializable, HasAudit {
 		this.creationUser = creationUser;
 		return this;
 	}
-	@Override
 	public Date getCreationDate() {
 		return creationDate;
 	}
@@ -68,7 +66,6 @@ public class Client implements Serializable, HasAudit {
 		this.creationDate = creationDate;
 		return this;
 	}
-	@Override
 	public String getModificationUser() {
 		return modificationUser;
 	}
@@ -76,7 +73,6 @@ public class Client implements Serializable, HasAudit {
 		this.modificationUser = modificationUser;
 		return this;
 	}
-	@Override
 	public Date getModificationDate() {
 		return modificationDate;
 	}

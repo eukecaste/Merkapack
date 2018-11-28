@@ -9,13 +9,13 @@ import com.merkapack.erp.core.dao.jooq.MaterialDAO;
 import com.merkapack.erp.core.dao.jooq.ProductDAO;
 import com.merkapack.erp.core.dao.jooq.RollDAO;
 import com.merkapack.erp.core.model.Client;
+import com.merkapack.erp.core.model.Filter.ClientFilter;
+import com.merkapack.erp.core.model.Filter.ProductFilter;
+import com.merkapack.erp.core.model.Filter.RollFilter;
 import com.merkapack.erp.core.model.Machine;
 import com.merkapack.erp.core.model.Material;
 import com.merkapack.erp.core.model.Product;
 import com.merkapack.erp.core.model.Roll;
-import com.merkapack.erp.core.model.Filter.ClientFilter;
-import com.merkapack.erp.core.model.Filter.ProductFilter;
-import com.merkapack.erp.core.model.Filter.RollFilter;
 
 public class MkpkGo {
 	
