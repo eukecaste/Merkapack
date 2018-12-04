@@ -30,7 +30,31 @@ public class Menu extends MkpkDockLayout {
 		});
 		planning.setStyleName(MKPK.CSS.mkpkImgPlanning());
 		tab.setWidget(0, 0, planning);
+/*
+		Button planning1 = new Button(MKPK.MSG.manufacturingPlanning());
+		planning1.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				Planning1View planning1 = new Planning1View();
+				planning1.onModuleLoad();
+			}
+		});
+		planning1.setStyleName(MKPK.CSS.mkpkImgPlanning());
+		tab.setWidget(1, 0, planning1);
 
+		Button planning2 = new Button(MKPK.MSG.manufacturingPlanning());
+		planning2.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				Planning2View planning2 = new Planning2View();
+				planning2.onModuleLoad();
+			}
+		});
+		planning2.setStyleName(MKPK.CSS.mkpkImgPlanning());
+		tab.setWidget(2, 0, planning2);
+*/
 		Button inventory = new Button(MKPK.MSG.manufacturingInventory());
 		inventory.setStyleName(MKPK.CSS.mkpkImgManufacturing());
 		inventory.addClickHandler(new ClickHandler() {

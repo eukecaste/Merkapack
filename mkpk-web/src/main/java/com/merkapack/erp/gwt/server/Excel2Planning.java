@@ -91,10 +91,10 @@ public class Excel2Planning {
 		clientValue = MkpkStringUtils.prependIfMissing(MkpkStringUtils.appendIfMissing(clientValue, "%"), "%");
 		final String clientName = clientValue;
 		LinkedList<Client> clients = MkpkGo.getClients(ctx, p -> p.getNameProperty().like(clientName));
-		if (clients != null) {
-			if (clients.size() == 1) {
+		if (clients != null && clients.size() > 0) {
+//			if (clients.size() == 1) {
 				return clients.get(0);
-			}
+//			}
 		}
 		return null;
 	}

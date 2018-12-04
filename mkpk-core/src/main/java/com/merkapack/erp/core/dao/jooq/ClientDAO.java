@@ -52,6 +52,7 @@ public class ClientDAO {
 	}
 	public static LinkedList<Client> getClients(DBContext ctx) {
 		return getSelect(ctx)
+			.orderBy(CLIENT.NAME)
 			.fetch()
 			.stream()
 			.map( new ClientMapper() )
@@ -60,6 +61,7 @@ public class ClientDAO {
 	public static LinkedList<Client> getClients(DBContext ctx, ClientFilter filter) {
 		return getSelect(ctx)
 			.where(CLIENT_PROPERTIES.getConditions(filter))
+			.orderBy(CLIENT.NAME)
 			.fetch()
 			.stream()
 			.map( new ClientMapper() )
@@ -70,6 +72,7 @@ public class ClientDAO {
 		query = MkpkStringUtils.appendIfMissing(query, "%");
 		return getSelect(ctx)
 				.where(CLIENT.NAME.like(query))
+				.orderBy(CLIENT.NAME)
 				.fetch()
 				.stream()
 				.map( new ClientMapper() )

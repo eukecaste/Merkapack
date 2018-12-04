@@ -40,17 +40,11 @@ public final class RootLayoutPanel extends LayoutPanel {
 	}
 
 	private void fillParent() {
-		
 		Element elem = getElement();
-		Element parent = elem.getParentElement();
-		
-		int top = parent.getOffsetTop();
-		int left = parent.getOffsetLeft();
-		
 		Style style = elem.getStyle();
 		style.setPosition(Position.ABSOLUTE);
-		style.setLeft(left, Unit.PX);
-		style.setTop(top, Unit.PX);
+		style.setLeft(0, Unit.PX);
+		style.setTop(0, Unit.PX);
 		style.setRight(0, Unit.PX);
 		style.setBottom(0, Unit.PX);
 	}

@@ -10,7 +10,6 @@ import com.google.gwt.core.client.JsArray;
 import com.google.gwt.core.client.JsonUtils;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
-import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -33,6 +32,11 @@ import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.view.client.ProvidesKey;
+import com.google.gwt.view.client.RangeChangeEvent;
+import com.google.gwt.view.client.RangeChangeEvent.Handler;
+import com.google.gwt.view.client.SelectionChangeEvent;
+import com.google.gwt.view.client.SingleSelectionModel;
 import com.merkapack.erp.core.model.Client;
 import com.merkapack.erp.core.model.Machine;
 import com.merkapack.erp.core.model.Material;
@@ -60,9 +64,20 @@ import com.merkapack.watson.util.MkpkMathUtils;
 import com.merkapack.watson.util.MkpkNumberUtils;
 import com.merkapack.watson.util.MkpkStringUtils;
 
-public class PlanningView extends MkpkDockLayout {
+public class Planning1View extends MkpkDockLayout {
 	
-	private static Logger LOGGER = Logger.getLogger(PlanningView.class.getName());
+	private class PlanningProvidesKey implements ProvidesKey<Planning> {
+		@Override
+		public Object getKey(Planning planning) {
+			return planning == null ? null :
+				planning.getId() == null?
+					 planning.getOrder()		
+					:planning.getId();
+		}
+	}
+
+	
+	private static Logger LOGGER = Logger.getLogger(Planning1View.class.getName());
 	private static final String FORM_ID = "formID";
 	private static final String FILEUPLOAD_ID = "fileUploadID";
 
@@ -87,12 +102,38 @@ public class PlanningView extends MkpkDockLayout {
 	private MkpkClientBox client = new MkpkClientBox();
 	private Label comment = new Label();
 
+	private PlanningViewTable table; 
 	private LinkedList<Planning> list = new LinkedList<Planning>();
+	private SingleSelectionModel<Planning> model;
 	
-	public PlanningView() {
+	public Planning1View() {
 		addNorth(getDateMachinePanel(), 35);
 		addNorth(getPlanningRowPanel(), 70);
+		
 		content = new ScrollPanel();
+		FlowPanel container = new FlowPanel();
+		container.setStyleName(MKPK.CSS.mkpkPadding());
+		table = new PlanningViewTable(new PlanningProvidesKey());
+		table.addRangeChangeHandler( new Handler() {
+			
+			@Override
+			public void onRangeChange(RangeChangeEvent event) {
+				table.setRowData(list);
+			}
+		});
+		model = new SingleSelectionModel<Planning>(new PlanningProvidesKey());
+		table.setSelectionModel(model);
+		model.addSelectionChangeHandler( 
+				new SelectionChangeEvent.Handler() {
+					@Override
+					public void onSelectionChange(SelectionChangeEvent event) {
+						planningRow.setPlanning( model.getSelectedObject());
+						planningRow.refresh();
+					}
+				});
+		container.add(table);
+		refreshList();
+		content.setWidget(container);
 		add(content);
 		Scheduler.get().scheduleDeferred(new ScheduledCommand() {
 			public void execute() {
@@ -128,10 +169,13 @@ public class PlanningView extends MkpkDockLayout {
 			public void onValueChange(ValueChangeEvent<Date> event) {
 				if (machine.getSelected() != null && startDate.getValue() != null) {
 					planningRow.setEnabled(true);
+					planningRow.getPlanning().setDate(startDate.getValue());
+					planningRow.getPlanning().setBlowsMinute(machine.getSelected().getBlows());
+					planningRow.refresh();
 					checkButton.setEnabled(true);
 					newLineButton.setEnabled(true);
 					fileUpload.setEnabled(true);
-					addNewPlanningToList();
+					refreshList();
 					Scheduler.get().scheduleDeferred(new ScheduledCommand() {
 						public void execute() {
 							product.setFocus(true);
@@ -152,10 +196,13 @@ public class PlanningView extends MkpkDockLayout {
 			public void onSelection(SelectionEvent<Machine> event) {
 				if (machine.getSelected() != null && startDate.getValue() != null) {
 					planningRow.setEnabled(true);
+					planningRow.getPlanning().setDate(startDate.getValue());
+					planningRow.getPlanning().setBlowsMinute(machine.getSelected().getBlows());
+					planningRow.refresh();
 					checkButton.setEnabled(true);
 					newLineButton.setEnabled(true);
 					fileUpload.setEnabled(true);
-					addNewPlanningToList();
+					refreshList();
 					Scheduler.get().scheduleDeferred(new ScheduledCommand() {
 						public void execute() {
 							product.setFocus(true);
@@ -189,11 +236,6 @@ public class PlanningView extends MkpkDockLayout {
 			@Override
 			public void onClick(ClickEvent event) {
 				addNewPlanningToList();
-				Scheduler.get().scheduleDeferred(new ScheduledCommand() {
-					public void execute() {
-						product.setFocus(true);
-					}
-				});
 			}
 		});
 
@@ -249,12 +291,13 @@ public class PlanningView extends MkpkDockLayout {
 		Planning planning = new Planning();
 		planning.setBlowsMinute(machine.getSelected().getBlows());
 		planning.setDate(startDate.getValue());
-		list.add(planning);
-		planningRow.setPlanning( planning );
+		planningRow.setPlanning( new Planning() );
 		planningRow.refresh();
-		refreshList();
-		content.scrollToBottom();
 		return planning;
+	}
+	
+	private void refreshList() {
+		table.setVisibleRangeAndClearData(table.getVisibleRange(), true);
 	}
 	
 	protected void parseResults(String result) {
@@ -307,48 +350,72 @@ public class PlanningView extends MkpkDockLayout {
 				.setBlows(jsPlanning.getBlows())
 				.setBlowsMinute(machine.getSelected().getBlows())
 				.setMinutes(jsPlanning.getMinutes())
-				.setClient(jsPlanning.getClient()==null?null
-					:new Client()
+				.setClient(new Client()
 					.setId(jsPlanning.getClient().getId())
 					.setDomain(jsPlanning.getClient().getDomain())
 					.setName(jsPlanning.getClient().getName()))
 				.setComments(jsPlanning.getComments())
 			);
 		}
-		refreshList();
+		table.setVisibleRangeAndClearData(table.getVisibleRange(), true);
+//		PlanningRow row = paintTable();
+//		Scheduler.get().scheduleDeferred(new ScheduledCommand() {
+//			public void execute() {
+//				row.setFocus(true);
+//			}
+//		});
 	}
 
 	protected void checkList() {
+		LOGGER.severe("Start checkList");
 		LinkedList<Planning> ret = PlanningRowCalculator.calculate(list);
 		list = ret;
-		refreshList();
+//		PlanningRow row = paintTable();
+//		Scheduler.get().scheduleDeferred(new ScheduledCommand() {
+//			public void execute() {
+//				LOGGER.severe("End checkList");
+//				row.setFocus(true);
+//			}
+//		});
 	}
-	
+
+//	private PlanningRow paintTable() {
+//		rows = new LinkedList<PlanningView.PlanningRow>();
+//		tab.removeAllRows();
+//		paintHeader();
+//		for (Planning planning : list) {
+//			addNewPlanningToList(planning);
+//		}
+//		if (list.isEmpty()) {
+//			addNewPlanningToList();
+//		}
+//		return rows.getLast();
+//	}
+
 	private FlexTable getTable() {
 		FlexTable tab = new FlexTable();
 		tab.setStyleName(MKPK.CSS.mkpkTable());
 		tab.addStyleName(MKPK.CSS.mkpkWidthAll());
-		tab.getColumnFormatter().setWidth( 0, "20px");
-		tab.getColumnFormatter().setWidth( 1, "80px");
-		tab.getColumnFormatter().setWidth( 2, "30px");
-		tab.getColumnFormatter().setWidth( 3, "100px");
-		tab.getColumnFormatter().setWidth( 4, "100px");
-		tab.getColumnFormatter().setWidth( 5, "100px");
-		tab.getColumnFormatter().setWidth( 6, "80px");
-		tab.getColumnFormatter().setWidth( 7, "80px");
-		tab.getColumnFormatter().setWidth( 8, "80px");
-		tab.getColumnFormatter().setWidth( 9, "80px");
-		tab.getColumnFormatter().setWidth(10, "80px");
-		tab.getColumnFormatter().setWidth(11, "80px");
-		tab.getColumnFormatter().setWidth(12, "100px");
-		tab.getColumnFormatter().setWidth(13, "auto");
-		tab.getColumnFormatter().setWidth(14, "20px");
+		tab.getColumnFormatter().setWidth(0, "103px");
+		tab.getColumnFormatter().setWidth(1, "31px");
+		tab.getColumnFormatter().setWidth(2, "1%");
+		tab.getColumnFormatter().setWidth(3, "1%");
+		tab.getColumnFormatter().setWidth(4, "1%");
+		tab.getColumnFormatter().setWidth(5, "1%");
+		tab.getColumnFormatter().setWidth(6, "80px");
+		tab.getColumnFormatter().setWidth(7, "1%");
+		tab.getColumnFormatter().setWidth(8, "1%");
+		tab.getColumnFormatter().setWidth(9, "90px");
+		tab.getColumnFormatter().setWidth(10, "1%");
+		tab.getColumnFormatter().setWidth(11, "1%");
+		tab.getColumnFormatter().setWidth(12, "auto");
+		tab.getColumnFormatter().setWidth(13, "1%");
 		paintHeader( tab );
 		return tab;
 	}
 
 	private void paintHeader(FlexTable tab) {
-		String[] labels = new String[] { ".", MKPK.MSG.date()
+		String[] labels = new String[] { MKPK.MSG.date()
 				, "#", MKPK.MSG.measure(), MKPK.MSG.material(), MKPK.MSG.roll(),
 				MKPK.MSG.unit(), MKPK.MSG.blowUnits(), MKPK.MSG.meters(), MKPK.MSG.blows(), MKPK.MSG.blowsMinutes(),
 				MKPK.MSG.time(), MKPK.MSG.client(), MKPK.MSG.comments(), "X" };
@@ -394,11 +461,6 @@ public class PlanningView extends MkpkDockLayout {
 
 			int col = 0;
 
-			// ORDER
-			tab.setWidget(row, col, new Label("+"));
-			tab.getCellFormatter().addStyleName(row, col, MKPK.CSS.mkpkTextCenter());
-			col++;
-			
 			// DIA
 			date.addValueChangeHandler(new ValueChangeHandler<Date>() {
 				@Override
@@ -584,7 +646,8 @@ public class PlanningView extends MkpkDockLayout {
 						@Override
 						public void onAccept() {
 							list.remove(getPlanning());
-							refreshList();
+//							rows.remove(PlanningRow.this);
+							checkList();
 						}
 					});
 
@@ -607,6 +670,14 @@ public class PlanningView extends MkpkDockLayout {
 			blowsMinute.setValue(getPlanning().getBlowsMinute(), false, false);
 			minutes.setValue(getPlanning().getMinutes() / 60, false, false);
 			client.setValue(getPlanning().getClient(), false, false);
+			if (list != null && !list.isEmpty()) {
+				Date startDate = list.get(0).getDate();
+				Date currentDate = getPlanning().getDate();
+				int days = GWTDateUtils.getDaysBetween(startDate, currentDate);
+				if (days % 2 == 0) {
+					date.getElement().getStyle().setBackgroundColor("#DDD");
+				}
+			}
 		}
 
 		private void fire() {
@@ -639,194 +710,4 @@ public class PlanningView extends MkpkDockLayout {
 			product.setTabIndex(index);
 		}
 	}
-	
-	private void refreshList() {
-		content.clear();
-		FlowPanel container = new FlowPanel("pre");
-		container.setStyleName(MKPK.CSS.mkpkPadding());
-		container.getElement().getStyle().setFontSize(0.95, Unit.EM);
-		if (list != null && list.size() > 0) {
-			String line0 = 
-				  '\u250c' + MkpkStringUtils.repeat('\u2500', 12)
-				+ '\u252c' + MkpkStringUtils.repeat('\u2500', 3)
-				+ '\u252c' + MkpkStringUtils.repeat('\u2500', 14)
-				+ '\u252c' + MkpkStringUtils.repeat('\u2500', 13)
-				+ '\u252c' + MkpkStringUtils.repeat('\u2500', 14)
-				+ '\u252c' + MkpkStringUtils.repeat('\u2500', 10)
-				+ '\u252c' + MkpkStringUtils.repeat('\u2500', 11)
-				+ '\u252c' + MkpkStringUtils.repeat('\u2500', 10)
-				+ '\u252c' + MkpkStringUtils.repeat('\u2500', 10)
-				+ '\u252c' + MkpkStringUtils.repeat('\u2500', 5)
-				+ '\u252c' + MkpkStringUtils.repeat('\u2500', 10)
-				+ '\u252c' + MkpkStringUtils.repeat('\u2500', 20)
-				+ '\u252c' + MkpkStringUtils.repeat('\u2500', 21)
-				+ '\u2510';
-			String line1 = 
-				  '\u2502' + MkpkStringUtils.center(MKPK.MSG.date(), 12)
-				+ '\u2502' + MkpkStringUtils.center( "#" , 3)
-				+ '\u2502' + MkpkStringUtils.rightPad( MKPK.MSG.measure() ,14)
-				+ '\u2502' + MkpkStringUtils.rightPad( MKPK.MSG.material() ,13)
-				+ '\u2502' + MkpkStringUtils.rightPad( MKPK.MSG.roll() ,14)
-				+ '\u2502' + MkpkStringUtils.leftPad ( MKPK.MSG.unit(), 10)
-				+ '\u2502' + MkpkStringUtils.leftPad ( MKPK.MSG.blowUnits(), 11)
-				+ '\u2502' + MkpkStringUtils.leftPad ( MKPK.MSG.meters(), 10)
-				+ '\u2502' + MkpkStringUtils.leftPad ( MKPK.MSG.blows(), 10)
-				+ '\u2502' + MkpkStringUtils.leftPad ( MKPK.MSG.blowsMinutesAbbrv(), 5)
-				+ '\u2502' + MkpkStringUtils.leftPad ( MKPK.MSG.time(), 10)
-				+ '\u2502' + MkpkStringUtils.rightPad( MKPK.MSG.client(),20)
-				+ '\u2502' + MkpkStringUtils.rightPad( MKPK.MSG.comments(),21)
-				+ '\u2502';
-				;
-			String line2 = 
-					  '\u251c' + MkpkStringUtils.repeat('\u2500', 12)
-					+ '\u253c' + MkpkStringUtils.repeat('\u2500', 3)
-					+ '\u253c' + MkpkStringUtils.repeat('\u2500', 14)
-					+ '\u253c' + MkpkStringUtils.repeat('\u2500', 13)
-					+ '\u253c' + MkpkStringUtils.repeat('\u2500', 14)
-					+ '\u253c' + MkpkStringUtils.repeat('\u2500', 10)
-					+ '\u253c' + MkpkStringUtils.repeat('\u2500', 11)
-					+ '\u253c' + MkpkStringUtils.repeat('\u2500', 10)
-					+ '\u253c' + MkpkStringUtils.repeat('\u2500', 10)
-					+ '\u253c' + MkpkStringUtils.repeat('\u2500', 5)
-					+ '\u253c' + MkpkStringUtils.repeat('\u2500', 10)
-					+ '\u253c' + MkpkStringUtils.repeat('\u2500', 20)
-					+ '\u253c' + MkpkStringUtils.repeat('\u2500', 21)
-					+ '\u2524';
-			InlineLabel line0Label = new InlineLabel(line0);
-			line0Label.addStyleName(MKPK.CSS.mkpkIconPaddingLeft());
-			InlineLabel line1Label = new InlineLabel(line1);
-			line1Label.addStyleName(MKPK.CSS.mkpkIconPaddingLeft());
-			InlineLabel line2Label = new InlineLabel(line2);
-			line2Label.addStyleName(MKPK.CSS.mkpkIconPaddingLeft());
-			FlowPanel f0 = new FlowPanel(); f0.add(line0Label); container.add(f0);
-			FlowPanel f1 = new FlowPanel(); f1.add(line1Label); container.add(f1);
-			FlowPanel f2 = new FlowPanel(); f2.add(line2Label); container.add(f2);
-
-//			String evenColor = MKPK.CSS.mkpkEvenBackgroundColor();
-//			String oddColor = MKPK.CSS.mkpkOddBackgroundColor();
-//			String color = oddColor;
-			Date date = null;
-			double minutes = 0;
-			for (Planning pl : list) {
-				if (GWTDateUtils.compare(pl.getDate(), date) != 0) {
-					if ( date != null) {
-						String line40 = 
-								  '\u2514' + MkpkStringUtils.repeat('\u2500', 12)
-								+ '\u2534' + MkpkStringUtils.repeat('\u2500', 3)
-								+ '\u2534' + MkpkStringUtils.repeat('\u2500', 14)
-								+ '\u2534' + MkpkStringUtils.repeat('\u2500', 13)
-								+ '\u2534' + MkpkStringUtils.repeat('\u2500', 14)
-								+ '\u2534' + MkpkStringUtils.repeat('\u2500', 10)
-								+ '\u2534' + MkpkStringUtils.repeat('\u2500', 11)
-								+ '\u2534' + MkpkStringUtils.repeat('\u2500', 10)
-								+ '\u2534' + MkpkStringUtils.repeat('\u2500', 10)
-								+ '\u2534' + MkpkStringUtils.repeat('\u2500', 5)
-								+ '\u2534' + MkpkStringUtils.repeat('\u2500', 10)
-								+ '\u2534' + MkpkStringUtils.repeat('\u2500', 20)
-								+ '\u2534' + MkpkStringUtils.repeat('\u2500', 21)
-								+ '\u2518';
-						InlineLabel line40Label = new InlineLabel(line40);
-						line40Label.addStyleName(MKPK.CSS.mkpkIconPaddingLeft());
-						FlowPanel f60 = new FlowPanel(); f60.add(line40Label); container.add(f60);
-						
-						
-						String lineTotalMinutes = MkpkStringUtils.leftPad("Total horas dia (" + MKPK.DATE_FORMAT.format( date ) + ")", 119)
-							+ MkpkStringUtils.leftPad(MKPK.FMT.format( minutes / 60 ), 10);
-						InlineLabel lineTotalMinutesLabel = new InlineLabel(lineTotalMinutes);
-						lineTotalMinutesLabel.addStyleName(MKPK.CSS.mkpkIconPaddingLeft());
-						lineTotalMinutesLabel.addStyleName(MKPK.CSS.mkpkBold());
-//						lineTotalMinutesLabel.addStyleName( color );
-						FlowPanel f3 = new FlowPanel(); f3.add(lineTotalMinutesLabel); container.add(f3);
-
-//						color = color.equals(oddColor)?evenColor:oddColor;
-						
-						String line022 = 
-								  '\u250c' + MkpkStringUtils.repeat('\u2500', 12)
-								+ '\u252c' + MkpkStringUtils.repeat('\u2500', 3)
-								+ '\u252c' + MkpkStringUtils.repeat('\u2500', 14)
-								+ '\u252c' + MkpkStringUtils.repeat('\u2500', 13)
-								+ '\u252c' + MkpkStringUtils.repeat('\u2500', 14)
-								+ '\u252c' + MkpkStringUtils.repeat('\u2500', 10)
-								+ '\u252c' + MkpkStringUtils.repeat('\u2500', 11)
-								+ '\u252c' + MkpkStringUtils.repeat('\u2500', 10)
-								+ '\u252c' + MkpkStringUtils.repeat('\u2500', 10)
-								+ '\u252c' + MkpkStringUtils.repeat('\u2500', 5)
-								+ '\u252c' + MkpkStringUtils.repeat('\u2500', 10)
-								+ '\u252c' + MkpkStringUtils.repeat('\u2500', 20)
-								+ '\u252c' + MkpkStringUtils.repeat('\u2500', 21)
-								+ '\u2510';
-						InlineLabel line222Label = new InlineLabel(line022);
-						line222Label.addStyleName(MKPK.CSS.mkpkIconPaddingLeft());
-						FlowPanel f022 = new FlowPanel(); f022.add(line222Label); container.add(f022);
-						
-					}
-					date = pl.getDate();
-					minutes = 0;
-				}
-				minutes = minutes + pl.getMinutes();
-				
-				String line = 
-					  '\u2502' + MkpkStringUtils.center(MKPK.DATE_FORMAT.format( pl.getDate()), 12)
-					+ '\u2502' + MkpkStringUtils.center( MkpkNumberUtils.toString( pl.getOrder()), 3)
-					+ '\u2502' + MkpkStringUtils.rightPad( MkpkStringUtils.abbreviate(pl.getProduct()!=null?pl.getProduct().getName():"", 13),14)
-					+ '\u2502' + MkpkStringUtils.rightPad( MkpkStringUtils.abbreviate(pl.getMaterial()!=null?pl.getMaterial().getName():"", 12),13)
-					+ '\u2502' + MkpkStringUtils.rightPad( MkpkStringUtils.abbreviate(pl.getRoll()!=null?pl.getRoll().getName():"", 13),14)
-					+ '\u2502' + MkpkStringUtils.leftPad(MKPK.FMT_INT.format( pl.getAmount()), 10)
-					+ '\u2502' + MkpkStringUtils.leftPad(MKPK.FMT_INT.format( pl.getBlowUnits()), 11)
-					+ '\u2502' + MkpkStringUtils.leftPad(MKPK.FMT.format( pl.getMeters()), 10)
-					+ '\u2502' + MkpkStringUtils.leftPad(MKPK.FMT.format( pl.getBlows()), 10)
-					+ '\u2502' + MkpkStringUtils.leftPad(MKPK.FMT_INT.format( pl.getBlowsMinute()), 5)
-					+ '\u2502' + MkpkStringUtils.leftPad(MKPK.FMT.format( pl.getHours()), 10)
-					+ '\u2502' + MkpkStringUtils.rightPad( MkpkStringUtils.abbreviate(pl.getClient()!=null?pl.getClient().getName():"", 19),20)
-					+ '\u2502' + MkpkStringUtils.rightPad( MkpkStringUtils.abbreviate(pl.getComments()!=null?pl.getComments():"COMENTARIOS", 20),21)
-					+ '\u2502';
-				InlineLabel lineLabel = new InlineLabel(line);
-				lineLabel.setStyleName(MKPK.CSS.mkpkIconPaddingLeft());
-//				lineLabel.addStyleName( color );
-				lineLabel.addStyleName(MKPK.CSS.mkpkClickableLabel());
-				lineLabel.addClickHandler( new ClickHandler() {
-					
-					@Override
-					public void onClick(ClickEvent event) {
-						planningRow.setPlanning(pl);
-						planningRow.refresh();
-					}
-				});
-				FlowPanel f4 = new FlowPanel(); f4.add(lineLabel); container.add(f4);
-			}
-			String line400 = 
-					  '\u2514' + MkpkStringUtils.repeat('\u2500', 12)
-					+ '\u2534' + MkpkStringUtils.repeat('\u2500', 3)
-					+ '\u2534' + MkpkStringUtils.repeat('\u2500', 14)
-					+ '\u2534' + MkpkStringUtils.repeat('\u2500', 13)
-					+ '\u2534' + MkpkStringUtils.repeat('\u2500', 14)
-					+ '\u2534' + MkpkStringUtils.repeat('\u2500', 10)
-					+ '\u2534' + MkpkStringUtils.repeat('\u2500', 11)
-					+ '\u2534' + MkpkStringUtils.repeat('\u2500', 10)
-					+ '\u2534' + MkpkStringUtils.repeat('\u2500', 10)
-					+ '\u2534' + MkpkStringUtils.repeat('\u2500', 5)
-					+ '\u2534' + MkpkStringUtils.repeat('\u2500', 10)
-					+ '\u2534' + MkpkStringUtils.repeat('\u2500', 20)
-					+ '\u2534' + MkpkStringUtils.repeat('\u2500', 21)
-					+ '\u2518';
-			InlineLabel line400Label = new InlineLabel(line400);
-			line400Label.addStyleName(MKPK.CSS.mkpkIconPaddingLeft());
-			FlowPanel f600 = new FlowPanel(); f600.add(line400Label); container.add(f600);
-				
-			if ( minutes != 0) {
-				String lineTotalMinutes = MkpkStringUtils.leftPad("Total horas dia (" + MKPK.DATE_FORMAT.format( date ) + ")", 119)
-						+ MkpkStringUtils.leftPad(MKPK.FMT.format( minutes / 60 ), 10);
-				InlineLabel lineTotalMinutesLabel = new InlineLabel(lineTotalMinutes);
-				lineTotalMinutesLabel.addStyleName(MKPK.CSS.mkpkIconPaddingLeft());
-				lineTotalMinutesLabel.addStyleName(MKPK.CSS.mkpkBold());
-				FlowPanel f5 = new FlowPanel(); f5.add(lineTotalMinutesLabel); container.add(f5);
-			}
-		} else {
-			Label lineLabel = new Label( MKPK.MSG.noData() );
-			lineLabel.setStyleName(MKPK.CSS.mkpkTextCenter());
-			container.add(lineLabel);
-		}
-		content.setWidget(container);
-	}
-	
 }

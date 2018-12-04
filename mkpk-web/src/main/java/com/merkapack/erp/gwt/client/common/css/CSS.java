@@ -15,7 +15,9 @@ public interface CSS extends CssResource {
 	@ClassName("mkpk-input-error")			String mkpkInputError();
 	@ClassName("mkpk-value-changed") 		String mkpkValueChanged();
 	@ClassName("mkpk-error-label") 			String mkpkErrorLabel();
-
+	@ClassName("mkpk-clickable-label") 		String mkpkClickableLabel();
+	@ClassName("mkpk-odd-background-color") String mkpkOddBackgroundColor();
+	@ClassName("mkpk-even-background-color")String mkpkEvenBackgroundColor();
 	
 	@ClassName("mkpk-display-none") 	String mkpkDisplayNone();
 	@ClassName("mkpk-display-block") 	String mkpkDisplayBlock();

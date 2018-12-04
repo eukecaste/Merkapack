@@ -72,6 +72,19 @@ input[type="text"] {
 	margin-right: 1em;
 }
 
+.mkpk-clickable-label {
+	cursor: pointer;
+}
+.mkpk-clickable-label:hover {
+	background-color: #EEE;
+}
+.mkpk-odd-background-color {
+	background-color: #FBEDB6;
+}
+.mkpk-even-background-color {
+	background-color: #dadad7;
+}
+
 .mkpk-display-none	{ display: none;}
 .mkpk-display-block	{ display: block;}
 .mkpk-display-inline{ display: inline;}

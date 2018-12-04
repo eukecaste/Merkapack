@@ -88,7 +88,7 @@ CREATE TABLE `user` (
 CREATE TABLE `client` (
 	 `id` int(4) NOT NULL AUTO_INCREMENT COMMENT 'Identificador unico'
 	,`domain` int(4) NOT NULL COMMENT 'Identificador del Dominio'
-	,`name` varchar(32) COLLATE latin1_spanish_ci NOT NULL COMMENT 'Nombre del cliente'
+	,`name` varchar(64) COLLATE latin1_spanish_ci NOT NULL COMMENT 'Nombre del cliente'
 	,`creation_user` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de creacion'
 	,`creation_date` datetime DEFAULT NULL COMMENT 'Fecha de creacion'
 	,`modification_user` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de modificacion'

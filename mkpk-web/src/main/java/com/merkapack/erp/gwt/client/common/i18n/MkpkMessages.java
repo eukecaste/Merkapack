@@ -119,6 +119,9 @@ public interface MkpkMessages extends Messages {
 	@DefaultMessage("Golpes/Min.")
 	String blowsMinutes();
 	
+	@DefaultMessage("G/M")
+	String blowsMinutesAbbrv();
+
 	@DefaultMessage("Tiempo")
 	String time();
 	
@@ -133,4 +136,7 @@ public interface MkpkMessages extends Messages {
 	
 	@DefaultMessage("Subir fichero")
 	String uploadFile();
+
+	@DefaultMessage("No se han encontrado datos")
+	String noData();
 }

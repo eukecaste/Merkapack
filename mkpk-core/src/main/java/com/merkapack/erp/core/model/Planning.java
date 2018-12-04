@@ -162,6 +162,13 @@ public class Planning implements Serializable, HasAudit, Cloneable {
 		this.minutes = minutes;
 		return this;
 	}
+	public double getHours() {
+		return minutes / 60;
+	}
+	public Planning setHours(double hours) {
+		this.minutes = hours * 60;
+		return this;
+	}
 	public Client getClient() {
 		return client;
 	}
