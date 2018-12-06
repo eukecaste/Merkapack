@@ -12,6 +12,7 @@ import com.merkapack.watson.util.MkpkPair;
 public class PlanningRowCalculator {
 
 	//private static Logger LOGGER = Logger.getLogger(PlanningRowCalculator.class.getName());
+	
 	private static final double MINUTES_BREAK = ((16 * 60) - (0.5 * 60));
 
 	public static enum Strategy implements Serializable {
@@ -187,7 +188,7 @@ public class PlanningRowCalculator {
 					minutes = minutes + pl.getMinutes();
 				}
 				if (minutes >= MINUTES_BREAK) {
-					double typedMinutes = pl.getMinutes();
+					double typedMinutes = pl.getMinutes() - 0;
 					Planning left = pl.clone();
 					Planning right = pl.clone();
 

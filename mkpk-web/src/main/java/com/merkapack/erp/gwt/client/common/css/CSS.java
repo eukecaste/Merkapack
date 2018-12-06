@@ -104,6 +104,23 @@ public interface CSS extends CssResource {
 	@ClassName("mkpk-confirm-dialog-ok-button")		String mkpkConfirmDialogOkButton();
 	@ClassName("mkpk-confirm-dialog-cancel-button")	String mkpkConfirmDialogCancelButton();
 	
+	@ClassName("mkpk-flex-panel")					String mkpkFlexContainer();
+	@ClassName("mkpk-flex-panel-child")				String mkpkFlexContainerChild();
+	@ClassName("mkpk-flex-panel-child-selector")	String mkpkFlexContainerChildSelector();
+	@ClassName("mkpk-flex-panel-child-date")		String mkpkFlexContainerChildDate();
+	@ClassName("mkpk-flex-panel-child-order")		String mkpkFlexContainerChildOrder();
+	@ClassName("mkpk-flex-panel-child-product")		String mkpkFlexContainerChildProduct();
+	@ClassName("mkpk-flex-panel-child-material")	String mkpkFlexContainerChildMaterial();
+	@ClassName("mkpk-flex-panel-child-roll")		String mkpkFlexContainerChildRoll();
+	@ClassName("mkpk-flex-panel-child-amount")		String mkpkFlexContainerChildAmount();
+	@ClassName("mkpk-flex-panel-child-blowUnits")	String mkpkFlexContainerChildBlowUnits();
+	@ClassName("mkpk-flex-panel-child-meters")		String mkpkFlexContainerChildMeters();
+	@ClassName("mkpk-flex-panel-child-blows")		String mkpkFlexContainerChildBlows();
+	@ClassName("mkpk-flex-panel-child-blowsMinute")	String mkpkFlexContainerChildBlowsMinute();
+	@ClassName("mkpk-flex-panel-child-hours")		String mkpkFlexContainerChildHours();
+	@ClassName("mkpk-flex-panel-child-client")		String mkpkFlexContainerChildClient();
+	@ClassName("mkpk-flex-panel-child-comments")	String mkpkFlexContainerChildComments();
+	@ClassName("mkpk-flex-panel-child-delete")		String mkpkFlexContainerChildDelete();
 	
 }
 

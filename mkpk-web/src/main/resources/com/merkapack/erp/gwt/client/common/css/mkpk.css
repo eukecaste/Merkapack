@@ -335,3 +335,57 @@ input[type="text"] {
     text-align: right;
     top: 0;
 }
+
+.mkpk-flex-panel {
+	display: flex;
+	flex-wrap: wrap;
+}
+.mkpk-flex-panel-child {
+	flex-grow: 1;
+}
+.mkpk-flex-panel-child-selector{
+	width: 20px;
+}
+.mkpk-flex-panel-child-date{
+	width: 80px;
+}
+.mkpk-flex-panel-child-order{
+	width: 30px;
+}
+.mkpk-flex-panel-child-product{
+	width: 100px;
+}
+.mkpk-flex-panel-child-material{
+	width: 100px;
+}
+.mkpk-flex-panel-child-roll{
+	width: 100px;
+}
+.mkpk-flex-panel-child-amount{
+	width: 80px;
+}
+.mkpk-flex-panel-child-blowUnits{
+	width: 80px;
+}
+.mkpk-flex-panel-child-meters{
+	width: 80px;
+}
+.mkpk-flex-panel-child-blows{
+	width: 80px;
+}
+.mkpk-flex-panel-child-blowsMinute{
+	width: 80px;
+}
+.mkpk-flex-panel-child-hours{
+	width: 80px;
+}
+.mkpk-flex-panel-child-client{
+	width: 100px;
+}
+.mkpk-flex-panel-child-comments{
+	width: auto;
+	flex-grow: 2;
+}
+.mkpk-flex-panel-child-delete{
+	width: 20px;
+}

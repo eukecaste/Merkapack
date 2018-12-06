@@ -22,6 +22,7 @@ import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.http.client.URL;
+import com.google.gwt.resources.client.CssResource.ClassName;
 import com.google.gwt.user.client.ui.FileUpload;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -32,6 +33,7 @@ import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteHandler;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.merkapack.erp.core.model.Client;
 import com.merkapack.erp.core.model.Machine;
@@ -66,6 +68,7 @@ public class PlanningView extends MkpkDockLayout {
 	private static final String FORM_ID = "formID";
 	private static final String FILEUPLOAD_ID = "fileUploadID";
 
+	private SimpleLayoutPanel contentContainer;
 	private ScrollPanel content;
 	
 	private MkpkMachineBox machine;
@@ -92,8 +95,11 @@ public class PlanningView extends MkpkDockLayout {
 	public PlanningView() {
 		addNorth(getDateMachinePanel(), 35);
 		addNorth(getPlanningRowPanel(), 70);
+		contentContainer = new SimpleLayoutPanel();
 		content = new ScrollPanel();
-		add(content);
+		contentContainer.setWidget(content);
+		add(contentContainer);
+		
 		Scheduler.get().scheduleDeferred(new ScheduledCommand() {
 			public void execute() {
 				machine.setFocus(true);
@@ -607,6 +613,31 @@ public class PlanningView extends MkpkDockLayout {
 			blowsMinute.setValue(getPlanning().getBlowsMinute(), false, false);
 			minutes.setValue(getPlanning().getMinutes() / 60, false, false);
 			client.setValue(getPlanning().getClient(), false, false);
+			validate();
+		}
+		public void validate() {
+			if ( MkpkMathUtils.isNotZero(getPlanning().getRollWidth())) {
+				if ( MkpkMathUtils.isNotZero(getPlanning().getWidth())) {
+					if (MkpkMathUtils.isNotZero(MkpkMathUtils.round(getPlanning().getRollWidth() % getPlanning().getWidth()))) {
+						blowUnits.addStyleName(MKPK.CSS.mkpkColorRed());
+						roll.addStyleName(MKPK.CSS.mkpkColorRed());
+					} else {
+						blowUnits.removeStyleName(MKPK.CSS.mkpkColorRed());
+						roll.removeStyleName(MKPK.CSS.mkpkColorRed());
+					}
+				}
+			}
+			if ( MkpkMathUtils.isNotZero(getPlanning().getRollLength())) {
+				if ( MkpkMathUtils.isNotZero(getPlanning().getMeters())) {
+					if ( getPlanning().getMeters() > getPlanning().getRollLength()) {
+						meters.addStyleName(MKPK.CSS.mkpkColorRed());
+					} else {
+						meters.removeStyleName(MKPK.CSS.mkpkColorRed());
+					}
+					
+				}
+				
+			}
 		}
 
 		private void fire() {
@@ -640,189 +671,281 @@ public class PlanningView extends MkpkDockLayout {
 		}
 	}
 	
-	private void refreshList() {
-		content.clear();
-		FlowPanel container = new FlowPanel("pre");
-		container.setStyleName(MKPK.CSS.mkpkPadding());
-		container.getElement().getStyle().setFontSize(0.95, Unit.EM);
-		if (list != null && list.size() > 0) {
-			String line0 = 
-				  '\u250c' + MkpkStringUtils.repeat('\u2500', 12)
-				+ '\u252c' + MkpkStringUtils.repeat('\u2500', 3)
-				+ '\u252c' + MkpkStringUtils.repeat('\u2500', 14)
-				+ '\u252c' + MkpkStringUtils.repeat('\u2500', 13)
-				+ '\u252c' + MkpkStringUtils.repeat('\u2500', 14)
-				+ '\u252c' + MkpkStringUtils.repeat('\u2500', 10)
-				+ '\u252c' + MkpkStringUtils.repeat('\u2500', 11)
-				+ '\u252c' + MkpkStringUtils.repeat('\u2500', 10)
-				+ '\u252c' + MkpkStringUtils.repeat('\u2500', 10)
-				+ '\u252c' + MkpkStringUtils.repeat('\u2500', 5)
-				+ '\u252c' + MkpkStringUtils.repeat('\u2500', 10)
-				+ '\u252c' + MkpkStringUtils.repeat('\u2500', 20)
-				+ '\u252c' + MkpkStringUtils.repeat('\u2500', 21)
-				+ '\u2510';
-			String line1 = 
-				  '\u2502' + MkpkStringUtils.center(MKPK.MSG.date(), 12)
-				+ '\u2502' + MkpkStringUtils.center( "#" , 3)
-				+ '\u2502' + MkpkStringUtils.rightPad( MKPK.MSG.measure() ,14)
-				+ '\u2502' + MkpkStringUtils.rightPad( MKPK.MSG.material() ,13)
-				+ '\u2502' + MkpkStringUtils.rightPad( MKPK.MSG.roll() ,14)
-				+ '\u2502' + MkpkStringUtils.leftPad ( MKPK.MSG.unit(), 10)
-				+ '\u2502' + MkpkStringUtils.leftPad ( MKPK.MSG.blowUnits(), 11)
-				+ '\u2502' + MkpkStringUtils.leftPad ( MKPK.MSG.meters(), 10)
-				+ '\u2502' + MkpkStringUtils.leftPad ( MKPK.MSG.blows(), 10)
-				+ '\u2502' + MkpkStringUtils.leftPad ( MKPK.MSG.blowsMinutesAbbrv(), 5)
-				+ '\u2502' + MkpkStringUtils.leftPad ( MKPK.MSG.time(), 10)
-				+ '\u2502' + MkpkStringUtils.rightPad( MKPK.MSG.client(),20)
-				+ '\u2502' + MkpkStringUtils.rightPad( MKPK.MSG.comments(),21)
-				+ '\u2502';
-				;
-			String line2 = 
-					  '\u251c' + MkpkStringUtils.repeat('\u2500', 12)
-					+ '\u253c' + MkpkStringUtils.repeat('\u2500', 3)
-					+ '\u253c' + MkpkStringUtils.repeat('\u2500', 14)
-					+ '\u253c' + MkpkStringUtils.repeat('\u2500', 13)
-					+ '\u253c' + MkpkStringUtils.repeat('\u2500', 14)
-					+ '\u253c' + MkpkStringUtils.repeat('\u2500', 10)
-					+ '\u253c' + MkpkStringUtils.repeat('\u2500', 11)
-					+ '\u253c' + MkpkStringUtils.repeat('\u2500', 10)
-					+ '\u253c' + MkpkStringUtils.repeat('\u2500', 10)
-					+ '\u253c' + MkpkStringUtils.repeat('\u2500', 5)
-					+ '\u253c' + MkpkStringUtils.repeat('\u2500', 10)
-					+ '\u253c' + MkpkStringUtils.repeat('\u2500', 20)
-					+ '\u253c' + MkpkStringUtils.repeat('\u2500', 21)
-					+ '\u2524';
-			InlineLabel line0Label = new InlineLabel(line0);
-			line0Label.addStyleName(MKPK.CSS.mkpkIconPaddingLeft());
-			InlineLabel line1Label = new InlineLabel(line1);
-			line1Label.addStyleName(MKPK.CSS.mkpkIconPaddingLeft());
-			InlineLabel line2Label = new InlineLabel(line2);
-			line2Label.addStyleName(MKPK.CSS.mkpkIconPaddingLeft());
-			FlowPanel f0 = new FlowPanel(); f0.add(line0Label); container.add(f0);
-			FlowPanel f1 = new FlowPanel(); f1.add(line1Label); container.add(f1);
-			FlowPanel f2 = new FlowPanel(); f2.add(line2Label); container.add(f2);
+	
+	
+//	private void refreshList() {
+//		content.clear();
+//		FlowPanel container = new FlowPanel("pre");
+//		container.setStyleName(MKPK.CSS.mkpkFlexContainer());
+//		container.getElement().getStyle().setFontSize(0.95, Unit.EM);
+//		if (list != null && list.size() > 0) {
+//			String line0 = 
+//				  '\u250c' + MkpkStringUtils.repeat('\u2500', 12)
+//				+ '\u252c' + MkpkStringUtils.repeat('\u2500', 3)
+//				+ '\u252c' + MkpkStringUtils.repeat('\u2500', 14)
+//				+ '\u252c' + MkpkStringUtils.repeat('\u2500', 13)
+//				+ '\u252c' + MkpkStringUtils.repeat('\u2500', 14)
+//				+ '\u252c' + MkpkStringUtils.repeat('\u2500', 10)
+//				+ '\u252c' + MkpkStringUtils.repeat('\u2500', 11)
+//				+ '\u252c' + MkpkStringUtils.repeat('\u2500', 10)
+//				+ '\u252c' + MkpkStringUtils.repeat('\u2500', 10)
+//				+ '\u252c' + MkpkStringUtils.repeat('\u2500', 5)
+//				+ '\u252c' + MkpkStringUtils.repeat('\u2500', 10)
+//				+ '\u252c' + MkpkStringUtils.repeat('\u2500', 20)
+//				+ '\u252c' + MkpkStringUtils.repeat('\u2500', 21)
+//				+ '\u2510';
+//			String line1 = 
+//				  '\u2502' + MkpkStringUtils.center(MKPK.MSG.date(), 12)
+//				+ '\u2502' + MkpkStringUtils.center( "#" , 3)
+//				+ '\u2502' + MkpkStringUtils.rightPad( MKPK.MSG.measure() ,14)
+//				+ '\u2502' + MkpkStringUtils.rightPad( MKPK.MSG.material() ,13)
+//				+ '\u2502' + MkpkStringUtils.rightPad( MKPK.MSG.roll() ,14)
+//				+ '\u2502' + MkpkStringUtils.leftPad ( MKPK.MSG.unit(), 10)
+//				+ '\u2502' + MkpkStringUtils.leftPad ( MKPK.MSG.blowUnits(), 11)
+//				+ '\u2502' + MkpkStringUtils.leftPad ( MKPK.MSG.meters(), 10)
+//				+ '\u2502' + MkpkStringUtils.leftPad ( MKPK.MSG.blows(), 10)
+//				+ '\u2502' + MkpkStringUtils.leftPad ( MKPK.MSG.blowsMinutesAbbrv(), 5)
+//				+ '\u2502' + MkpkStringUtils.leftPad ( MKPK.MSG.time(), 10)
+//				+ '\u2502' + MkpkStringUtils.rightPad( MKPK.MSG.client(),20)
+//				+ '\u2502' + MkpkStringUtils.rightPad( MKPK.MSG.comments(),21)
+//				+ '\u2502';
+//				;
+//			String line2 = 
+//					  '\u251c' + MkpkStringUtils.repeat('\u2500', 12)
+//					+ '\u253c' + MkpkStringUtils.repeat('\u2500', 3)
+//					+ '\u253c' + MkpkStringUtils.repeat('\u2500', 14)
+//					+ '\u253c' + MkpkStringUtils.repeat('\u2500', 13)
+//					+ '\u253c' + MkpkStringUtils.repeat('\u2500', 14)
+//					+ '\u253c' + MkpkStringUtils.repeat('\u2500', 10)
+//					+ '\u253c' + MkpkStringUtils.repeat('\u2500', 11)
+//					+ '\u253c' + MkpkStringUtils.repeat('\u2500', 10)
+//					+ '\u253c' + MkpkStringUtils.repeat('\u2500', 10)
+//					+ '\u253c' + MkpkStringUtils.repeat('\u2500', 5)
+//					+ '\u253c' + MkpkStringUtils.repeat('\u2500', 10)
+//					+ '\u253c' + MkpkStringUtils.repeat('\u2500', 20)
+//					+ '\u253c' + MkpkStringUtils.repeat('\u2500', 21)
+//					+ '\u2524';
+//			InlineLabel line0Label = new InlineLabel(line0);
+//			line0Label.addStyleName(MKPK.CSS.mkpkIconPaddingLeft());
+//			InlineLabel line1Label = new InlineLabel(line1);
+//			line1Label.addStyleName(MKPK.CSS.mkpkIconPaddingLeft());
+//			InlineLabel line2Label = new InlineLabel(line2);
+//			line2Label.addStyleName(MKPK.CSS.mkpkIconPaddingLeft());
+//			FlowPanel f0 = new FlowPanel(); f0.add(line0Label); container.add(f0);
+//			FlowPanel f1 = new FlowPanel(); f1.add(line1Label); container.add(f1);
+//			FlowPanel f2 = new FlowPanel(); f2.add(line2Label); container.add(f2);
 
 //			String evenColor = MKPK.CSS.mkpkEvenBackgroundColor();
 //			String oddColor = MKPK.CSS.mkpkOddBackgroundColor();
 //			String color = oddColor;
-			Date date = null;
-			double minutes = 0;
+//			Date date = null;
+//			double minutes = 0;
+//			for (Planning pl : list) {
+//				if (GWTDateUtils.compare(pl.getDate(), date) != 0) {
+//					if ( date != null) {
+//						String line40 = 
+//								  '\u2514' + MkpkStringUtils.repeat('\u2500', 12)
+//								+ '\u2534' + MkpkStringUtils.repeat('\u2500', 3)
+//								+ '\u2534' + MkpkStringUtils.repeat('\u2500', 14)
+//								+ '\u2534' + MkpkStringUtils.repeat('\u2500', 13)
+//								+ '\u2534' + MkpkStringUtils.repeat('\u2500', 14)
+//								+ '\u2534' + MkpkStringUtils.repeat('\u2500', 10)
+//								+ '\u2534' + MkpkStringUtils.repeat('\u2500', 11)
+//								+ '\u2534' + MkpkStringUtils.repeat('\u2500', 10)
+//								+ '\u2534' + MkpkStringUtils.repeat('\u2500', 10)
+//								+ '\u2534' + MkpkStringUtils.repeat('\u2500', 5)
+//								+ '\u2534' + MkpkStringUtils.repeat('\u2500', 10)
+//								+ '\u2534' + MkpkStringUtils.repeat('\u2500', 20)
+//								+ '\u2534' + MkpkStringUtils.repeat('\u2500', 21)
+//								+ '\u2518';
+//						InlineLabel line40Label = new InlineLabel(line40);
+//						line40Label.addStyleName(MKPK.CSS.mkpkIconPaddingLeft());
+//						FlowPanel f60 = new FlowPanel(); f60.add(line40Label); container.add(f60);
+//						
+//						
+//						String lineTotalMinutes = MkpkStringUtils.leftPad("Total horas dia (" + MKPK.DATE_FORMAT.format( date ) + ")", 113)
+//							+ MkpkStringUtils.leftPad(MKPK.FMT.format( minutes / 60 ), 10);
+//						InlineLabel lineTotalMinutesLabel = new InlineLabel(lineTotalMinutes);
+//						lineTotalMinutesLabel.addStyleName(MKPK.CSS.mkpkIconPaddingLeft());
+//						lineTotalMinutesLabel.addStyleName(MKPK.CSS.mkpkBold());
+////						lineTotalMinutesLabel.addStyleName( color );
+//						FlowPanel f3 = new FlowPanel(); f3.add(lineTotalMinutesLabel); container.add(f3);
+//
+////						color = color.equals(oddColor)?evenColor:oddColor;
+//						
+//						String line022 = 
+//								  '\u250c' + MkpkStringUtils.repeat('\u2500', 12)
+//								+ '\u252c' + MkpkStringUtils.repeat('\u2500', 3)
+//								+ '\u252c' + MkpkStringUtils.repeat('\u2500', 14)
+//								+ '\u252c' + MkpkStringUtils.repeat('\u2500', 13)
+//								+ '\u252c' + MkpkStringUtils.repeat('\u2500', 14)
+//								+ '\u252c' + MkpkStringUtils.repeat('\u2500', 10)
+//								+ '\u252c' + MkpkStringUtils.repeat('\u2500', 11)
+//								+ '\u252c' + MkpkStringUtils.repeat('\u2500', 10)
+//								+ '\u252c' + MkpkStringUtils.repeat('\u2500', 10)
+//								+ '\u252c' + MkpkStringUtils.repeat('\u2500', 5)
+//								+ '\u252c' + MkpkStringUtils.repeat('\u2500', 10)
+//								+ '\u252c' + MkpkStringUtils.repeat('\u2500', 20)
+//								+ '\u252c' + MkpkStringUtils.repeat('\u2500', 21)
+//								+ '\u2510';
+//						InlineLabel line222Label = new InlineLabel(line022);
+//						line222Label.addStyleName(MKPK.CSS.mkpkIconPaddingLeft());
+//						FlowPanel f022 = new FlowPanel(); f022.add(line222Label); container.add(f022);
+//						
+//					}
+//					date = pl.getDate();
+//					minutes = 0;
+//				}
+//				minutes = minutes + pl.getMinutes();
+//				
+//				String line = 
+//					  '\u2502' + MkpkStringUtils.center(MKPK.DATE_FORMAT.format( pl.getDate()), 12)
+//					+ '\u2502' + MkpkStringUtils.center( MkpkNumberUtils.toString( pl.getOrder()), 3)
+//					+ '\u2502' + MkpkStringUtils.rightPad( MkpkStringUtils.abbreviate(pl.getProduct()!=null?pl.getProduct().getName():"", 13),14)
+//					+ '\u2502' + MkpkStringUtils.rightPad( MkpkStringUtils.abbreviate(pl.getMaterial()!=null?pl.getMaterial().getName():"", 12),13)
+//					+ '\u2502' + MkpkStringUtils.rightPad( MkpkStringUtils.abbreviate(pl.getRoll()!=null?pl.getRoll().getName():"", 13),14)
+//					+ '\u2502' + MkpkStringUtils.leftPad(MKPK.FMT_INT.format( pl.getAmount()), 10)
+//					+ '\u2502' + MkpkStringUtils.leftPad(MKPK.FMT_INT.format( pl.getBlowUnits()), 11)
+//					+ '\u2502' + MkpkStringUtils.leftPad(MKPK.FMT.format( pl.getMeters()), 10)
+//					+ '\u2502' + MkpkStringUtils.leftPad(MKPK.FMT.format( pl.getBlows()), 10)
+//					+ '\u2502' + MkpkStringUtils.leftPad(MKPK.FMT_INT.format( pl.getBlowsMinute()), 5)
+//					+ '\u2502' + MkpkStringUtils.leftPad(MKPK.FMT.format( pl.getHours()), 10)
+//					+ '\u2502' + MkpkStringUtils.rightPad( MkpkStringUtils.abbreviate(pl.getClient()!=null?pl.getClient().getName():"", 19),20)
+//					+ '\u2502' + MkpkStringUtils.rightPad( MkpkStringUtils.abbreviate(pl.getComments()!=null?pl.getComments():".....", 20),21)
+//					+ '\u2502';
+//				InlineLabel lineLabel = new InlineLabel(line);
+//				lineLabel.setStyleName(MKPK.CSS.mkpkIconPaddingLeft());
+////				lineLabel.addStyleName( color );
+//				lineLabel.addStyleName(MKPK.CSS.mkpkClickableLabel());
+//				lineLabel.addClickHandler( new ClickHandler() {
+//					
+//					@Override
+//					public void onClick(ClickEvent event) {
+//						planningRow.setPlanning(pl);
+//						planningRow.refresh();
+//					}
+//				});
+//				FlowPanel f4 = new FlowPanel(); f4.add(lineLabel); container.add(f4);
+//			}
+//			String line400 = 
+//					  '\u2514' + MkpkStringUtils.repeat('\u2500', 12)
+//					+ '\u2534' + MkpkStringUtils.repeat('\u2500', 3)
+//					+ '\u2534' + MkpkStringUtils.repeat('\u2500', 14)
+//					+ '\u2534' + MkpkStringUtils.repeat('\u2500', 13)
+//					+ '\u2534' + MkpkStringUtils.repeat('\u2500', 14)
+//					+ '\u2534' + MkpkStringUtils.repeat('\u2500', 10)
+//					+ '\u2534' + MkpkStringUtils.repeat('\u2500', 11)
+//					+ '\u2534' + MkpkStringUtils.repeat('\u2500', 10)
+//					+ '\u2534' + MkpkStringUtils.repeat('\u2500', 10)
+//					+ '\u2534' + MkpkStringUtils.repeat('\u2500', 5)
+//					+ '\u2534' + MkpkStringUtils.repeat('\u2500', 10)
+//					+ '\u2534' + MkpkStringUtils.repeat('\u2500', 20)
+//					+ '\u2534' + MkpkStringUtils.repeat('\u2500', 21)
+//					+ '\u2518';
+//			InlineLabel line400Label = new InlineLabel(line400);
+//			line400Label.addStyleName(MKPK.CSS.mkpkIconPaddingLeft());
+//			FlowPanel f600 = new FlowPanel(); f600.add(line400Label); container.add(f600);
+//				
+//			if ( minutes != 0) {
+//				String lineTotalMinutes = MkpkStringUtils.leftPad("Total horas dia (" + MKPK.DATE_FORMAT.format( date ) + ")", 113)
+//						+ MkpkStringUtils.leftPad(MKPK.FMT.format( minutes / 60 ), 10);
+//				InlineLabel lineTotalMinutesLabel = new InlineLabel(lineTotalMinutes);
+//				lineTotalMinutesLabel.addStyleName(MKPK.CSS.mkpkIconPaddingLeft());
+//				lineTotalMinutesLabel.addStyleName(MKPK.CSS.mkpkBold());
+//				FlowPanel f5 = new FlowPanel(); f5.add(lineTotalMinutesLabel); container.add(f5);
+//			}
+//		} else {
+//			Label lineLabel = new Label( MKPK.MSG.noData() );
+//			lineLabel.setStyleName(MKPK.CSS.mkpkTextCenter());
+//			container.add(lineLabel);
+//		}
+	private void refreshList() {
+		content.clear();
+		FlowPanel container = new FlowPanel("pre");
+		container.setStyleName(MKPK.CSS.mkpkFlexContainer());
+		container.getElement().getStyle().setFontSize(0.95, Unit.EM);
+		if (list != null && list.size() > 0) {
 			for (Planning pl : list) {
-				if (GWTDateUtils.compare(pl.getDate(), date) != 0) {
-					if ( date != null) {
-						String line40 = 
-								  '\u2514' + MkpkStringUtils.repeat('\u2500', 12)
-								+ '\u2534' + MkpkStringUtils.repeat('\u2500', 3)
-								+ '\u2534' + MkpkStringUtils.repeat('\u2500', 14)
-								+ '\u2534' + MkpkStringUtils.repeat('\u2500', 13)
-								+ '\u2534' + MkpkStringUtils.repeat('\u2500', 14)
-								+ '\u2534' + MkpkStringUtils.repeat('\u2500', 10)
-								+ '\u2534' + MkpkStringUtils.repeat('\u2500', 11)
-								+ '\u2534' + MkpkStringUtils.repeat('\u2500', 10)
-								+ '\u2534' + MkpkStringUtils.repeat('\u2500', 10)
-								+ '\u2534' + MkpkStringUtils.repeat('\u2500', 5)
-								+ '\u2534' + MkpkStringUtils.repeat('\u2500', 10)
-								+ '\u2534' + MkpkStringUtils.repeat('\u2500', 20)
-								+ '\u2534' + MkpkStringUtils.repeat('\u2500', 21)
-								+ '\u2518';
-						InlineLabel line40Label = new InlineLabel(line40);
-						line40Label.addStyleName(MKPK.CSS.mkpkIconPaddingLeft());
-						FlowPanel f60 = new FlowPanel(); f60.add(line40Label); container.add(f60);
-						
-						
-						String lineTotalMinutes = MkpkStringUtils.leftPad("Total horas dia (" + MKPK.DATE_FORMAT.format( date ) + ")", 119)
-							+ MkpkStringUtils.leftPad(MKPK.FMT.format( minutes / 60 ), 10);
-						InlineLabel lineTotalMinutesLabel = new InlineLabel(lineTotalMinutes);
-						lineTotalMinutesLabel.addStyleName(MKPK.CSS.mkpkIconPaddingLeft());
-						lineTotalMinutesLabel.addStyleName(MKPK.CSS.mkpkBold());
-//						lineTotalMinutesLabel.addStyleName( color );
-						FlowPanel f3 = new FlowPanel(); f3.add(lineTotalMinutesLabel); container.add(f3);
+				InlineLabel selector = new InlineLabel();
+				selector.setStyleName(MKPK.CSS.mkpkFlexContainerChild());
+				selector.addStyleName(MKPK.CSS.mkpkIconBullet());
+				selector.addStyleName(MKPK.CSS.mkpkFlexContainerChildSelector());
+				container.add(selector);
+				
+				InlineLabel date = new InlineLabel(MKPK.DATE_FORMAT.format(pl.getDate()));
+				date.setStyleName(MKPK.CSS.mkpkFlexContainerChild());
+				date.addStyleName(MKPK.CSS.mkpkFlexContainerChildDate());
+				container.add(date);
 
-//						color = color.equals(oddColor)?evenColor:oddColor;
-						
-						String line022 = 
-								  '\u250c' + MkpkStringUtils.repeat('\u2500', 12)
-								+ '\u252c' + MkpkStringUtils.repeat('\u2500', 3)
-								+ '\u252c' + MkpkStringUtils.repeat('\u2500', 14)
-								+ '\u252c' + MkpkStringUtils.repeat('\u2500', 13)
-								+ '\u252c' + MkpkStringUtils.repeat('\u2500', 14)
-								+ '\u252c' + MkpkStringUtils.repeat('\u2500', 10)
-								+ '\u252c' + MkpkStringUtils.repeat('\u2500', 11)
-								+ '\u252c' + MkpkStringUtils.repeat('\u2500', 10)
-								+ '\u252c' + MkpkStringUtils.repeat('\u2500', 10)
-								+ '\u252c' + MkpkStringUtils.repeat('\u2500', 5)
-								+ '\u252c' + MkpkStringUtils.repeat('\u2500', 10)
-								+ '\u252c' + MkpkStringUtils.repeat('\u2500', 20)
-								+ '\u252c' + MkpkStringUtils.repeat('\u2500', 21)
-								+ '\u2510';
-						InlineLabel line222Label = new InlineLabel(line022);
-						line222Label.addStyleName(MKPK.CSS.mkpkIconPaddingLeft());
-						FlowPanel f022 = new FlowPanel(); f022.add(line222Label); container.add(f022);
-						
-					}
-					date = pl.getDate();
-					minutes = 0;
-				}
-				minutes = minutes + pl.getMinutes();
+				InlineLabel order = new InlineLabel(MkpkNumberUtils.toString(pl.getOrder()));
+				order.setStyleName(MKPK.CSS.mkpkFlexContainerChild());
+				order.addStyleName(MKPK.CSS.mkpkFlexContainerChildOrder());
+				container.add(order);
+
+				InlineLabel product = new InlineLabel(MkpkStringUtils.abbreviate(pl.getProduct() != null ? pl.getProduct().getName() : "" , 13));
+				product.setStyleName(MKPK.CSS.mkpkFlexContainerChild());
+				product.addStyleName(MKPK.CSS.mkpkFlexContainerChildProduct());
+				container.add(product);
 				
-				String line = 
-					  '\u2502' + MkpkStringUtils.center(MKPK.DATE_FORMAT.format( pl.getDate()), 12)
-					+ '\u2502' + MkpkStringUtils.center( MkpkNumberUtils.toString( pl.getOrder()), 3)
-					+ '\u2502' + MkpkStringUtils.rightPad( MkpkStringUtils.abbreviate(pl.getProduct()!=null?pl.getProduct().getName():"", 13),14)
-					+ '\u2502' + MkpkStringUtils.rightPad( MkpkStringUtils.abbreviate(pl.getMaterial()!=null?pl.getMaterial().getName():"", 12),13)
-					+ '\u2502' + MkpkStringUtils.rightPad( MkpkStringUtils.abbreviate(pl.getRoll()!=null?pl.getRoll().getName():"", 13),14)
-					+ '\u2502' + MkpkStringUtils.leftPad(MKPK.FMT_INT.format( pl.getAmount()), 10)
-					+ '\u2502' + MkpkStringUtils.leftPad(MKPK.FMT_INT.format( pl.getBlowUnits()), 11)
-					+ '\u2502' + MkpkStringUtils.leftPad(MKPK.FMT.format( pl.getMeters()), 10)
-					+ '\u2502' + MkpkStringUtils.leftPad(MKPK.FMT.format( pl.getBlows()), 10)
-					+ '\u2502' + MkpkStringUtils.leftPad(MKPK.FMT_INT.format( pl.getBlowsMinute()), 5)
-					+ '\u2502' + MkpkStringUtils.leftPad(MKPK.FMT.format( pl.getHours()), 10)
-					+ '\u2502' + MkpkStringUtils.rightPad( MkpkStringUtils.abbreviate(pl.getClient()!=null?pl.getClient().getName():"", 19),20)
-					+ '\u2502' + MkpkStringUtils.rightPad( MkpkStringUtils.abbreviate(pl.getComments()!=null?pl.getComments():"COMENTARIOS", 20),21)
-					+ '\u2502';
-				InlineLabel lineLabel = new InlineLabel(line);
-				lineLabel.setStyleName(MKPK.CSS.mkpkIconPaddingLeft());
-//				lineLabel.addStyleName( color );
-				lineLabel.addStyleName(MKPK.CSS.mkpkClickableLabel());
-				lineLabel.addClickHandler( new ClickHandler() {
-					
-					@Override
-					public void onClick(ClickEvent event) {
-						planningRow.setPlanning(pl);
-						planningRow.refresh();
-					}
-				});
-				FlowPanel f4 = new FlowPanel(); f4.add(lineLabel); container.add(f4);
-			}
-			String line400 = 
-					  '\u2514' + MkpkStringUtils.repeat('\u2500', 12)
-					+ '\u2534' + MkpkStringUtils.repeat('\u2500', 3)
-					+ '\u2534' + MkpkStringUtils.repeat('\u2500', 14)
-					+ '\u2534' + MkpkStringUtils.repeat('\u2500', 13)
-					+ '\u2534' + MkpkStringUtils.repeat('\u2500', 14)
-					+ '\u2534' + MkpkStringUtils.repeat('\u2500', 10)
-					+ '\u2534' + MkpkStringUtils.repeat('\u2500', 11)
-					+ '\u2534' + MkpkStringUtils.repeat('\u2500', 10)
-					+ '\u2534' + MkpkStringUtils.repeat('\u2500', 10)
-					+ '\u2534' + MkpkStringUtils.repeat('\u2500', 5)
-					+ '\u2534' + MkpkStringUtils.repeat('\u2500', 10)
-					+ '\u2534' + MkpkStringUtils.repeat('\u2500', 20)
-					+ '\u2534' + MkpkStringUtils.repeat('\u2500', 21)
-					+ '\u2518';
-			InlineLabel line400Label = new InlineLabel(line400);
-			line400Label.addStyleName(MKPK.CSS.mkpkIconPaddingLeft());
-			FlowPanel f600 = new FlowPanel(); f600.add(line400Label); container.add(f600);
+				InlineLabel material = new InlineLabel(MkpkStringUtils.abbreviate(pl.getMaterial() != null ? pl.getMaterial().getName() : "",13));
+				material.setStyleName(MKPK.CSS.mkpkFlexContainerChild());
+				material.addStyleName(MKPK.CSS.mkpkFlexContainerChildMaterial());
+				container.add(material);
+
+				InlineLabel roll = new InlineLabel(MkpkStringUtils.abbreviate(pl.getRoll() != null ? pl.getRoll().getName() : "", 13));
+				roll.setStyleName(MKPK.CSS.mkpkFlexContainerChild());
+				roll.addStyleName(MKPK.CSS.mkpkFlexContainerChildRoll());
+				container.add(roll);
+
+				InlineLabel amount = new InlineLabel(MKPK.FMT_INT.format(pl.getAmount()));
+				amount.setStyleName(MKPK.CSS.mkpkFlexContainerChild());
+				amount.addStyleName(MKPK.CSS.mkpkFlexContainerChildAmount());
+				container.add(amount);
 				
-			if ( minutes != 0) {
-				String lineTotalMinutes = MkpkStringUtils.leftPad("Total horas dia (" + MKPK.DATE_FORMAT.format( date ) + ")", 119)
-						+ MkpkStringUtils.leftPad(MKPK.FMT.format( minutes / 60 ), 10);
-				InlineLabel lineTotalMinutesLabel = new InlineLabel(lineTotalMinutes);
-				lineTotalMinutesLabel.addStyleName(MKPK.CSS.mkpkIconPaddingLeft());
-				lineTotalMinutesLabel.addStyleName(MKPK.CSS.mkpkBold());
-				FlowPanel f5 = new FlowPanel(); f5.add(lineTotalMinutesLabel); container.add(f5);
+				InlineLabel blowUnits = new InlineLabel(MKPK.FMT_INT.format(pl.getBlowUnits()));
+				blowUnits.setStyleName(MKPK.CSS.mkpkFlexContainerChild());
+				blowUnits.addStyleName(MKPK.CSS.mkpkFlexContainerChildBlowUnits());
+				container.add(blowUnits);
+				
+				InlineLabel meters = new InlineLabel(MKPK.FMT.format(pl.getMeters()));
+				meters.setStyleName(MKPK.CSS.mkpkFlexContainerChild());
+				meters.addStyleName(MKPK.CSS.mkpkFlexContainerChildMeters());
+				container.add(meters);
+
+				InlineLabel blows = new InlineLabel(MKPK.FMT.format(pl.getBlows()));
+				blows.setStyleName(MKPK.CSS.mkpkFlexContainerChild());
+				blows.addStyleName(MKPK.CSS.mkpkFlexContainerChildBlows());
+				container.add(blows);
+
+				InlineLabel blowsMinute = new InlineLabel(MKPK.FMT_INT.format(pl.getBlowsMinute()));
+				blowsMinute.setStyleName(MKPK.CSS.mkpkFlexContainerChild());
+				blowsMinute.addStyleName(MKPK.CSS.mkpkFlexContainerChildBlowsMinute());
+				container.add(blowsMinute);
+				
+				InlineLabel hours = new InlineLabel(MKPK.FMT.format(pl.getHours()));
+				hours.setStyleName(MKPK.CSS.mkpkFlexContainerChild());
+				hours.addStyleName(MKPK.CSS.mkpkFlexContainerChildHours());
+				container.add(hours);
+				
+				InlineLabel client = new InlineLabel(MkpkStringUtils.abbreviate(pl.getClient() != null ? pl.getClient().getName() : "", 19));
+				client.setStyleName(MKPK.CSS.mkpkFlexContainerChild());
+				client.addStyleName(MKPK.CSS.mkpkFlexContainerChildClient());
+				container.add(client);
+
+				InlineLabel comments = new InlineLabel(MkpkStringUtils.abbreviate(pl.getComments() != null ? pl.getComments() : ".....", 20));
+				comments.setStyleName(MKPK.CSS.mkpkFlexContainerChild());
+				comments.addStyleName(MKPK.CSS.mkpkFlexContainerChildComments());
+				container.add(comments);
+
+				InlineLabel delete = new InlineLabel();
+				delete.setStyleName(MKPK.CSS.mkpkFlexContainerChild());
+				delete.addStyleName(MKPK.CSS.mkpkIconDelete());
+				delete.addStyleName(MKPK.CSS.mkpkFlexContainerChildDelete());
+				container.add(delete);
+				
 			}
 		} else {
-			Label lineLabel = new Label( MKPK.MSG.noData() );
+			Label lineLabel = new Label(MKPK.MSG.noData());
 			lineLabel.setStyleName(MKPK.CSS.mkpkTextCenter());
 			container.add(lineLabel);
 		}
