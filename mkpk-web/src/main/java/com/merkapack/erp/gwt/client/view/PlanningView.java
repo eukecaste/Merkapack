@@ -10,7 +10,6 @@ import com.google.gwt.core.client.JsArray;
 import com.google.gwt.core.client.JsonUtils;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
-import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -22,7 +21,6 @@ import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.http.client.URL;
-import com.google.gwt.resources.client.CssResource.ClassName;
 import com.google.gwt.user.client.ui.FileUpload;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -43,7 +41,6 @@ import com.merkapack.erp.core.model.Product;
 import com.merkapack.erp.core.model.Roll;
 import com.merkapack.erp.gwt.client.common.MKPK;
 import com.merkapack.erp.gwt.client.js.JsPlanning;
-import com.merkapack.erp.gwt.client.util.GWTDateUtils;
 import com.merkapack.erp.gwt.client.widget.MkpkButton;
 import com.merkapack.erp.gwt.client.widget.MkpkClientBox;
 import com.merkapack.erp.gwt.client.widget.MkpkConfirmDialog;
@@ -264,6 +261,7 @@ public class PlanningView extends MkpkDockLayout {
 	}
 	
 	protected void parseResults(String result) {
+		result = MkpkStringUtils.remove(result, "<pre style=\"word-wrap: break-word; white-space: pre-wrap;\">");
 		result = MkpkStringUtils.remove(result, "<pre>");
 		result = MkpkStringUtils.remove(result, "</pre>");
 		JsArray<JsPlanning> array = JsonUtils.safeEval(result);
@@ -341,11 +339,11 @@ public class PlanningView extends MkpkDockLayout {
 		tab.getColumnFormatter().setWidth( 4, "100px");
 		tab.getColumnFormatter().setWidth( 5, "100px");
 		tab.getColumnFormatter().setWidth( 6, "80px");
-		tab.getColumnFormatter().setWidth( 7, "80px");
+		tab.getColumnFormatter().setWidth( 7, "45px");
 		tab.getColumnFormatter().setWidth( 8, "80px");
 		tab.getColumnFormatter().setWidth( 9, "80px");
-		tab.getColumnFormatter().setWidth(10, "80px");
-		tab.getColumnFormatter().setWidth(11, "80px");
+		tab.getColumnFormatter().setWidth(10, "45px");
+		tab.getColumnFormatter().setWidth(11, "65px");
 		tab.getColumnFormatter().setWidth(12, "100px");
 		tab.getColumnFormatter().setWidth(13, "auto");
 		tab.getColumnFormatter().setWidth(14, "20px");
@@ -356,7 +354,7 @@ public class PlanningView extends MkpkDockLayout {
 	private void paintHeader(FlexTable tab) {
 		String[] labels = new String[] { ".", MKPK.MSG.date()
 				, "#", MKPK.MSG.measure(), MKPK.MSG.material(), MKPK.MSG.roll(),
-				MKPK.MSG.unit(), MKPK.MSG.blowUnits(), MKPK.MSG.meters(), MKPK.MSG.blows(), MKPK.MSG.blowsMinutes(),
+				MKPK.MSG.unit(), MKPK.MSG.blowUnitsAbbr(), MKPK.MSG.meters(), MKPK.MSG.blows(), MKPK.MSG.blowsMinutesAbbrv(),
 				MKPK.MSG.time(), MKPK.MSG.client(), MKPK.MSG.comments(), "X" };
 		for (int col = 0; col < labels.length; col++) {
 			Label label = new Label(labels[col]);
@@ -500,7 +498,8 @@ public class PlanningView extends MkpkDockLayout {
 			// UNIDADES GOLPES
 			blowUnits.addStyleName(MKPK.CSS.mkpkPaddingLeft2px());
 			blowUnits.setEnabled(false);
-			blowUnits.setVisibleLength(4);
+			blowUnits.setVisibleLength(2);
+			blowUnits.setWidth("40px");
 			tab.setWidget(row, col, blowUnits);
 
 			++col;
@@ -531,7 +530,8 @@ public class PlanningView extends MkpkDockLayout {
 			++col;
 
 			// GOLPES MINUTO
-			blowsMinute.setVisibleLength(5);
+			blowsMinute.setVisibleLength(2);
+			blowUnits.setWidth("40px");
 			tab.setWidget(row, col, blowsMinute);
 			blowsMinute.addValueChangeHandler(new ValueChangeHandler<Double>() {
 
@@ -546,7 +546,8 @@ public class PlanningView extends MkpkDockLayout {
 			++col;
 
 			// TIEMPO
-			minutes.setVisibleLength(5);
+			minutes.setVisibleLength(4);
+			blowUnits.setWidth("60px");
 			tab.setWidget(row, col, minutes);
 			minutes.addValueChangeHandler(new ValueChangeHandler<Double>() {
 
@@ -861,95 +862,153 @@ public class PlanningView extends MkpkDockLayout {
 //		}
 	private void refreshList() {
 		content.clear();
-		FlowPanel container = new FlowPanel("pre");
-		container.setStyleName(MKPK.CSS.mkpkFlexContainer());
-		container.getElement().getStyle().setFontSize(0.95, Unit.EM);
+		
+		FlowPanel mainContainer = new FlowPanel();
+		mainContainer.setStyleName(MKPK.CSS.mkpkPaddingTop());
 		if (list != null && list.size() > 0) {
 			for (Planning pl : list) {
+				FlowPanel container = new FlowPanel();
+				container.setStyleName(MKPK.CSS.mkpkFlexPanel());
+				
+				
 				InlineLabel selector = new InlineLabel();
-				selector.setStyleName(MKPK.CSS.mkpkFlexContainerChild());
-				selector.addStyleName(MKPK.CSS.mkpkIconBullet());
-				selector.addStyleName(MKPK.CSS.mkpkFlexContainerChildSelector());
+				selector.setStyleName(MKPK.CSS.mkpkFlexPanelChild());
+				selector.addStyleName(MKPK.CSS.mkpkFlexPanelChildSelector());
+				selector.addStyleName(pl.isSelected()?MKPK.CSS.mkpkIconChecked():MKPK.CSS.mkpkIconUnchecked());
+				selector.addStyleName(MKPK.CSS.mkpkPointer());
+				selector.addClickHandler(new ClickHandler() {
+					
+					@Override
+					public void onClick(ClickEvent event) {
+						selector.removeStyleName(pl.isSelected()?MKPK.CSS.mkpkIconChecked():MKPK.CSS.mkpkIconUnchecked());
+						pl.setSelected(!pl.isSelected());
+						selector.addStyleName(pl.isSelected()?MKPK.CSS.mkpkIconChecked():MKPK.CSS.mkpkIconUnchecked());
+					}
+				});
 				container.add(selector);
 				
 				InlineLabel date = new InlineLabel(MKPK.DATE_FORMAT.format(pl.getDate()));
-				date.setStyleName(MKPK.CSS.mkpkFlexContainerChild());
-				date.addStyleName(MKPK.CSS.mkpkFlexContainerChildDate());
+				date.setStyleName(MKPK.CSS.mkpkFlexPanelChild());
+				date.addStyleName(MKPK.CSS.mkpkFlexPanelChildDate());
 				container.add(date);
 
 				InlineLabel order = new InlineLabel(MkpkNumberUtils.toString(pl.getOrder()));
-				order.setStyleName(MKPK.CSS.mkpkFlexContainerChild());
-				order.addStyleName(MKPK.CSS.mkpkFlexContainerChildOrder());
+				order.setStyleName(MKPK.CSS.mkpkFlexPanelChild());
+				order.addStyleName(MKPK.CSS.mkpkFlexPanelChildOrder());
 				container.add(order);
 
-				InlineLabel product = new InlineLabel(MkpkStringUtils.abbreviate(pl.getProduct() != null ? pl.getProduct().getName() : "" , 13));
-				product.setStyleName(MKPK.CSS.mkpkFlexContainerChild());
-				product.addStyleName(MKPK.CSS.mkpkFlexContainerChildProduct());
+				InlineLabel product = new InlineLabel(pl.getProduct() != null ? pl.getProduct().getName() : "" );
+				product.setStyleName(MKPK.CSS.mkpkFlexPanelChild());
+				product.addStyleName(MKPK.CSS.mkpkFlexPanelChildProduct());
 				container.add(product);
 				
-				InlineLabel material = new InlineLabel(MkpkStringUtils.abbreviate(pl.getMaterial() != null ? pl.getMaterial().getName() : "",13));
-				material.setStyleName(MKPK.CSS.mkpkFlexContainerChild());
-				material.addStyleName(MKPK.CSS.mkpkFlexContainerChildMaterial());
+				InlineLabel material = new InlineLabel(pl.getMaterial() != null ? pl.getMaterial().getName() : "");
+				material.setStyleName(MKPK.CSS.mkpkFlexPanelChild());
+				material.addStyleName(MKPK.CSS.mkpkFlexPanelChildMaterial());
 				container.add(material);
 
-				InlineLabel roll = new InlineLabel(MkpkStringUtils.abbreviate(pl.getRoll() != null ? pl.getRoll().getName() : "", 13));
-				roll.setStyleName(MKPK.CSS.mkpkFlexContainerChild());
-				roll.addStyleName(MKPK.CSS.mkpkFlexContainerChildRoll());
+				InlineLabel roll = new InlineLabel(pl.getRoll() != null ? pl.getRoll().getName() : "");
+				roll.setStyleName(MKPK.CSS.mkpkFlexPanelChild());
+				roll.addStyleName(MKPK.CSS.mkpkFlexPanelChildRoll());
 				container.add(roll);
 
 				InlineLabel amount = new InlineLabel(MKPK.FMT_INT.format(pl.getAmount()));
-				amount.setStyleName(MKPK.CSS.mkpkFlexContainerChild());
-				amount.addStyleName(MKPK.CSS.mkpkFlexContainerChildAmount());
+				amount.setStyleName(MKPK.CSS.mkpkFlexPanelChild());
+				amount.addStyleName(MKPK.CSS.mkpkFlexPanelChildAmount());
 				container.add(amount);
 				
 				InlineLabel blowUnits = new InlineLabel(MKPK.FMT_INT.format(pl.getBlowUnits()));
-				blowUnits.setStyleName(MKPK.CSS.mkpkFlexContainerChild());
-				blowUnits.addStyleName(MKPK.CSS.mkpkFlexContainerChildBlowUnits());
+				blowUnits.setStyleName(MKPK.CSS.mkpkFlexPanelChild());
+				blowUnits.addStyleName(MKPK.CSS.mkpkFlexPanelChildBlowUnits());
 				container.add(blowUnits);
 				
 				InlineLabel meters = new InlineLabel(MKPK.FMT.format(pl.getMeters()));
-				meters.setStyleName(MKPK.CSS.mkpkFlexContainerChild());
-				meters.addStyleName(MKPK.CSS.mkpkFlexContainerChildMeters());
+				meters.setStyleName(MKPK.CSS.mkpkFlexPanelChild());
+				meters.addStyleName(MKPK.CSS.mkpkFlexPanelChildMeters());
 				container.add(meters);
 
 				InlineLabel blows = new InlineLabel(MKPK.FMT.format(pl.getBlows()));
-				blows.setStyleName(MKPK.CSS.mkpkFlexContainerChild());
-				blows.addStyleName(MKPK.CSS.mkpkFlexContainerChildBlows());
+				blows.setStyleName(MKPK.CSS.mkpkFlexPanelChild());
+				blows.addStyleName(MKPK.CSS.mkpkFlexPanelChildBlows());
 				container.add(blows);
 
 				InlineLabel blowsMinute = new InlineLabel(MKPK.FMT_INT.format(pl.getBlowsMinute()));
-				blowsMinute.setStyleName(MKPK.CSS.mkpkFlexContainerChild());
-				blowsMinute.addStyleName(MKPK.CSS.mkpkFlexContainerChildBlowsMinute());
+				blowsMinute.setStyleName(MKPK.CSS.mkpkFlexPanelChild());
+				blowsMinute.addStyleName(MKPK.CSS.mkpkFlexPanelChildBlowsMinute());
 				container.add(blowsMinute);
 				
 				InlineLabel hours = new InlineLabel(MKPK.FMT.format(pl.getHours()));
-				hours.setStyleName(MKPK.CSS.mkpkFlexContainerChild());
-				hours.addStyleName(MKPK.CSS.mkpkFlexContainerChildHours());
+				hours.setStyleName(MKPK.CSS.mkpkFlexPanelChild());
+				hours.addStyleName(MKPK.CSS.mkpkFlexPanelChildHours());
 				container.add(hours);
 				
-				InlineLabel client = new InlineLabel(MkpkStringUtils.abbreviate(pl.getClient() != null ? pl.getClient().getName() : "", 19));
-				client.setStyleName(MKPK.CSS.mkpkFlexContainerChild());
-				client.addStyleName(MKPK.CSS.mkpkFlexContainerChildClient());
+				InlineLabel client = new InlineLabel(pl.getClient() != null ? pl.getClient().getName() : "");
+				client.setStyleName(MKPK.CSS.mkpkFlexPanelChild());
+				client.addStyleName(MKPK.CSS.mkpkFlexPanelChildClient());
 				container.add(client);
 
-				InlineLabel comments = new InlineLabel(MkpkStringUtils.abbreviate(pl.getComments() != null ? pl.getComments() : ".....", 20));
-				comments.setStyleName(MKPK.CSS.mkpkFlexContainerChild());
-				comments.addStyleName(MKPK.CSS.mkpkFlexContainerChildComments());
+				InlineLabel comments = new InlineLabel(pl.getComments() != null ? pl.getComments() : "");
+				comments.setStyleName(MKPK.CSS.mkpkFlexPanelChild());
+				comments.addStyleName(MKPK.CSS.mkpkFlexPanelChildComments());
 				container.add(comments);
 
 				InlineLabel delete = new InlineLabel();
-				delete.setStyleName(MKPK.CSS.mkpkFlexContainerChild());
+				delete.setStyleName(MKPK.CSS.mkpkFlexPanelChild());
 				delete.addStyleName(MKPK.CSS.mkpkIconDelete());
-				delete.addStyleName(MKPK.CSS.mkpkFlexContainerChildDelete());
+				delete.addStyleName(MKPK.CSS.mkpkFlexPanelChildDelete());
+				delete.addStyleName(MKPK.CSS.mkpkPointer());
+				delete.addClickHandler(new ClickHandler() {
+					
+					@Override
+					public void onClick(ClickEvent event) {
+						MkpkConfirmDialog cd = new MkpkConfirmDialog();
+						cd.confirm(MKPK.MSG.deleteConfirmation(), MKPK.MSG.delete(), new MkpkConfirmDialogCallback() {
+							@Override
+							public void onCancel() {
+							}
+	
+							@Override
+							public void onAccept() {
+								list.remove(pl);
+								refreshList();
+							}
+						});
+					}
+				});
 				container.add(delete);
 				
+				
+				// TODO Improve
+				if ( MkpkMathUtils.isNotZero(pl.getRollWidth())) {
+					if ( MkpkMathUtils.isNotZero(pl.getWidth())) {
+						if (MkpkMathUtils.isNotZero(MkpkMathUtils.round(pl.getRollWidth() % pl.getWidth()))) {
+							blowUnits.addStyleName(MKPK.CSS.mkpkColorRed());
+							roll.addStyleName(MKPK.CSS.mkpkColorRed());
+						} else {
+							blowUnits.removeStyleName(MKPK.CSS.mkpkColorRed());
+							roll.removeStyleName(MKPK.CSS.mkpkColorRed());
+						}
+					}
+				}
+				if ( MkpkMathUtils.isNotZero(pl.getRollLength())) {
+					if ( MkpkMathUtils.isNotZero(pl.getMeters())) {
+						if ( pl.getMeters() > pl.getRollLength()) {
+							meters.addStyleName(MKPK.CSS.mkpkColorRed());
+						} else {
+							meters.removeStyleName(MKPK.CSS.mkpkColorRed());
+						}
+						
+					}
+					
+				}
+
+				mainContainer.add(container);	
 			}
 		} else {
 			Label lineLabel = new Label(MKPK.MSG.noData());
 			lineLabel.setStyleName(MKPK.CSS.mkpkTextCenter());
-			container.add(lineLabel);
+			mainContainer.add(lineLabel);
 		}
-		content.setWidget(container);
+		content.setWidget(mainContainer);
 	}
-	
 }

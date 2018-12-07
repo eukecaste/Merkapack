@@ -25,6 +25,12 @@ public interface Resources extends ClientBundle {
 	@Source("images/mkpk-icon-bullet.png")
 	ImageResource mkpkIconBullet();
 
+	@Source("images/mkpk-icon-checked.png")
+	ImageResource mkpkIconChecked();
+
+	@Source("images/mkpk-icon-unchecked.png")
+	ImageResource mkpkIconUnchecked();
+
 	@Source("images/mkpk-input-error.png")
 	ImageResource mkpkInputError();
 

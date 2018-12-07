@@ -29,6 +29,7 @@ public class JsPlanning extends JavaScriptObject {
 	public final native JsClient getClient() 		 /*-{	return this.client;				}-*/;
 	public final native String getComments() 		 /*-{	return this.comments;			}-*/;
 	public final native boolean isDirty() 			 /*-{	return this.dirty;				}-*/;
+	public final native boolean isSelected()		 /*-{	return this.selected;			}-*/;
 	public final native String getCreationUser() 	 /*-{	return this.creationUser;		}-*/;
 	public final native Date getCreationDate() 		 /*-{	return this.creationDate;		}-*/;
 	public final native String getModificationUser() /*-{	return this.modificationUser;	}-*/;

@@ -90,6 +90,8 @@ public interface CSS extends CssResource {
 	@ClassName("mkpk-icon-plus")		String mkpkIconPlus();
 	@ClassName("mkpk-icon-delete")		String mkpkIconDelete();
 	@ClassName("mkpk-icon-accept")		String mkpkIconAccept();
+	@ClassName("mkpk-icon-checked")		String mkpkIconChecked();
+	@ClassName("mkpk-icon-unchecked")	String mkpkIconUnchecked();
 
 	@ClassName("mkpk-menu")		String mkpkMenu();
 	@ClassName("mkpk-close")	String mkpkClose();
@@ -104,23 +106,23 @@ public interface CSS extends CssResource {
 	@ClassName("mkpk-confirm-dialog-ok-button")		String mkpkConfirmDialogOkButton();
 	@ClassName("mkpk-confirm-dialog-cancel-button")	String mkpkConfirmDialogCancelButton();
 	
-	@ClassName("mkpk-flex-panel")					String mkpkFlexContainer();
-	@ClassName("mkpk-flex-panel-child")				String mkpkFlexContainerChild();
-	@ClassName("mkpk-flex-panel-child-selector")	String mkpkFlexContainerChildSelector();
-	@ClassName("mkpk-flex-panel-child-date")		String mkpkFlexContainerChildDate();
-	@ClassName("mkpk-flex-panel-child-order")		String mkpkFlexContainerChildOrder();
-	@ClassName("mkpk-flex-panel-child-product")		String mkpkFlexContainerChildProduct();
-	@ClassName("mkpk-flex-panel-child-material")	String mkpkFlexContainerChildMaterial();
-	@ClassName("mkpk-flex-panel-child-roll")		String mkpkFlexContainerChildRoll();
-	@ClassName("mkpk-flex-panel-child-amount")		String mkpkFlexContainerChildAmount();
-	@ClassName("mkpk-flex-panel-child-blowUnits")	String mkpkFlexContainerChildBlowUnits();
-	@ClassName("mkpk-flex-panel-child-meters")		String mkpkFlexContainerChildMeters();
-	@ClassName("mkpk-flex-panel-child-blows")		String mkpkFlexContainerChildBlows();
-	@ClassName("mkpk-flex-panel-child-blowsMinute")	String mkpkFlexContainerChildBlowsMinute();
-	@ClassName("mkpk-flex-panel-child-hours")		String mkpkFlexContainerChildHours();
-	@ClassName("mkpk-flex-panel-child-client")		String mkpkFlexContainerChildClient();
-	@ClassName("mkpk-flex-panel-child-comments")	String mkpkFlexContainerChildComments();
-	@ClassName("mkpk-flex-panel-child-delete")		String mkpkFlexContainerChildDelete();
+	@ClassName("mkpk-flex-panel")					String mkpkFlexPanel();
+	@ClassName("mkpk-flex-panel-child")				String mkpkFlexPanelChild();
+	@ClassName("mkpk-flex-panel-child-selector")	String mkpkFlexPanelChildSelector();
+	@ClassName("mkpk-flex-panel-child-date")		String mkpkFlexPanelChildDate();
+	@ClassName("mkpk-flex-panel-child-order")		String mkpkFlexPanelChildOrder();
+	@ClassName("mkpk-flex-panel-child-product")		String mkpkFlexPanelChildProduct();
+	@ClassName("mkpk-flex-panel-child-material")	String mkpkFlexPanelChildMaterial();
+	@ClassName("mkpk-flex-panel-child-roll")		String mkpkFlexPanelChildRoll();
+	@ClassName("mkpk-flex-panel-child-amount")		String mkpkFlexPanelChildAmount();
+	@ClassName("mkpk-flex-panel-child-blowUnits")	String mkpkFlexPanelChildBlowUnits();
+	@ClassName("mkpk-flex-panel-child-meters")		String mkpkFlexPanelChildMeters();
+	@ClassName("mkpk-flex-panel-child-blows")		String mkpkFlexPanelChildBlows();
+	@ClassName("mkpk-flex-panel-child-blows-minute")String mkpkFlexPanelChildBlowsMinute();
+	@ClassName("mkpk-flex-panel-child-hours")		String mkpkFlexPanelChildHours();
+	@ClassName("mkpk-flex-panel-child-client")		String mkpkFlexPanelChildClient();
+	@ClassName("mkpk-flex-panel-child-comments")	String mkpkFlexPanelChildComments();
+	@ClassName("mkpk-flex-panel-child-delete")		String mkpkFlexPanelChildDelete();
 	
 }
 

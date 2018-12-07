@@ -113,6 +113,9 @@ public interface MkpkMessages extends Messages {
 	@DefaultMessage("Un./Golpe")
 	String blowUnits();
 
+	@DefaultMessage("U/G")
+	String blowUnitsAbbr();
+
 	@DefaultMessage("Metros")
 	String meters();
 	

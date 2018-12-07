@@ -177,6 +177,8 @@ input[type="text"] {
 @sprite .mkpk-close	{width: auto; gwt-image: "mkpkClose";}
 @sprite .mkpk-icon-menu 	{width: auto; gwt-image: "mkpkIconMenu";}
 @sprite .mkpk-icon-bullet 	{width: auto; gwt-image: "mkpkIconBullet";}
+@sprite .mkpk-icon-checked 	{width: auto; gwt-image: "mkpkIconChecked";}
+@sprite .mkpk-icon-unchecked{width: auto; gwt-image: "mkpkIconUnchecked";}
 @sprite .mkpk-icon-plus 	{width: auto; gwt-image: "mkpkIconPlus";}
 @sprite .mkpk-icon-cancel 	{width: auto; gwt-image: "mkpkIconCancel";}
 @sprite .mkpk-icon-delete 	{width: auto; gwt-image: "mkpkIconDelete";}
@@ -339,53 +341,76 @@ input[type="text"] {
 .mkpk-flex-panel {
 	display: flex;
 	flex-wrap: wrap;
+	padding-right: 15px;
+	padding-left: 15px;
+	border-bottom: solid lightgray 0.5px;
+}
+.mkpk-flex-panel:hover {
+	background-color: #EEE;
+	border-bottom: solid black 0.5px;
 }
 .mkpk-flex-panel-child {
-	flex-grow: 1;
+	box-sizing: border-box;
+	padding: 2px;
+	border-collapse: collapse;
+	text-overflow: ellipsis;
+	overflow: hidden;
+	white-space: nowrap;
+	align-items: flex-end;
+	height: auto;	
 }
 .mkpk-flex-panel-child-selector{
 	width: 20px;
 }
 .mkpk-flex-panel-child-date{
-	width: 80px;
+    width: 87px;
+    text-align: center;
 }
 .mkpk-flex-panel-child-order{
 	width: 30px;
+	text-align: center;
 }
 .mkpk-flex-panel-child-product{
-	width: 100px;
+	width: 115px;
 }
 .mkpk-flex-panel-child-material{
-	width: 100px;
+	width: 115px;
 }
 .mkpk-flex-panel-child-roll{
-	width: 100px;
+	width: 115px;
 }
 .mkpk-flex-panel-child-amount{
-	width: 80px;
+	width: 85px;
+	text-align: right;
 }
 .mkpk-flex-panel-child-blowUnits{
-	width: 80px;
+	width: 65px;
+	text-align: right;
 }
 .mkpk-flex-panel-child-meters{
-	width: 80px;
+	width: 85px;
+	text-align: right;
 }
 .mkpk-flex-panel-child-blows{
-	width: 80px;
+	width: 81px;
+	text-align: right;
 }
-.mkpk-flex-panel-child-blowsMinute{
-	width: 80px;
+.mkpk-flex-panel-child-blows-minute{
+	width: 60px;
+	text-align: right;
 }
 .mkpk-flex-panel-child-hours{
-	width: 80px;
+	width: 75px;
+	text-align: right;
 }
 .mkpk-flex-panel-child-client{
-	width: 100px;
+	width: 115px;
 }
 .mkpk-flex-panel-child-comments{
 	width: auto;
 	flex-grow: 2;
 }
 .mkpk-flex-panel-child-delete{
-	width: 20px;
+	width: 29px;
+	text-align: center;
 }

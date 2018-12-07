@@ -34,6 +34,8 @@ public class Planning implements Serializable, HasAudit, Cloneable {
 	private Date modificationDate;
 	
 	private boolean dirty = true;
+	private boolean selected;
+	
 	public Integer getId() {
 		return id;
 	}
@@ -181,6 +183,14 @@ public class Planning implements Serializable, HasAudit, Cloneable {
 	}
 	public Planning setComments(String comments) {
 		this.comments = comments;
+		return this;
+	}
+	// ---------------------------------------------------------- SELECTED
+	public boolean isSelected() {
+		return selected;
+	}
+	public Planning setSelected(boolean selected) {
+		this.selected = selected;
 		return this;
 	}
 	// ---------------------------------------------------------- DIRTY
