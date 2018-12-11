@@ -1,6 +1,7 @@
 package com.merkapack.erp.core.model;
 
 import com.merkapack.erp.core.model.Properties.ClientProperties;
+import com.merkapack.erp.core.model.Properties.PlanningProperties;
 import com.merkapack.erp.core.model.Properties.ProductProperties;
 import com.merkapack.erp.core.model.Properties.RollProperties;
 
@@ -42,5 +43,10 @@ public interface Filter {
 	@FunctionalInterface
 	public interface ClientFilter{
 		Filter filter(ClientProperties properties);
+	}
+
+	@FunctionalInterface
+	public interface PlanningFilter{
+		Filter filter(PlanningProperties properties);
 	}
 }

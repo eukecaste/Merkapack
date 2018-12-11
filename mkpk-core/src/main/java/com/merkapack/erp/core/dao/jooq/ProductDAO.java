@@ -38,7 +38,7 @@ public class ProductDAO {
 		@Override public Property<Double> getLengthProperty() {return new FilterDAO.PropertyDAO<Double>(PRODUCT.LENGTH);}
 		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<String>(PRODUCT.CREATION_USER);}
 		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.PropertyDAO<Timestamp>(PRODUCT.CREATION_DATE);}
-		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<String>(PRODUCT.NAME);}
+		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<String>(PRODUCT.MODIFICATION_USER);}
 		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.PropertyDAO<Timestamp>(PRODUCT.MODIFICATION_DATE);}
 	}
 	private static SelectOnConditionStep<Record> getSelect(DBContext ctx) {

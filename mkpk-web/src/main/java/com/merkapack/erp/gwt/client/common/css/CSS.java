@@ -107,6 +107,7 @@ public interface CSS extends CssResource {
 	@ClassName("mkpk-confirm-dialog-cancel-button")	String mkpkConfirmDialogCancelButton();
 	
 	@ClassName("mkpk-flex-panel")					String mkpkFlexPanel();
+	@ClassName("mkpk-flex-panel-selected")			String mkpkFlexPanelSelected();
 	@ClassName("mkpk-flex-panel-child")				String mkpkFlexPanelChild();
 	@ClassName("mkpk-flex-panel-child-selector")	String mkpkFlexPanelChildSelector();
 	@ClassName("mkpk-flex-panel-child-date")		String mkpkFlexPanelChildDate();
@@ -123,6 +124,8 @@ public interface CSS extends CssResource {
 	@ClassName("mkpk-flex-panel-child-client")		String mkpkFlexPanelChildClient();
 	@ClassName("mkpk-flex-panel-child-comments")	String mkpkFlexPanelChildComments();
 	@ClassName("mkpk-flex-panel-child-delete")		String mkpkFlexPanelChildDelete();
+	@ClassName("mkpk-flex-panel-child-fill1")		String mkpkFlexPanelChildFill1();
+	@ClassName("mkpk-flex-panel-child-fill2")		String mkpkFlexPanelChildFill2();
 	
 }
 

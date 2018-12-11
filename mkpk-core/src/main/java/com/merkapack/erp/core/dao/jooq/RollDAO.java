@@ -38,7 +38,7 @@ public class RollDAO {
 		@Override public Property<String> getMaterialNameProperty() {return new FilterDAO.PropertyDAO<String>(MATERIAL.NAME);}
 		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<String>(ROLL.CREATION_USER);}
 		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.PropertyDAO<Timestamp>(ROLL.CREATION_DATE);}
-		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<String>(ROLL.NAME);}
+		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<String>(ROLL.MODIFICATION_USER);}
 		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.PropertyDAO<Timestamp>(ROLL.MODIFICATION_DATE);}
 	}
 

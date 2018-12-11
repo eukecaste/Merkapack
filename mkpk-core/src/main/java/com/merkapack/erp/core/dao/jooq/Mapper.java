@@ -2,9 +2,10 @@ package com.merkapack.erp.core.dao.jooq;
 
 
 import static com.merkapack.erp.master.jooq.tables.Client.CLIENT;
-import static com.merkapack.erp.master.jooq.tables.Product.PRODUCT;
 import static com.merkapack.erp.master.jooq.tables.Machine.MACHINE;
 import static com.merkapack.erp.master.jooq.tables.Material.MATERIAL;
+import static com.merkapack.erp.master.jooq.tables.Planning.PLANNING;
+import static com.merkapack.erp.master.jooq.tables.Product.PRODUCT;
 import static com.merkapack.erp.master.jooq.tables.Roll.ROLL;
 
 import java.util.function.Function;
@@ -14,6 +15,7 @@ import org.jooq.Record;
 import com.merkapack.erp.core.model.Client;
 import com.merkapack.erp.core.model.Machine;
 import com.merkapack.erp.core.model.Material;
+import com.merkapack.erp.core.model.Planning;
 import com.merkapack.erp.core.model.Product;
 import com.merkapack.erp.core.model.Roll;
 
@@ -111,4 +113,36 @@ public class Mapper {
 		
 	}
 	
+	protected static class PlanningMapper implements Function<Record,Planning> {
+
+		@Override
+		public Planning apply(Record rec) {
+			return new Planning()
+				.setId(rec.get(PLANNING.ID))
+				.setDomain(rec.get(PLANNING.DOMAIN))
+				.setDate(rec.get(PLANNING.DATE))
+				.setOrder(rec.get(PLANNING.ORDER))
+				.setProduct( (new ProductMapper()).apply(rec) )
+				.setWidth(rec.get(PLANNING.WIDTH))
+				.setLength(rec.get(PLANNING.LENGTH))
+				.setMaterial( (new MaterialMapper()).apply(rec) )
+				.setRoll( (new RollMapper()).apply(rec) )
+				.setRollWidth(rec.get(PLANNING.ROLL_WIDTH))
+				.setRollLength(rec.get(PLANNING.ROLL_LENGTH))
+				.setAmount(rec.get(PLANNING.AMOUNT))
+				.setBlowUnits(rec.get(PLANNING.BLOWUNITS))
+				.setMeters(rec.get(PLANNING.METERS))
+				.setBlows(rec.get(PLANNING.BLOWS))
+				.setBlowsMinute(rec.get(PLANNING.BLOWS_MINUTE))
+				.setMinutes(rec.get(PLANNING.MINUTES))
+				.setClient( (new ClientMapper()).apply(rec) )
+				.setComments(rec.get(PLANNING.COMMENT))
+				.setCreationUser(rec.getValue(PLANNING.CREATION_USER))
+				.setCreationDate(rec.getValue(PLANNING.CREATION_DATE))
+				.setModificationUser(rec.getValue(PLANNING.MODIFICATION_USER))
+				.setModificationDate(rec.getValue(PLANNING.MODIFICATION_DATE))
+				.setDirty(false);
+		}
+		
+	}
 }

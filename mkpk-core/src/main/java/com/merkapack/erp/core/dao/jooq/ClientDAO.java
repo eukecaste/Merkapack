@@ -32,7 +32,7 @@ public class ClientDAO {
 		@Override public Property<String> getNameProperty() {return new FilterDAO.PropertyDAO<String>(CLIENT.NAME);}
 		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<String>(CLIENT.CREATION_USER);}
 		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.PropertyDAO<Timestamp>(CLIENT.CREATION_DATE);}
-		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<String>(CLIENT.NAME);}
+		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<String>(CLIENT.MODIFICATION_USER);}
 		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.PropertyDAO<Timestamp>(CLIENT.MODIFICATION_DATE);}
 	}
 	

@@ -6,14 +6,17 @@ import com.merkapack.erp.core.basic.DBContext;
 import com.merkapack.erp.core.dao.jooq.ClientDAO;
 import com.merkapack.erp.core.dao.jooq.MachineDAO;
 import com.merkapack.erp.core.dao.jooq.MaterialDAO;
+import com.merkapack.erp.core.dao.jooq.PlanningDAO;
 import com.merkapack.erp.core.dao.jooq.ProductDAO;
 import com.merkapack.erp.core.dao.jooq.RollDAO;
 import com.merkapack.erp.core.model.Client;
 import com.merkapack.erp.core.model.Filter.ClientFilter;
+import com.merkapack.erp.core.model.Filter.PlanningFilter;
 import com.merkapack.erp.core.model.Filter.ProductFilter;
 import com.merkapack.erp.core.model.Filter.RollFilter;
 import com.merkapack.erp.core.model.Machine;
 import com.merkapack.erp.core.model.Material;
+import com.merkapack.erp.core.model.Planning;
 import com.merkapack.erp.core.model.Product;
 import com.merkapack.erp.core.model.Roll;
 
@@ -141,5 +144,27 @@ public class MkpkGo {
 
 	public static void delete(DBContext ctx, Roll roll) {
 		ctx.getDslContext().transaction( configuration -> RollDAO.delete(ctx,roll));
+	}
+
+	//							----------
+	// 							[PLANNING]
+	//							----------
+	public static LinkedList<Planning> getPlannings(DBContext ctx, PlanningFilter filter) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> PlanningDAO.getPlannings(ctx,filter));
+	}
+	
+	public static Planning save(DBContext ctx,Planning planning) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> PlanningDAO.save(ctx,planning));
+	}
+
+	public static LinkedList<Planning> save(DBContext ctx,LinkedList<Planning> list) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> PlanningDAO.save(ctx,list));
+	}
+
+	public static void delete(DBContext ctx, Planning planning) {
+		ctx.getDslContext().transaction( configuration -> PlanningDAO.delete(ctx,planning));
 	}
 }

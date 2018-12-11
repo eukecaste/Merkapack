@@ -114,10 +114,15 @@ CREATE TABLE `planning` (
 	,`amount` double(8,2) DEFAULT '0.00' COMMENT 'Cantidad'
 	,`blowUnits` int(11) DEFAULT 0 COMMENT 'Golpe unidades'	
 	,`meters` double(8,2) DEFAULT '0.00' COMMENT 'Metros'
+	,`blows` double(8,2) DEFAULT '0.00' COMMENT 'Golpes'
   	,`blows_minute` double(6,2) DEFAULT '0.00' COMMENT 'Golpes por minuto'
   	,`minutes` double(10,2) DEFAULT '0.00' COMMENT 'Minutos'
 	,`client` int(4) NOT NULL COMMENT 'Identificador del cliente'
 	,`comment` varchar(128) COLLATE latin1_spanish_ci NOT NULL COMMENT 'Comentario'
+	,`creation_user` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de creacion'
+	,`creation_date` datetime DEFAULT NULL COMMENT 'Fecha de creacion'
+	,`modification_user` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de modificacion'
+	,`modification_date` datetime DEFAULT NULL COMMENT 'Fecha de modificacion'
 	,PRIMARY KEY (`id`)
 	,KEY `IDX_PLANNING_DOMAIN` (`domain`)
 	,KEY `IDX_PLANNING_MACHINE` (`machine`)

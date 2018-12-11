@@ -48,6 +48,7 @@ public class Planning implements Serializable, HasAudit, Cloneable {
 		return domain;
 	}
 	public Planning setDomain(int domain) {
+		if (!isDirty()) setDirty( true );
 		this.domain = domain;
 		return this;
 	}
@@ -56,6 +57,7 @@ public class Planning implements Serializable, HasAudit, Cloneable {
 		return date;
 	}
 	public Planning setDate(Date date) {
+		if (!isDirty()) setDirty( true );
 		this.date = date;
 		return this;
 	}
@@ -63,6 +65,7 @@ public class Planning implements Serializable, HasAudit, Cloneable {
 		return order;
 	}
 	public Planning setOrder(int order) {
+		if (!isDirty()) setDirty( true );
 		this.order = order;
 		return this;
 	}
@@ -70,6 +73,7 @@ public class Planning implements Serializable, HasAudit, Cloneable {
 		return machine;
 	}
 	public Planning setMachine(Machine machine) {
+		if (!isDirty()) setDirty( true );
 		this.machine = machine;
 		return this;
 	}
@@ -77,6 +81,7 @@ public class Planning implements Serializable, HasAudit, Cloneable {
 		return product;
 	}
 	public Planning setProduct(Product product) {
+		if (!isDirty()) setDirty( true );
 		this.product = product;
 		return this;
 	}
@@ -84,6 +89,7 @@ public class Planning implements Serializable, HasAudit, Cloneable {
 		return width;
 	}
 	public Planning setWidth(double width) {
+		if (!isDirty()) setDirty( true );
 		this.width = width;
 		return this;
 	}
@@ -91,6 +97,7 @@ public class Planning implements Serializable, HasAudit, Cloneable {
 		return length;
 	}
 	public Planning setLength(double length) {
+		if (!isDirty()) setDirty( true );
 		this.length = length;
 		return this;
 	}
@@ -98,6 +105,7 @@ public class Planning implements Serializable, HasAudit, Cloneable {
 		return material;
 	}
 	public Planning setMaterial(Material material) {
+		if (!isDirty()) setDirty( true );
 		this.material = material;
 		return this;
 	}
@@ -105,6 +113,7 @@ public class Planning implements Serializable, HasAudit, Cloneable {
 		return roll;
 	}
 	public Planning setRoll(Roll roll) {
+		if (!isDirty()) setDirty( true );
 		this.roll = roll;
 		return this;
 	}
@@ -112,6 +121,7 @@ public class Planning implements Serializable, HasAudit, Cloneable {
 		return rollWidth;
 	}
 	public Planning setRollWidth(double rollWidth) {
+		if (!isDirty()) setDirty( true );
 		this.rollWidth = rollWidth;
 		return this;
 	}
@@ -119,6 +129,7 @@ public class Planning implements Serializable, HasAudit, Cloneable {
 		return rollLength;
 	}
 	public Planning setRollLength(double rollLength) {
+		if (!isDirty()) setDirty( true );
 		this.rollLength = rollLength;
 		return this;
 	}
@@ -126,6 +137,7 @@ public class Planning implements Serializable, HasAudit, Cloneable {
 		return amount;
 	}
 	public Planning setAmount(double amount) {
+		if (!isDirty()) setDirty( true );
 		this.amount = amount;
 		return this;
 	}
@@ -133,6 +145,7 @@ public class Planning implements Serializable, HasAudit, Cloneable {
 		return this.blowUnits;
 	}
 	public Planning setBlowUnits(int blowUnits) {
+		if (!isDirty()) setDirty( true );
 		this.blowUnits = blowUnits;
 		return this;
 	}
@@ -140,6 +153,7 @@ public class Planning implements Serializable, HasAudit, Cloneable {
 		return meters;
 	}
 	public Planning setMeters(double meters) {
+		if (!isDirty()) setDirty( true );
 		this.meters = meters;
 		return this;
 	}
@@ -147,6 +161,7 @@ public class Planning implements Serializable, HasAudit, Cloneable {
 		return blows;
 	}
 	public Planning setBlows(double blows) {
+		if (!isDirty()) setDirty( true );
 		this.blows = blows;
 		return this;
 	}
@@ -154,6 +169,7 @@ public class Planning implements Serializable, HasAudit, Cloneable {
 		return blowsMinute;
 	}
 	public Planning setBlowsMinute(double blowsMinute) {
+		if (!isDirty()) setDirty( true );
 		this.blowsMinute = blowsMinute;
 		return this;
 	}
@@ -161,6 +177,7 @@ public class Planning implements Serializable, HasAudit, Cloneable {
 		return minutes;
 	}
 	public Planning setMinutes(double minutes) {
+		if (!isDirty()) setDirty( true );
 		this.minutes = minutes;
 		return this;
 	}
@@ -168,6 +185,7 @@ public class Planning implements Serializable, HasAudit, Cloneable {
 		return minutes / 60;
 	}
 	public Planning setHours(double hours) {
+		if (!isDirty()) setDirty( true );
 		this.minutes = hours * 60;
 		return this;
 	}
@@ -175,6 +193,7 @@ public class Planning implements Serializable, HasAudit, Cloneable {
 		return client;
 	}
 	public Planning setClient(Client client) {
+		if (!isDirty()) setDirty( true );
 		this.client = client;
 		return this;
 	}
@@ -182,6 +201,7 @@ public class Planning implements Serializable, HasAudit, Cloneable {
 		return comments;
 	}
 	public Planning setComments(String comments) {
+		if (!isDirty()) setDirty( true );
 		this.comments = comments;
 		return this;
 	}
@@ -207,6 +227,7 @@ public class Planning implements Serializable, HasAudit, Cloneable {
 		return creationUser;
 	}
 	public Planning setCreationUser(String creationUser) {
+		if (!isDirty()) setDirty( true );
 		this.creationUser = creationUser;
 		return this;
 	}
@@ -215,6 +236,7 @@ public class Planning implements Serializable, HasAudit, Cloneable {
 		return creationDate;
 	}
 	public Planning setCreationDate(Date creationDate) {
+		if (!isDirty()) setDirty( true );
 		this.creationDate = creationDate;
 		return this;
 	}
@@ -223,6 +245,7 @@ public class Planning implements Serializable, HasAudit, Cloneable {
 		return modificationUser;
 	}
 	public Planning setModificationUser(String modificationUser) {
+		if (!isDirty()) setDirty( true );
 		this.modificationUser = modificationUser;
 		return this;
 	}
@@ -231,8 +254,20 @@ public class Planning implements Serializable, HasAudit, Cloneable {
 		return modificationDate;
 	}
 	public Planning setModificationDate(Date modificationDate) {
+		if (!isDirty()) setDirty( true );
 		this.modificationDate = modificationDate;
 		return this;
+	}
+	
+	public void initialize() {
+		this.setWidth(0);
+		this.setLength(0);
+		this.setRollWidth(0);
+		this.setRollLength(0);
+		this.setAmount(0);
+		this.setMeters(0);
+		this.setBlows(0);
+		this.setMinutes(0);
 	}
 	
 	public Planning clone() {
@@ -260,7 +295,8 @@ public class Planning implements Serializable, HasAudit, Cloneable {
 			.setCreationUser(this.creationUser) 
 			.setCreationDate(this.creationDate) 
 			.setModificationUser(this.modificationUser) 
-			.setModificationDate(this.modificationDate) 
+			.setModificationDate(this.modificationDate)
+			.setSelected(this.isSelected())
 			;
 	}
 }

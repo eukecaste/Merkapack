@@ -17,7 +17,6 @@ import com.merkapack.erp.core.model.Client;
 import com.merkapack.erp.core.model.Planning;
 import com.merkapack.erp.core.model.Product;
 import com.merkapack.erp.core.model.Roll;
-import com.merkapack.erp.gwt.shared.PlanningRowCalculator;
 import com.merkapack.watson.util.MkpkMathUtils;
 import com.merkapack.watson.util.MkpkStringUtils;
 
@@ -61,8 +60,6 @@ public class Excel2Planning {
 						pl.setRollLength(roll.getLength());
 					}
 				}
-				pl.setBlowsMinute(80); // TODO
-				PlanningRowCalculator.calculate(pl);
 				list.add(pl);
 				order++;
 			}

@@ -1,5 +1,9 @@
 package com.merkapack.erp.planning.test;
 
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
+import java.text.DecimalFormat;
 import java.util.Date;
 import java.util.LinkedList;
 
@@ -13,37 +17,45 @@ import com.merkapack.erp.core.model.Machine;
 import com.merkapack.erp.core.model.Planning;
 import com.merkapack.erp.core.model.Product;
 import com.merkapack.erp.core.model.Roll;
+import com.merkapack.erp.gwt.client.util.GWTDateUtils;
+import com.merkapack.erp.gwt.shared.PlanningCalculatorParams;
+import com.merkapack.erp.gwt.shared.PlanningCalculatorStrategy;
 import com.merkapack.erp.gwt.shared.PlanningRowCalculator;
-import com.merkapack.erp.gwt.shared.PlanningRowCalculator.Strategy;
-import com.merkapack.watson.util.MkpkMathUtils;
+import com.merkapack.watson.util.MkpkNumberUtils;
+import com.merkapack.watson.util.MkpkStringUtils;
 
 public class PlanningCalculatorTest {
-	
+
 	private static final int DOMAIN = 1;
 	private static final String USER = "admin";
-	SimpleDateFormat FORMATTER = new SimpleDateFormat("dd/MM/yyyy");
+	private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd/MM/yyyy");
+	private static final DecimalFormat FMT = new DecimalFormat("#,##0.00");
+	private static final DecimalFormat FMT_INT = new DecimalFormat("#,##0");
 
 	@Test
-	public void testCalculator() {
-		
+	public void testCalculator() throws IOException {
+
 		DBContext ctx = MkpkDatasource.getDBContext(DOMAIN, USER);
 		Planning pl = new Planning();
-		
+		PlanningCalculatorParams params =  new PlanningCalculatorParams()	
+				.setWorkHoursInADay(16 * 60 )
+				.setHoursMargin( 0.5 * 60 );
+
 		pl.setDate(new Date());
 		pl.setOrder(1);
-		
+
 		LinkedList<Machine> machines = MkpkGo.getMachines(ctx, "ver");
 		Machine m = machines.get(0);
 		pl.setMachine(m);
 		pl.setBlowsMinute(m.getBlows());
-		
-		Product p  = MkpkGo.getProducts(ctx, "170x250").get(0);
-		
+
+		Product p = MkpkGo.getProducts(ctx, "170x250").get(0);
+
 		pl.setProduct(p);
 		pl.setWidth(p.getWidth());
 		pl.setLength(p.getLength());
 		pl.setMaterial(p.getMaterial());
-		
+
 		LinkedList<Roll> rolls = MkpkGo.getRolls(ctx, "1000");
 		Roll r = rolls.get(0);
 		pl.setRoll(r);
@@ -51,61 +63,87 @@ public class PlanningCalculatorTest {
 		pl.setRollLength(r.getLength());
 		pl.setClient(MkpkGo.getClients(ctx, "VAC").get(0));
 
-		pl.setMinutes(17*60);
-		PlanningRowCalculator.calculate(pl, Strategy.TIME_CHANGED);
-		
+		pl.setMinutes(17 * 60);
+		PlanningRowCalculator.calculate(params, PlanningCalculatorStrategy.TIME_CHANGED, pl);
 
-//		Planning pl2 = pl.clone();
-//		pl2.setOrder(2);
-//		pl2.setClient(MkpkGo.getClients(ctx, "PAC").get(0));
-//		pl2.setMeters(12005);
-//		PlanningRowCalculator.calculate(pl2, Strategy.METERS_CHANGED);
-		
 		LinkedList<Planning> list = new LinkedList<Planning>();
 		list.add(pl);
-//		list.add(pl2);
-		
-		LinkedList<Planning> ret = PlanningRowCalculator.calculate(list);
-		for( Planning pln : ret ) {
-			print(pln);
-		}
-		
-		for( Planning pln : ret ) {
-			shortPrint(pln);
-		}
-	}
-	
-	private void shortPrint( Planning pl) {
-		String line = "" +  pl.getOrder() + "  -"  
-			+ "\t" + FORMATTER.format( pl.getDate())  
-			+ "\t" + pl.getMeters() + " mts." 
-			+ "\t" + pl.getMinutes() + "' (" + MkpkMathUtils.round(pl.getMinutes() / 60) + " Horas" + ")"
-		;
-		System.out.println(line);
+
+		LinkedList<Planning> ret = PlanningRowCalculator.calculate(params, list);
+		print(new OutputStreamWriter( System.out ),ret);
 	}
 
-	private void print( Planning pl) {
-		String line = 
-				"id ..." + pl.getId() + "\n" +
-				"\tdomain ..." +  pl.getDomain() + "\n" +
-				"\tdate ..." +  pl.getDate() + "\n" +
-				"\torder ..." +  pl.getOrder() + "\n" +
-				"\tmachine ..." +  pl.getMachine().getName()  + "\n" +
-				"\tproduct ..." +  pl.getProduct().getName() + "\n" +
-				"\twidth ..." +  pl.getWidth() + "\n" +
-				"\tlength ..." +  pl.getLength() + "\n" +
-				"\tmaterial ..." +  pl.getMaterial().getName() + "\n" +
-				"\troll ..." +  pl.getRoll().getName() + "\n" +
-				"\trollWidth ..." +  pl.getRollWidth() + "\n" +
-				"\trollLength ..." +  pl.getRollLength() + "\n" +
-				"\tamount ..." +  pl.getAmount() + "\n" +
-				"\tblowUnits ..." + pl.getBlowUnits() + "\n" +
-				"\tmeters ..." + pl.getMeters() + "\n" +
-				"\tblows ..." + pl.getBlows() + "\n" +
-				"\tblowsMinute ..." + pl.getBlowsMinute() + "\n" +
-				"\tminutes ..." + pl.getMinutes() + " --- " + MkpkMathUtils.round(pl.getMinutes() / 60) + " Horas\n" +
-				"\tclient ..." + pl.getClient().getName() + "\n"
+	public static void print(Writer writer, LinkedList<Planning> list) throws IOException {
+		if (list != null && list.size() > 0) {
+			writer.write("\n");
+			String line1 = 
+				  '|' + MkpkStringUtils.center("Fecha", 12) 
+				+ '|' + MkpkStringUtils.center("#", 3)
+				+ '|' + MkpkStringUtils.rightPad("Medida", 14) 
+				+ '|' + MkpkStringUtils.rightPad("Material", 13) 
+				+ '|' + MkpkStringUtils.rightPad("Bobina", 14)
+				+ '|' + MkpkStringUtils.leftPad("Unidad", 10) 
+				+ '|' + MkpkStringUtils.leftPad("U/G", 11)
+				+ '|' + MkpkStringUtils.leftPad("Metros", 10) 
+				+ '|' + MkpkStringUtils.leftPad("Golpes", 10) 
+				+ '|' + MkpkStringUtils.leftPad("G/M", 5) 
+				+ '|' + MkpkStringUtils.leftPad("Tiempo", 10) 
+				+ '|' + MkpkStringUtils.rightPad("Cliente", 20)
+				+ '|' + MkpkStringUtils.rightPad("Comentarios", 21) 
+				+ '|';
 			;
-			System.out.println(line);
+			writer.write(line1);
+			writer.write("\n");
+			writer.write(MkpkStringUtils.repeat("-", line1.length()) );
+			writer.write("\n");
+			Date date = null;
+			double minutes = 0;
+			for (Planning pl : list) {
+				if (GWTDateUtils.compare(pl.getDate(), date) != 0) {
+					if (date != null) {
+						writer.write(MkpkStringUtils.repeat("-", line1.length()) );
+						writer.write("\n");
+						String lineTotalMinutes = MkpkStringUtils
+								.leftPad("Total horas dia (" + DATE_FORMAT.format(date) + ")", 113)
+								+ MkpkStringUtils.leftPad(FMT.format(minutes), 10);
+						writer.write(lineTotalMinutes);
+						writer.write("\n");
+						writer.write("\n");
+					}
+					date = pl.getDate();
+					minutes = 0;
+				}
+				minutes = minutes + pl.getMinutes();
+
+				String line = 
+					  '|' + MkpkStringUtils.center(DATE_FORMAT.format(pl.getDate()), 12) 
+					+ '|' + MkpkStringUtils.center(MkpkNumberUtils.toString(pl.getOrder()), 3) 
+					+ '|' + MkpkStringUtils.rightPad(MkpkStringUtils.abbreviate(pl.getProduct() != null ? pl.getProduct().getName() : "", 13), 14)
+					+ '|' + MkpkStringUtils.rightPad(MkpkStringUtils.abbreviate(pl.getMaterial() != null ? pl.getMaterial().getName() : "", 12), 13)
+					+ '|' + MkpkStringUtils.rightPad(MkpkStringUtils.abbreviate(pl.getRoll() != null ? pl.getRoll().getName() : "", 13), 14)
+					+ '|' + MkpkStringUtils.leftPad(FMT_INT.format(pl.getAmount()), 10) 
+					+ '|' + MkpkStringUtils.leftPad(FMT_INT.format(pl.getBlowUnits()), 11) 
+					+ '|' + MkpkStringUtils.leftPad(FMT.format(pl.getMeters()), 10) 
+					+ '|' + MkpkStringUtils.leftPad(FMT.format(pl.getBlows()), 10) 
+					+ '|' + MkpkStringUtils.leftPad(FMT_INT.format(pl.getBlowsMinute()), 5) 
+					+ '|' + MkpkStringUtils.leftPad(FMT.format(pl.getMinutes()), 10) 
+					+ '|' + MkpkStringUtils.rightPad(MkpkStringUtils.abbreviate(pl.getClient() != null ? pl.getClient().getName() : "", 19),20)
+					+ '|' + MkpkStringUtils.rightPad( MkpkStringUtils.abbreviate(pl.getComments() != null ? pl.getComments() : ".....", 20),							21)
+					+ '|';
+				writer.write(line);
+				writer.write("\n");
+			}
+			if (minutes != 0) {
+				writer.write(MkpkStringUtils.repeat("-", line1.length()) );
+				writer.write("\n");
+				String lineTotalMinutes = MkpkStringUtils.leftPad("Total horas dia (" + DATE_FORMAT.format(date) + ")",
+						113) + MkpkStringUtils.leftPad(FMT.format(minutes / 60), 10);
+				writer.write(lineTotalMinutes);
+				writer.write("\n");
+			}
+		} else {
+			System.out.println("No hay Datos");
+		}
+
 	}
 }
