@@ -20,7 +20,7 @@ import com.merkapack.erp.core.model.Machine;
 import com.merkapack.erp.core.model.Planning;
 import com.merkapack.erp.gwt.server.Excel2Planning;
 import com.merkapack.erp.gwt.shared.PlanningCalculatorParams;
-import com.merkapack.erp.gwt.shared.PlanningRowCalculator;
+import com.merkapack.erp.gwt.shared.PlanningCalculator;
 
 public class PlanningExcelTest {
 	
@@ -58,10 +58,10 @@ public class PlanningExcelTest {
 		for (Planning pl : list) {
 			pl.setDate(startDate);
 			pl.setBlowsMinute(machine.getBlows());
-			PlanningRowCalculator.calculate(params,pl);
+			PlanningCalculator.calculate(params,pl);
 
 		}
-		list = PlanningRowCalculator.calculate( params ,list);
+		list = PlanningCalculator.calculate( params ,list);
 		PlanningCalculatorTest.print(writer, list);
 	}
 

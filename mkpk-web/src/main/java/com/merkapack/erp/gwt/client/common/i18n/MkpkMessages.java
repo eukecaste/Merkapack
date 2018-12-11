@@ -26,6 +26,9 @@ public interface MkpkMessages extends Messages {
 	@DefaultMessage("EEEEEEEE")
 	String dayPattern();
 
+	@DefaultMessage("Configuraci\u00F3n")
+	String configuration();
+	
 	@DefaultMessage("Aceptar")
 	String accept();
 
@@ -142,4 +145,14 @@ public interface MkpkMessages extends Messages {
 
 	@DefaultMessage("No se han encontrado datos")
 	String noData();
+	
+	@DefaultMessage("Golpes minutos por defecto")
+	String defaultBlowsMiniute();
+	
+	@DefaultMessage("Margen de tiempo en la jornada")
+	String hoursMargin();
+	
+	@DefaultMessage("Jornada laboral")
+	String workHoursInADay();
+	
 }

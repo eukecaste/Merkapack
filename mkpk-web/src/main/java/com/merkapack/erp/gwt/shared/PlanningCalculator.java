@@ -8,12 +8,10 @@ import com.merkapack.erp.gwt.client.util.GWTDateUtils;
 import com.merkapack.watson.util.MkpkMathUtils;
 import com.merkapack.watson.util.MkpkPair;
 
-public class PlanningRowCalculator {
+public class PlanningCalculator {
 
 	//private static Logger LOGGER = Logger.getLogger(PlanningRowCalculator.class.getName());
 	
-	private static final double MINUTES_BREAK = ((16 * 60) - (0.5 * 60));
-
 	public static void calculate(PlanningCalculatorParams params, Planning planning) {
 		PlanningCalculatorStrategy.AMOUNT_CHANGED.calculate(params,planning);
 	}
@@ -71,9 +69,9 @@ public class PlanningRowCalculator {
 	}
 
 	public static MkpkPair<Planning,Planning> splitLineTime(PlanningCalculatorParams params,Planning pl) {
-		if (pl.getMinutes() >= MINUTES_BREAK ) {
+		if (pl.getMinutes() >= params.getMinutesBreak() ) {
 			Planning left = pl.clone();
-			left.setMinutes(MINUTES_BREAK);
+			left.setMinutes(params.getMinutesBreak());
 			calculate(params, PlanningCalculatorStrategy.TIME_CHANGED, left);
 			
 			Planning right = pl.clone();
@@ -101,12 +99,12 @@ public class PlanningRowCalculator {
 				if (GWTDateUtils.compare(pl.getDate(), date) <= 0) {
 					minutes = minutes + pl.getMinutes();
 				}
-				if (minutes >= MINUTES_BREAK) {
+				if (minutes >= params.getMinutesBreak()) {
 					double typedMinutes = pl.getMinutes() - 0;
 					Planning left = pl.clone();
 					Planning right = pl.clone();
 
-					double minutes1 = MkpkMathUtils.round(typedMinutes - (minutes - MINUTES_BREAK));
+					double minutes1 = MkpkMathUtils.round(typedMinutes - (minutes - params.getMinutesBreak()));
 					left.setMinutes(minutes1);
 					calculate(params, PlanningCalculatorStrategy.TIME_CHANGED, left);
 

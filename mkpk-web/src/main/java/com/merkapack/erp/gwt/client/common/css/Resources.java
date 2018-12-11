@@ -52,6 +52,12 @@ public interface Resources extends ClientBundle {
 	@Source("images/mkpk-icon-plus.png")
 	ImageResource mkpkIconPlus();
 	
+	@Source("images/mkpk-icon-magic.png")
+	ImageResource mkpkIconMagic();
+	
+	@Source("images/mkpk-icon-config.png")
+	ImageResource mkpkIconConfig();
+
 	@Source("images/mkpk-button-check-list.png")
 	ImageResource mkpkButtonCheckList();
 	
@@ -61,12 +67,18 @@ public interface Resources extends ClientBundle {
 	@Source("images/mkpk-button-upload.png")
 	ImageResource mkpkButtonUpload();
 	
+	@Source("images/mkpk-button-config.png")
+	ImageResource mkpkButtonConfig();
+
 	@Source("images/mkpk-menu.png")
 	ImageResource mkpkMenu();
 
 	@Source("images/mkpk-close.png")
 	ImageResource mkpkClose();
-
+	
+	@Source("images/mkpk-configuration.png")
+	ImageResource mkpkConfig();
+			
 	@Source("images/mkpk-cd-close.gif")
 	ImageResource mkpkCDClose();
 	

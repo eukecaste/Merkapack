@@ -2,6 +2,8 @@ package com.merkapack.erp.gwt.shared;
 
 import java.io.Serializable;
 
+import com.merkapack.watson.util.MkpkMathUtils;
+
 public class PlanningCalculatorParams implements Serializable {
 	
 	private static final long serialVersionUID = -7718863342559517207L;
@@ -32,5 +34,24 @@ public class PlanningCalculatorParams implements Serializable {
 		this.workHoursInADay = workHoursInADay;
 		return this;
 	}
+	public double getMinutesBreak() {
+		return MkpkMathUtils.round(getWorkHoursInADay() * 60) - (getHoursMargin() * 60);
+	}
  
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

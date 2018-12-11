@@ -106,6 +106,7 @@ input[type="text"] {
 .mkpk-width-70p{width: 70%;}
 .mkpk-width-80p{width: 80%;}
 .mkpk-width-90p{width: 90%;}
+.mkpk-width-400{width: 400px;}
 
 .mkpk-block-center	{margin-left:auto; margin-right: auto;}
 .mkpk-text-left		{text-align: left;}
@@ -175,6 +176,8 @@ input[type="text"] {
 
 @sprite .mkpk-menu 	{width: auto; gwt-image: "mkpkMenu";}
 @sprite .mkpk-close	{width: auto; gwt-image: "mkpkClose";}
+@sprite .mkpk-config{width: auto; gwt-image: "mkpkConfig";}
+
 @sprite .mkpk-icon-menu 	{width: auto; gwt-image: "mkpkIconMenu";}
 @sprite .mkpk-icon-bullet 	{width: auto; gwt-image: "mkpkIconBullet";}
 @sprite .mkpk-icon-checked 	{width: auto; gwt-image: "mkpkIconChecked";}
@@ -183,9 +186,13 @@ input[type="text"] {
 @sprite .mkpk-icon-cancel 	{width: auto; gwt-image: "mkpkIconCancel";}
 @sprite .mkpk-icon-delete 	{width: auto; gwt-image: "mkpkIconDelete";}
 @sprite .mkpk-icon-accept 	{width: auto; gwt-image: "mkpkIconAccept";}
+@sprite .mkpk-icon-magic 	{width: auto; gwt-image: "mkpkIconMagic";}
+@sprite .mkpk-icon-config 	{width: auto; gwt-image: "mkpkIconConfig";}
+
 @sprite .mkpk-button-check-list {width: auto; gwt-image: "mkpkButtonCheckList";}
 @sprite .mkpk-button-add-list 	{width: auto; gwt-image: "mkpkButtonAddList";}
 @sprite .mkpk-button-upload 	{width: auto; gwt-image: "mkpkButtonUpload";}
+@sprite .mkpk-button-config 	{width: auto; gwt-image: "mkpkButtonConfig";}
 
 .mkpk-table {
 	margin-top: 1em;
@@ -425,9 +432,10 @@ input[type="text"] {
 	flex-grow: 2;
 }
 
-
-
-
-
-
-
+.mkpk-context-menu-option{
+	border: solid #BBB 1px;
+	width: 60px;
+	font-weight: bold;
+	font-size: 1.1em;
+	white-space: nowrap;
+}

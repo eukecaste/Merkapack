@@ -50,8 +50,8 @@ public class MkpkDockLayout extends DockLayoutPanel implements EntryPoint {
 		tabHeader.addStyleName(MKPK.CSS.mkpkBorderBottom());
 		
 		Image logoImage = new Image(MKPK.RESOURCES.mkpkLogo());
-		logoImage.setWidth("150%");
-		logoImage.setHeight("150%");
+		logoImage.setWidth("250px");
+		logoImage.setHeight("60px");
 		logoImage.addStyleName(MKPK.CSS.mkpkPointer());
 		logoImage.addClickHandler(new ClickHandler() {
 			

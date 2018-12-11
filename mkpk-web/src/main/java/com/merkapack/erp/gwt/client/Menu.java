@@ -18,6 +18,7 @@ public class Menu extends MkpkDockLayout {
 	private Widget getContent() {
 		FlexTable tab = new FlexTable();
 		tab.setStyleName(MKPK.CSS.mkpkBlockCenter());
+		tab.addStyleName(MKPK.CSS.mkpkWidth400());
 		
 		Button planning = new Button(MKPK.MSG.manufacturingPlanning());
 		planning.addClickHandler(new ClickHandler() {

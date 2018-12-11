@@ -39,6 +39,7 @@ public interface CSS extends CssResource {
 	@ClassName("mkpk-width-70p") 	String mkpkWidth70p();
 	@ClassName("mkpk-width-80p") 	String mkpkWidth80p();
 	@ClassName("mkpk-width-90p") 	String mkpkWidth90p();
+	@ClassName("mkpk-width-400") 	String mkpkWidth400();
 
 	@ClassName("mkpk-block-center")	String mkpkBlockCenter();
 	@ClassName("mkpk-text-left")	String mkpkTextLeft();
@@ -72,8 +73,7 @@ public interface CSS extends CssResource {
 	@ClassName("mkpk-table-header")			String mkpkTableHeader();
 	@ClassName("mkpk-table-odd-background")	String mkpkOddBakcground();
 	
-	@ClassName("mkpk-app-title")
-	String mkpkAppTitle();
+	@ClassName("mkpk-app-title")		String mkpkAppTitle();
 
 	@ClassName("mkpk-img-logo")				String mkpkImgLogo();
 	@ClassName("mkpk-img-manufacturing")	String mkpkImgManufacturing();
@@ -83,6 +83,7 @@ public interface CSS extends CssResource {
 	@ClassName("mkpk-button-check-list")	String mkpkButtonCheckList();
 	@ClassName("mkpk-button-add-list")		String mkpkButtonAddList();
 	@ClassName("mkpk-button-upload")		String mkpkButtonUpload();
+	@ClassName("mkpk-button-config")		String mkpkButtonConfig();	
 	
 	@ClassName("mkpk-icon-bullet")		String mkpkIconBullet();
 	@ClassName("mkpk-icon-menu")		String mkpkIconMenu();
@@ -92,9 +93,12 @@ public interface CSS extends CssResource {
 	@ClassName("mkpk-icon-accept")		String mkpkIconAccept();
 	@ClassName("mkpk-icon-checked")		String mkpkIconChecked();
 	@ClassName("mkpk-icon-unchecked")	String mkpkIconUnchecked();
+	@ClassName("mkpk-icon-magic")		String mkpkIconMagic();
+	@ClassName("mkpk-icon-config")		String mkpkIconConfig();	
 
 	@ClassName("mkpk-menu")		String mkpkMenu();
 	@ClassName("mkpk-close")	String mkpkClose();
+	@ClassName("mkpk-config")	String mkpkConfig();
 	
 	@ClassName("mkpk-cd-panel")		String mkpkCDPanel();
 	@ClassName("mkpk-cd-header")	String mkpkCDHeader();
@@ -127,6 +131,7 @@ public interface CSS extends CssResource {
 	@ClassName("mkpk-flex-panel-child-fill1")		String mkpkFlexPanelChildFill1();
 	@ClassName("mkpk-flex-panel-child-fill2")		String mkpkFlexPanelChildFill2();
 	
+	@ClassName("mkpk-context-menu-option")			String mkpkContextMenuOption();	
 }
 
 

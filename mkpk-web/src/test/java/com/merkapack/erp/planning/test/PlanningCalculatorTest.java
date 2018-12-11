@@ -20,7 +20,7 @@ import com.merkapack.erp.core.model.Roll;
 import com.merkapack.erp.gwt.client.util.GWTDateUtils;
 import com.merkapack.erp.gwt.shared.PlanningCalculatorParams;
 import com.merkapack.erp.gwt.shared.PlanningCalculatorStrategy;
-import com.merkapack.erp.gwt.shared.PlanningRowCalculator;
+import com.merkapack.erp.gwt.shared.PlanningCalculator;
 import com.merkapack.watson.util.MkpkNumberUtils;
 import com.merkapack.watson.util.MkpkStringUtils;
 
@@ -64,12 +64,12 @@ public class PlanningCalculatorTest {
 		pl.setClient(MkpkGo.getClients(ctx, "VAC").get(0));
 
 		pl.setMinutes(17 * 60);
-		PlanningRowCalculator.calculate(params, PlanningCalculatorStrategy.TIME_CHANGED, pl);
+		PlanningCalculator.calculate(params, PlanningCalculatorStrategy.TIME_CHANGED, pl);
 
 		LinkedList<Planning> list = new LinkedList<Planning>();
 		list.add(pl);
 
-		LinkedList<Planning> ret = PlanningRowCalculator.calculate(params, list);
+		LinkedList<Planning> ret = PlanningCalculator.calculate(params, list);
 		print(new OutputStreamWriter( System.out ),ret);
 	}
 
