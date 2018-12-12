@@ -51,7 +51,7 @@ public class PlanningDAO {
 		@Override public Property<Double> getRollWidthProperty() {return new FilterDAO.PropertyDAO<Double>(PLANNING.ROLL_WIDTH);}
 		@Override public Property<Double> getRollLengthProperty() {return new FilterDAO.PropertyDAO<Double>(PLANNING.ROLL_LENGTH);}
 		@Override public Property<Double> getAmountProperty() {return new FilterDAO.PropertyDAO<Double>(PLANNING.AMOUNT);}
-		@Override public Property<Integer> getBlowUnitsProperty() {return new FilterDAO.PropertyDAO<Integer>(PLANNING.BLOWUNITS);}
+		@Override public Property<Integer> getBlowUnitsProperty() {return new FilterDAO.PropertyDAO<Integer>(PLANNING.BLOW_UNITS);}
 		@Override public Property<Double> getMetersProperty() {return new FilterDAO.PropertyDAO<Double>(PLANNING.METERS);}
 		@Override public Property<Double> getBlowsProperty() {return new FilterDAO.PropertyDAO<Double>(PLANNING.BLOWS);}
 		@Override public Property<Double> getBlowsMinuteProperty() {return new FilterDAO.PropertyDAO<Double>(PLANNING.BLOWS_MINUTE);}
@@ -128,7 +128,7 @@ public class PlanningDAO {
 			.set(PLANNING.ROLL_WIDTH,planning.getRollWidth())
 			.set(PLANNING.ROLL_LENGTH,planning.getRollLength())
 			.set(PLANNING.AMOUNT,planning.getRollLength())
-			.set(PLANNING.BLOWUNITS,planning.getBlowUnits())
+			.set(PLANNING.BLOW_UNITS,planning.getBlowUnits())
 			.set(PLANNING.METERS,planning.getMeters())
 			.set(PLANNING.BLOWS,planning.getBlows())
 			.set(PLANNING.BLOWS_MINUTE,planning.getBlowsMinute())
@@ -157,7 +157,7 @@ public class PlanningDAO {
 			.set(PLANNING.ROLL_WIDTH,planning.getRollWidth())
 			.set(PLANNING.ROLL_LENGTH,planning.getRollLength())
 			.set(PLANNING.AMOUNT,planning.getRollLength())
-			.set(PLANNING.BLOWUNITS,planning.getBlowUnits())
+			.set(PLANNING.BLOW_UNITS,planning.getBlowUnits())
 			.set(PLANNING.METERS,planning.getMeters())
 			.set(PLANNING.BLOWS,planning.getBlows())
 			.set(PLANNING.BLOWS_MINUTE,planning.getBlowsMinute())

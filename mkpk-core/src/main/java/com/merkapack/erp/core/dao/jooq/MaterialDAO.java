@@ -41,6 +41,7 @@ public class MaterialDAO {
 				.orderBy(MATERIAL.NAME)
 				.fetch()
 				.stream()
+				.limit(30)
 				.map( new MaterialMapper() )
 				.collect(Collectors.toCollection(LinkedList::new));
 	}

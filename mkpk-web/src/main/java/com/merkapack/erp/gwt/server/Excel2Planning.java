@@ -30,7 +30,7 @@ public class Excel2Planning {
 		int order = 1;
 		while (iterator.hasNext()) {
 			Row row = iterator.next();
-			Cell amountCell = row.getCell(3);
+			Cell amountCell = row.getCell(2);
 			if (amountCell.getCellType() != CellType.STRING) {
 				Planning pl = new Planning();
 				Cell clientCell = row.getCell(0);
@@ -43,9 +43,7 @@ public class Excel2Planning {
 
 				Cell productCell = row.getCell(1);
 				String productValue = productCell.getStringCellValue();
-				Cell materialCell = row.getCell(2);
-				String materialValue = materialCell.getStringCellValue();
-				Product product = getProduct(ctx, productValue, materialValue);
+				Product product = getProduct(ctx, productValue);
 				pl.setOrder(order);
 				if (product != null) {
 					pl.setProduct(product);
@@ -68,14 +66,9 @@ public class Excel2Planning {
 		return list;
 	}
 
-	private static Product getProduct(DBContext ctx, String productValue, String materialValue) {
-		productValue = MkpkStringUtils.prependIfMissing(MkpkStringUtils.appendIfMissing(productValue, "%"), "%");
-		materialValue = MkpkStringUtils.prependIfMissing(MkpkStringUtils.appendIfMissing(materialValue, "%"), "%");
-
-		final String productName = productValue;
-		final String materialName = materialValue;
+	private static Product getProduct(DBContext ctx, String productCode) {
 		LinkedList<Product> products = MkpkGo.getProducts(ctx,
-				p -> p.getNameProperty().like(productName).and(p.getMaterialNameProperty().like(materialName)));
+				p -> p.getCodeProperty().eq(productCode));
 		if (products != null) {
 			if (products.size() == 1) {
 				return products.get(0);
@@ -104,7 +97,7 @@ public class Excel2Planning {
 				availableRolls.add(roll);
 			}
 		}
-		if (availableRolls.size() == 1) {
+		if (availableRolls.size() > 0) {
 			return availableRolls.get(0);
 		}
 		return null;

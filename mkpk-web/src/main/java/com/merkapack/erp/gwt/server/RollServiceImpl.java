@@ -31,11 +31,11 @@ public class RollServiceImpl extends StatelessRemoteServiceServlet implements Ro
 	}
 
 	@Override
-	public LinkedList<Roll> getRolls(String query) throws MkpkCoreException {
+	public LinkedList<Roll> getRolls(String query,Integer material) throws MkpkCoreException {
 		DBContext ctx = null;
 		try {
 			ctx = MkpkDatasource.getDBContext(DOMAIN, USER);
-			LinkedList<Roll> list = MkpkGo.getRolls(ctx,query);
+			LinkedList<Roll> list = MkpkGo.getRolls(ctx,query,material);
 			return list;
 		} catch (Throwable t) {
 			throw new MkpkCoreException("Se ha producido un error ["+ t.getMessage() +"]", t);

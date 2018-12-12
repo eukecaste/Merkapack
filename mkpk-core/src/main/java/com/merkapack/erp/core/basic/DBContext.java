@@ -53,7 +53,7 @@ public class DBContext {
 	}
 	public void close() {
 		try {
-			if (connection!= null) { 
+			if (connection != null) { 
 				connection.close();
 			};
 		} catch (SQLException e) {

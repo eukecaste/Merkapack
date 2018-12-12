@@ -50,7 +50,8 @@ public class MkpkRollBox extends ResizeComposite implements HasValue<String>
 	private static final int MIN_CHARACTERS = 2;
 	private static final int MAX_CHARACTERS = 8;
 
-	private RollServiceAsync service;
+	private static final RollServiceAsync commonServiceRaw = GWT.create(RollService.class);
+	private static final RollServiceAsync SERVICE = new RollServiceAsyncDecorator(commonServiceRaw);
 
 	private Roll selected;
 	
@@ -58,6 +59,10 @@ public class MkpkRollBox extends ResizeComposite implements HasValue<String>
 	private TextBox rollTextBox;
 	
 	private AccountSuggestionDisplay suggestionDisplay;
+	
+	public static interface IMaterialCallback {
+		Integer getMaterial();
+	}
 	
 	private static class AccountSuggestionDisplay extends DefaultSuggestionDisplay {
 	    private Widget suggestionMenu;
@@ -107,9 +112,7 @@ public class MkpkRollBox extends ResizeComposite implements HasValue<String>
 		
 	}
 	
-	public MkpkRollBox() {
-		RollServiceAsync commonServiceRaw = GWT.create(RollService.class);
-		service = new RollServiceAsyncDecorator(commonServiceRaw);
+	public MkpkRollBox(IMaterialCallback materialCallBack) {
 		MultiWordSuggestOracle oracle = new MultiWordSuggestOracle() {
 			@Override
 			public void requestSuggestions(final Request request,final Callback callback) {
@@ -117,8 +120,8 @@ public class MkpkRollBox extends ResizeComposite implements HasValue<String>
 				if (MkpkStringUtils.length(request.getQuery()) >= MIN_CHARACTERS
 				 && MkpkStringUtils.length(request.getQuery()) <= MAX_CHARACTERS) {
 					reset();
-					service.getRolls(request.getQuery() ,new AsyncCallback<LinkedList<Roll>>() {
-		
+					SERVICE.getRolls(request.getQuery(),(materialCallBack==null?null:materialCallBack.getMaterial())
+							,new AsyncCallback<LinkedList<Roll>>() {
 								public void onFailure(Throwable caught) {
 									callback.onSuggestionsReady(request, new Response());
 								}

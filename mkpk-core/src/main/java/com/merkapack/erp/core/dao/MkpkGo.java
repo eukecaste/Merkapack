@@ -79,7 +79,7 @@ public class MkpkGo {
 				configuration -> MaterialDAO.getMaterials(ctx));
 	}
 	
-	public static LinkedList<Material> getMaterials(String query, DBContext ctx) {
+	public static LinkedList<Material> getMaterials(DBContext ctx,String query) {
 		return ctx.getDslContext().transactionResult(
 				configuration -> MaterialDAO.getMaterials(ctx,query));
 	}
@@ -127,9 +127,9 @@ public class MkpkGo {
 				configuration -> RollDAO.getRolls(ctx));
 	}
 	
-	public static LinkedList<Roll> getRolls(DBContext ctx,String query) {
+	public static LinkedList<Roll> getRolls(DBContext ctx,String query, Integer material) {
 		return ctx.getDslContext().transactionResult(
-				configuration -> RollDAO.getRolls(ctx,query));
+				configuration -> RollDAO.getRolls(ctx,query,material));
 	}
 
 	public static LinkedList<Roll> getRolls(DBContext ctx, RollFilter filter) {

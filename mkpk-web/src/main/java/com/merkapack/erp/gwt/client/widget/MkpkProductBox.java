@@ -129,8 +129,7 @@ public class MkpkProductBox extends ResizeComposite implements HasValue<String>
 										
 										for (final Product product : result) {
 											SafeHtmlBuilder bld = new SafeHtmlBuilder();
-											String ds = product.getName() 
-												+ (product.getMaterial()!=null?" ("+ product.getMaterial().getName()+")":"");
+											String ds = product.getCode() + " - " + product.getName();
 											int i = MkpkStringUtils.indexOfIgnoreCase(ds, request.getQuery());
 											bld.appendHtmlConstant("<span class=\"" 
 													+ MKPK.CSS.mkpkIconBullet()
@@ -143,7 +142,7 @@ public class MkpkProductBox extends ResizeComposite implements HasValue<String>
 									        bld.appendHtmlConstant(END_STRONG);
 									        bld.appendEscaped(MkpkStringUtils.substring(ds, (i + MkpkStringUtils.length(request.getQuery()) )));
 									        bld.appendHtmlConstant("</span>");
-									        ProductSuggestion as = new ProductSuggestion(product, product.getName(), bld.toSafeHtml().asString());
+									        ProductSuggestion as = new ProductSuggestion(product, product.getCode(), bld.toSafeHtml().asString());
 											suggestions.add(as);
 										}
 									}
@@ -197,7 +196,7 @@ public class MkpkProductBox extends ResizeComposite implements HasValue<String>
 	}
 	public void setValue(Product product, boolean fire) {
 		this.selected = product;
-		setValue(product==null?null:product.getName(),fire);
+		setValue(product==null?null: product.getCode(),fire);
 	}
 	public void setValue(Product value, boolean fireEvents, boolean shouldDisplayChange) {
 		setValue(value, fireEvents);

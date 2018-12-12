@@ -36,7 +36,7 @@ public class MaterialServiceImpl extends StatelessRemoteServiceServlet implement
 		DBContext ctx = null;
 		try {
 			ctx = MkpkDatasource.getDBContext(DOMAIN, USER);
-			return MkpkGo.getMaterials(query,ctx);
+			return MkpkGo.getMaterials(ctx,query);
 		} catch (Throwable t) {
 			t.printStackTrace();
 			throw new MkpkCoreException("Se ha producido un error ["+ t.getMessage() +"]", t);

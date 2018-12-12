@@ -31,11 +31,14 @@ public class ProductDAO {
 		}
 		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<Integer>(PRODUCT.ID);} 
 		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<Integer>(PRODUCT.DOMAIN);}
+		@Override public Property<String> getCodeProperty() {return new FilterDAO.PropertyDAO<String>(PRODUCT.CODE);}
 		@Override public Property<String> getNameProperty() {return new FilterDAO.PropertyDAO<String>(PRODUCT.NAME);}
 		@Override public Property<Integer> getMaterialIdProperty() {return new FilterDAO.PropertyDAO<Integer>(MATERIAL.ID);} 
 		@Override public Property<String> getMaterialNameProperty() {return new FilterDAO.PropertyDAO<String>(MATERIAL.NAME);}
 		@Override public Property<Double> getWidthProperty() {return new FilterDAO.PropertyDAO<Double>(PRODUCT.WIDTH);}
 		@Override public Property<Double> getLengthProperty() {return new FilterDAO.PropertyDAO<Double>(PRODUCT.LENGTH);}
+		@Override public Property<Double> getBoxUnitsProperty() {return new FilterDAO.PropertyDAO<Double>(PRODUCT.BOX_UNITS);}
+		@Override public Property<String> getMoldProperty() {return new FilterDAO.PropertyDAO<String>(PRODUCT.MOLD);}
 		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<String>(PRODUCT.CREATION_USER);}
 		@Override public Property<Timestamp> getCreationDateProperty() {return new FilterDAO.PropertyDAO<Timestamp>(PRODUCT.CREATION_DATE);}
 		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<String>(PRODUCT.MODIFICATION_USER);}
@@ -79,9 +82,10 @@ public class ProductDAO {
 		query = MkpkStringUtils.prependIfMissing(query, "%");
 		query = MkpkStringUtils.appendIfMissing(query, "%");
 		return getSelect(ctx)
-			.where(PRODUCT.NAME.like(query))
+			.where(PRODUCT.CODE.like(query).or(PRODUCT.NAME.like(query)))
 			.fetch()
 			.stream()
+			.limit(30)
 			.map( new ProductMapper() )
 			.collect(Collectors.toCollection(LinkedList::new));
 	}
@@ -95,10 +99,13 @@ public class ProductDAO {
 		Integer id = ctx.getDslContext()
 			.insertInto(PRODUCT)
 			.set(PRODUCT.DOMAIN,product.getDomain())
+			.set(PRODUCT.CODE,product.getCode())
 			.set(PRODUCT.NAME,product.getName())
 			.set(PRODUCT.MATERIAL,product.getMaterial().getId())
 			.set(PRODUCT.WIDTH,product.getWidth())
 			.set(PRODUCT.LENGTH,product.getLength())
+			.set(PRODUCT.BOX_UNITS,product.getBoxUnits())
+			.set(PRODUCT.MOLD,product.getMold())
 			.set(PRODUCT.CREATION_USER,ctx.getUser())
 			.set(PRODUCT.CREATION_DATE, new Timestamp( System.currentTimeMillis()) )
 			.returning(PRODUCT.ID)

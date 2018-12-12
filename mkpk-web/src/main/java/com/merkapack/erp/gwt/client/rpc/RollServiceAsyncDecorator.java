@@ -22,9 +22,9 @@ public class RollServiceAsyncDecorator implements RollServiceAsync {
 	}
 
 	@Override
-	public void getRolls(String query, AsyncCallback<LinkedList<Roll>> callback) {
+	public void getRolls(String query,Integer material, AsyncCallback<LinkedList<Roll>> callback) {
 		MKPK.start();
-		service.getRolls(query,callback);
+		service.getRolls(query,material,callback);
 		
 	}
 

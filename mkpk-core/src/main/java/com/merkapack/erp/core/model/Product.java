@@ -9,10 +9,13 @@ public class Product implements Serializable, HasAudit {
 	
 	private Integer id;
 	private int domain;
+	private String code;
 	private String name;
 	private Material material;
 	private Double width;
 	private Double length;
+	private Double boxUnits;
+	private String mold;
 	
 	private String creationUser;
 	private Date creationDate;
@@ -37,6 +40,14 @@ public class Product implements Serializable, HasAudit {
 		return this;
 	}
 	
+	public String getCode() {
+		return code;
+	}
+	public Product setCode(String code) {
+		this.code = code;
+		return this;
+	}
+
 	public String getName() {
 		return name;
 	}
@@ -52,6 +63,11 @@ public class Product implements Serializable, HasAudit {
 		this.material = material;
 		return this;
 	}
+	public String getMeasure() {
+		return   (this.length==null?"":("" +this.length.intValue())
+			+"x"+(this.width ==null?"":("" +this.width.intValue())))
+				;
+	}
 	public Double getWidth() {
 		return width;
 	}
@@ -64,6 +80,22 @@ public class Product implements Serializable, HasAudit {
 	}
 	public Product setLength(Double length) {
 		this.length = length;
+		return this;
+	}
+	
+	public Double getBoxUnits() {
+		return boxUnits;
+	}
+	public Product setBoxUnits(Double boxUnits) {
+		this.boxUnits = boxUnits;
+		return this;
+	}
+	
+	public String getMold() {
+		return mold;
+	}
+	public Product setMold(String mold) {
+		this.mold = mold;
 		return this;
 	}
 	// ---------------------------------------------------------- DIRTY

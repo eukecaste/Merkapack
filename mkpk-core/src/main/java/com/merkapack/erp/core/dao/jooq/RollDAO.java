@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 import org.jooq.Condition;
 import org.jooq.Record;
 import org.jooq.SelectOnConditionStep;
+import org.jooq.impl.DSL;
 
 import com.merkapack.erp.core.basic.DBContext;
 import com.merkapack.erp.core.dao.jooq.Mapper.RollMapper;
@@ -77,13 +78,15 @@ public class RollDAO {
 			.collect(Collectors.toCollection(LinkedList::new));
 	}
 	
-	public static LinkedList<Roll> getRolls(DBContext ctx, String query) {
+	public static LinkedList<Roll> getRolls(DBContext ctx, String query, Integer material) {
 		query = MkpkStringUtils.prependIfMissing(query, "%");
 		query = MkpkStringUtils.appendIfMissing(query, "%");
 		return getSelect(ctx)
 			.where(ROLL.NAME.like(query))
+			.and(material == null?DSL.trueCondition():ROLL.MATERIAL.eq(material))
 			.fetch()
 			.stream()
+			.limit(30)
 			.map( new RollMapper() )
 			.collect(Collectors.toCollection(LinkedList::new));
 	}

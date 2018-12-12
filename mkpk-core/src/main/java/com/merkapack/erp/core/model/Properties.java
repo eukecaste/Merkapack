@@ -17,11 +17,14 @@ public interface Properties {
 	public interface ProductProperties extends AuditProperties {
 		Property<Integer> getIdProperty();
 		Property<Integer> getDomainProperty();
+		Property<String> getCodeProperty();
 		Property<String> getNameProperty();
 		Property<Integer> getMaterialIdProperty();
 		Property<String> getMaterialNameProperty();
 		Property<Double> getWidthProperty();
 		Property<Double> getLengthProperty();
+		Property<Double> getBoxUnitsProperty();
+		Property<String> getMoldProperty();
 	}
 
 	public interface RollProperties extends AuditProperties {

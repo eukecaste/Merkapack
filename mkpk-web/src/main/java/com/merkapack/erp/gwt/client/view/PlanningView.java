@@ -21,6 +21,7 @@ import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.http.client.URL;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.FileUpload;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -54,9 +55,9 @@ import com.merkapack.erp.gwt.client.widget.MkpkDockLayout;
 import com.merkapack.erp.gwt.client.widget.MkpkDoubleBox;
 import com.merkapack.erp.gwt.client.widget.MkpkIntegerBox;
 import com.merkapack.erp.gwt.client.widget.MkpkMachineBox;
-import com.merkapack.erp.gwt.client.widget.MkpkMaterialBox;
 import com.merkapack.erp.gwt.client.widget.MkpkProductBox;
 import com.merkapack.erp.gwt.client.widget.MkpkRollBox;
+import com.merkapack.erp.gwt.client.widget.MkpkRollBox.IMaterialCallback;
 import com.merkapack.erp.gwt.shared.PlanningCalculator;
 import com.merkapack.erp.gwt.shared.PlanningCalculatorParams;
 import com.merkapack.erp.gwt.shared.PlanningCalculatorStrategy;
@@ -80,9 +81,15 @@ public class PlanningView extends MkpkDockLayout {
 	private MkpkDateBox date = new MkpkDateBox();
 	private Label orderLabel = new Label();
 	private MkpkProductBox product = new MkpkProductBox();
-	private MkpkMaterialBox material = new MkpkMaterialBox();
+//	private MkpkMaterialBox material = new MkpkMaterialBox();
 	private MkpkButton deleteButton = new MkpkButton();
-	private MkpkRollBox roll = new MkpkRollBox();
+	private MkpkRollBox roll = new MkpkRollBox( new IMaterialCallback() {
+		@Override
+		public Integer getMaterial() {
+			Product pro = product.getSelected();
+			return (pro != null && pro.getMaterial() != null)?pro.getMaterial().getId():null;
+		}
+	});
 	private MkpkDoubleBox amount = new MkpkDoubleBox();
 	private MkpkIntegerBox blowUnits = new MkpkIntegerBox();
 	private MkpkDoubleBox meters = new MkpkDoubleBox();
@@ -331,7 +338,7 @@ public class PlanningView extends MkpkDockLayout {
 		planning.setDate(startDate.getValue());
 		list.add(planning);
 		planningRow.setPlanning( planning );
-		planningRow.refresh();
+		planningRow.refresh(planning);
 		refreshList();
 		content.scrollToBottom();
 		return planning;
@@ -354,6 +361,7 @@ public class PlanningView extends MkpkDockLayout {
 				.setProduct( new Product()
 					.setId(jsPlanning.getProduct().getId())
 					.setDomain(jsPlanning.getProduct().getDomain())
+					.setCode(jsPlanning.getProduct().getCode())
 					.setName(jsPlanning.getProduct().getName())
 					.setMaterial( new Material()
 						.setId(jsPlanning.getProduct().getMaterial().getId())
@@ -363,6 +371,8 @@ public class PlanningView extends MkpkDockLayout {
 					)
 					.setWidth(jsPlanning.getProduct().getWidth())
 					.setLength(jsPlanning.getProduct().getLength())
+					.setBoxUnits(jsPlanning.getProduct().getBoxUnits())
+					.setMold(jsPlanning.getProduct().getMold())
 				)
 				.setWidth(jsPlanning.getWidth())
 				.setLength(jsPlanning.getLength())
@@ -414,28 +424,31 @@ public class PlanningView extends MkpkDockLayout {
 		FlexTable tab = new FlexTable();
 		tab.setStyleName(MKPK.CSS.mkpkTable());
 		tab.addStyleName(MKPK.CSS.mkpkWidthAll());
-		tab.getColumnFormatter().setWidth( 0, "20px");
-		tab.getColumnFormatter().setWidth( 1, "80px");
-		tab.getColumnFormatter().setWidth( 2, "30px");
-		tab.getColumnFormatter().setWidth( 3, "100px");
-		tab.getColumnFormatter().setWidth( 4, "100px");
-		tab.getColumnFormatter().setWidth( 5, "100px");
-		tab.getColumnFormatter().setWidth( 6, "80px");
-		tab.getColumnFormatter().setWidth( 7, "45px");
-		tab.getColumnFormatter().setWidth( 8, "80px");
-		tab.getColumnFormatter().setWidth( 9, "80px");
-		tab.getColumnFormatter().setWidth(10, "45px");
-		tab.getColumnFormatter().setWidth(11, "65px");
-		tab.getColumnFormatter().setWidth(12, "100px");
-		tab.getColumnFormatter().setWidth(13, "auto");
-		tab.getColumnFormatter().setWidth(14, "20px");
+		int col = 0;
+		tab.getColumnFormatter().setWidth( col++, "20px");
+		tab.getColumnFormatter().setWidth( col++, "80px");
+		tab.getColumnFormatter().setWidth( col++, "30px");
+		tab.getColumnFormatter().setWidth( col++, "230px");
+		//tab.getColumnFormatter().setWidth( col++, "100px");
+		tab.getColumnFormatter().setWidth( col++, "100px");
+		tab.getColumnFormatter().setWidth( col++, "80px");
+		tab.getColumnFormatter().setWidth( col++, "45px");
+		tab.getColumnFormatter().setWidth( col++, "80px");
+		tab.getColumnFormatter().setWidth( col++, "80px");
+		tab.getColumnFormatter().setWidth( col++, "45px");
+		tab.getColumnFormatter().setWidth( col++, "65px");
+		tab.getColumnFormatter().setWidth( col++, "100px");
+		tab.getColumnFormatter().setWidth( col++, "auto");
+		tab.getColumnFormatter().setWidth( col++, "20px");
 		paintHeader( tab );
 		return tab;
 	}
 
 	private void paintHeader(FlexTable tab) {
 		String[] labels = new String[] { ".", MKPK.MSG.date()
-				, "#", MKPK.MSG.measure(), MKPK.MSG.material(), MKPK.MSG.roll(),
+				, "#", MKPK.MSG.product()
+//				, MKPK.MSG.material()
+				, MKPK.MSG.roll(),
 				MKPK.MSG.unit(), MKPK.MSG.blowUnitsAbbr(), MKPK.MSG.meters(), MKPK.MSG.blows(), MKPK.MSG.blowsMinutesAbbrv(),
 				MKPK.MSG.time(), MKPK.MSG.client(), MKPK.MSG.comments(), "X" };
 		for (int col = 0; col < labels.length; col++) {
@@ -463,7 +476,7 @@ public class PlanningView extends MkpkDockLayout {
 		public void setEnabled(boolean enabled) {
 			date.setEnabled(enabled);
 			product.setEnabled(enabled);
-			material.setEnabled(enabled);
+//			material.setEnabled(enabled);
 			roll.setEnabled(enabled);
 			amount.setEnabled(enabled);
 			blowUnits.setEnabled(enabled);
@@ -491,7 +504,7 @@ public class PlanningView extends MkpkDockLayout {
 				public void onValueChange(ValueChangeEvent<Date> event) {
 					getPlanning().setDate(date.getValue());
 					PlanningCalculator.calculate(getParams(), PlanningCalculatorStrategy.AMOUNT_CHANGED, getPlanning());
-					fire();
+					fire(getPlanning());
 				}
 			});
 			tab.setWidget(row, col, date);
@@ -504,7 +517,7 @@ public class PlanningView extends MkpkDockLayout {
 			col++;
 
 			// PRODUCT
-			product.setVisibleLength(10);
+			product.setVisibleLength(18);
 			tab.setWidget(row, col, product);
 			product.addSelectionHandler(new SelectionHandler<Product>() {
 
@@ -515,9 +528,9 @@ public class PlanningView extends MkpkDockLayout {
 					getPlanning().setWidth(p.getWidth());
 					getPlanning().setLength(p.getLength());
 					getPlanning().setMaterial(p.getMaterial());
-					material.setValue( p.getMaterial(), false);
+//					material.setValue( p.getMaterial(), false);
 					PlanningCalculator.calculate(getParams(), PlanningCalculatorStrategy.AMOUNT_CHANGED, getPlanning());
-					fire();
+					fire(getPlanning());
 					Scheduler.get().scheduleDeferred(new ScheduledCommand() {
 						public void execute() {
 							roll.setFocus(true);
@@ -528,17 +541,17 @@ public class PlanningView extends MkpkDockLayout {
 			++col;
 
 			// MATERIAL
-			material.setVisibleLength(10);
-			tab.setWidget(row, col, material);
-			material.addSelectionHandler(new SelectionHandler<Material>() {
-				@Override
-				public void onSelection(SelectionEvent<Material> event) {
-					getPlanning().setMaterial(event.getSelectedItem());
-					PlanningCalculator.calculate(getParams(), PlanningCalculatorStrategy.AMOUNT_CHANGED, getPlanning());
-					fire();
-				}
-			});
-			++col;
+//			material.setVisibleLength(10);
+//			tab.setWidget(row, col, material);
+//			material.addSelectionHandler(new SelectionHandler<Material>() {
+//				@Override
+//				public void onSelection(SelectionEvent<Material> event) {
+//					getPlanning().setMaterial(event.getSelectedItem());
+//					PlanningCalculator.calculate(getParams(), PlanningCalculatorStrategy.AMOUNT_CHANGED, getPlanning());
+//					fire();
+//				}
+//			});
+//			++col;
 
 			// BOBINA
 			roll.setVisibleLength(10);
@@ -552,7 +565,7 @@ public class PlanningView extends MkpkDockLayout {
 					getPlanning().setRollWidth(r.getWidth());
 					getPlanning().setRollLength(r.getLength());
 					PlanningCalculator.calculate(getParams(), PlanningCalculatorStrategy.AMOUNT_CHANGED, getPlanning());
-					fire();
+					fire(getPlanning());
 				}
 			});
 			++col;
@@ -567,7 +580,7 @@ public class PlanningView extends MkpkDockLayout {
 					LOGGER.severe("AMOUNT ...: " + amount.getValue());
 					getPlanning().setAmount(amount.getValue());
 					PlanningCalculator.calculate(getParams(), PlanningCalculatorStrategy.AMOUNT_CHANGED, getPlanning());
-					fire();
+					fire(getPlanning());
 					Scheduler.get().scheduleDeferred(new ScheduledCommand() {
 						public void execute() {
 							client.setFocus(true);
@@ -594,7 +607,7 @@ public class PlanningView extends MkpkDockLayout {
 				public void onValueChange(ValueChangeEvent<Double> event) {
 					getPlanning().setMeters(meters.getValue());
 					PlanningCalculator.calculate(getParams(), PlanningCalculatorStrategy.METERS_CHANGED, getPlanning());
-					fire();
+					fire(getPlanning());
 					Scheduler.get().scheduleDeferred(new ScheduledCommand() {
 						public void execute() {
 							client.setFocus(true);
@@ -621,7 +634,7 @@ public class PlanningView extends MkpkDockLayout {
 				public void onValueChange(ValueChangeEvent<Double> event) {
 					getPlanning().setBlowsMinute(blowsMinute.getValue());
 					PlanningCalculator.calculate(getParams(), PlanningCalculatorStrategy.AMOUNT_CHANGED, getPlanning());
-					fire();
+					fire(getPlanning());
 				}
 			});
 
@@ -637,7 +650,7 @@ public class PlanningView extends MkpkDockLayout {
 				public void onValueChange(ValueChangeEvent<Double> event) {
 					getPlanning().setMinutes(MkpkMathUtils.round(minutes.getValue() * 60));
 					PlanningCalculator.calculate(getParams(), PlanningCalculatorStrategy.TIME_CHANGED, getPlanning());
-					fire();
+					fire(getPlanning());
 				}
 			});
 			++col;
@@ -649,7 +662,7 @@ public class PlanningView extends MkpkDockLayout {
 				@Override
 				public void onSelection(SelectionEvent<Client> event) {
 					getPlanning().setClient(event.getSelectedItem());
-					fire();
+					fire(getPlanning());
 				}
 			});
 			++col;
@@ -683,19 +696,19 @@ public class PlanningView extends MkpkDockLayout {
 			tab.getCellFormatter().addStyleName(row, col, MKPK.CSS.mkpkTextCenter());
 		}
 
-		public void refresh() {
-			date.setValue(getPlanning().getDate(), false);
-			orderLabel.setText(MkpkNumberUtils.toString(getPlanning().getOrder()));
-			product.setValue(getPlanning().getProduct(), false, false);
-			material.setValue(getPlanning().getMaterial(), false, false);
-			roll.setValue(getPlanning().getRoll(), false, false);
-			amount.setValue(getPlanning().getAmount(), false, false);
-			blowUnits.setValue(getPlanning().getBlowUnits(), false, false);
-			meters.setValue(getPlanning().getMeters(), false, false);
-			blows.setValue(getPlanning().getBlows(), false, false);
-			blowsMinute.setValue(getPlanning().getBlowsMinute(), false, false);
-			minutes.setValue(getPlanning().getMinutes() / 60, false, false);
-			client.setValue(getPlanning().getClient(), false, false);
+		public void refresh(Planning planning) {
+			date.setValue(planning.getDate(), false);
+			orderLabel.setText(MkpkNumberUtils.toString(planning.getOrder()));
+			product.setValue(planning.getProduct(), false, false);
+//			material.setValue(planning.getMaterial(), false, false);
+			roll.setValue(planning.getRoll(), false, false);
+			amount.setValue(planning.getAmount(), false, false);
+			blowUnits.setValue(planning.getBlowUnits(), false, false);
+			meters.setValue(planning.getMeters(), false, false);
+			blows.setValue(planning.getBlows(), false, false);
+			blowsMinute.setValue(planning.getBlowsMinute(), false, false);
+			minutes.setValue(planning.getMinutes() / 60, false, false);
+			client.setValue(planning.getClient(), false, false);
 			validatePlanningRow();
 		}
 		
@@ -704,8 +717,8 @@ public class PlanningView extends MkpkDockLayout {
 			validateMeters(getPlanning(),meters);
 		}
 
-		private void fire() {
-			refresh();
+		private void fire(Planning pl) {
+			refresh(pl);
 			refreshList();
 			ValueChangeEvent.fire(PlanningRow.this, getPlanning());
 		}
@@ -767,8 +780,9 @@ public class PlanningView extends MkpkDockLayout {
 		focusContainer.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
+				Window.alert("Click ..: " + pl.getProduct().getCode() + pl.getProduct().getName());
 				planningRow.setPlanning(pl);
-				planningRow.refresh();
+				planningRow.refresh(pl);
 				Scheduler.get().scheduleDeferred(new ScheduledCommand() {
 					public void execute() {
 						amount.setFocus(true);
@@ -816,7 +830,7 @@ public class PlanningView extends MkpkDockLayout {
 		order.addStyleName(MKPK.CSS.mkpkFlexPanelChildOrder());
 		container.add(order);
 
-		InlineLabel product = new InlineLabel(pl.getProduct() != null ? pl.getProduct().getName() : "" );
+		InlineLabel product = new InlineLabel(pl.getProduct() != null ? pl.getProduct().getMeasure() : "" );
 		product.setStyleName(MKPK.CSS.mkpkFlexPanelChild());
 		product.addStyleName(MKPK.CSS.mkpkFlexPanelChildProduct());
 		container.add(product);

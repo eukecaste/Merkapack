@@ -1,11 +1,9 @@
 package com.merkapack.erp.planning.test;
 
+
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
-import java.util.Date;
-import java.util.LinkedList;
 
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
@@ -17,14 +15,11 @@ import org.junit.Test;
 import com.merkapack.erp.core.basic.DBContext;
 import com.merkapack.erp.core.basic.MkpkDatasource;
 import com.merkapack.erp.core.dao.MkpkGo;
-import com.merkapack.erp.core.model.Machine;
-import com.merkapack.erp.core.model.Planning;
-import com.merkapack.erp.gwt.server.Excel2Planning;
-import com.merkapack.erp.gwt.shared.PlanningCalculator;
-import com.merkapack.erp.gwt.shared.PlanningCalculatorParams;
+import com.merkapack.erp.core.model.Material;
+import com.merkapack.erp.core.model.Roll;
 
 @Ignore
-public class PlanningExcelTest {
+public class DBRollTest {
 	
 	private static final int DOMAIN = 1;
 	private static final String USER = "admin";
@@ -48,23 +43,47 @@ public class PlanningExcelTest {
 
 	@Test
 	public void testCalculator() throws EncryptedDocumentException, IOException, OpenXML4JException {
-		Date startDate = new Date(); 
-		Machine machine = MkpkGo.getMachines(ctx, "VERD").get(0);
-		PlanningCalculatorParams params = new PlanningCalculatorParams()
-				.setWorkHoursInADay(16 * 60 )
-				.setHoursMargin( 0.5 * 60 );
+		String[] materials = new String[] {
+ 			 "COCCION"
+			,"M-9"
+			,"M-8"
+			,"GOFRADAS"
+			,"GOFRADA ROLLO"
+			,"NEGRA"
+			,"NEGRAS"
+			,"ORO"
+			,"ORO/ORO"
+			,"PLATA"
+			,"IMPRESO"
+			,"PLATA/PLATA"
+			,"CALIDAD"
+			,"M-12"
+			,"M-15"
+			,"TRANSPARENTE"
+			,"M-14"
+			,"M-17"
+			,"M-220"
+			,"80 My"
+			,"PORTUGAL"
+		};
+		double widths[] = new double[] {500,550,600,650,700,750,800,900,1000,1050,1100,1200};
+		double lengths[] = new double[] {3000,1250,1500,1000};
 		
-		InputStream in = PlanningExcelTest.class.getResourceAsStream("PlanningExcelTest.xlsx");
-		LinkedList<Planning> list = Excel2Planning.importPlanning(ctx, in);
-		in.close();
-		for (Planning pl : list) {
-			pl.setDate(startDate);
-			pl.setBlowsMinute(machine.getBlows());
-			PlanningCalculator.calculate(params,pl);
-
+		for (String material : materials) {
+			Material m = MkpkGo.getMaterials(ctx,material).get(0);
+			for ( double width : widths) {
+				for ( double length : lengths) {
+					String name = "" + ((int) width) + "x" + ((int) length);
+					MkpkGo.save(ctx, new Roll()
+						.setDomain(DOMAIN)
+						.setName(name)
+						.setMaterial(m)
+						.setWidth(width)
+						.setLength(length)
+					);
+				}
+			}
 		}
-		list = PlanningCalculator.calculate( params ,list);
-		PlanningCalculatorTest.print(writer, list);
 	}
 
 }

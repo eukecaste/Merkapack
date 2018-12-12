@@ -44,7 +44,7 @@ public class PlanningUpload extends HttpServlet {
                 in.close();
             }
             
-			resp.setContentType(MimeType.JSON.getName());
+            resp.setContentType(MimeType.JSON.getName());
 			Gson g = new Gson();
 			g.toJson(list, resp.getWriter());
 			resp.flushBuffer();

@@ -10,7 +10,22 @@
 	<artifactId>mkpk-core</artifactId>
 	<name>MKPK CORE</name>
 	<description>MKPK CORE</description>
-	
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-source-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
 	<dependencies>
 		<!-- INTERNAL -->
 		<dependency>
@@ -27,10 +42,10 @@
 		</dependency>
 		<!-- EXTERNAL -->
 		<dependency>
-		    <groupId>org.apache.tomcat</groupId>
-		    <artifactId>tomcat-jdbc</artifactId>
-		    <version>9.0.12</version>
+			<groupId>org.apache.tomcat</groupId>
+			<artifactId>tomcat-jdbc</artifactId>
+			<version>9.0.12</version>
 			<scope>compile</scope>
-		</dependency>		
+		</dependency>
 	</dependencies>
 </project>

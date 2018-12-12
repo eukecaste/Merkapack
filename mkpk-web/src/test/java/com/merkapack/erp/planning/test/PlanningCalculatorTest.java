@@ -7,6 +7,7 @@ import java.text.DecimalFormat;
 import java.util.Date;
 import java.util.LinkedList;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.ibm.icu.text.SimpleDateFormat;
@@ -18,12 +19,13 @@ import com.merkapack.erp.core.model.Planning;
 import com.merkapack.erp.core.model.Product;
 import com.merkapack.erp.core.model.Roll;
 import com.merkapack.erp.gwt.client.util.GWTDateUtils;
+import com.merkapack.erp.gwt.shared.PlanningCalculator;
 import com.merkapack.erp.gwt.shared.PlanningCalculatorParams;
 import com.merkapack.erp.gwt.shared.PlanningCalculatorStrategy;
-import com.merkapack.erp.gwt.shared.PlanningCalculator;
 import com.merkapack.watson.util.MkpkNumberUtils;
 import com.merkapack.watson.util.MkpkStringUtils;
 
+@Ignore
 public class PlanningCalculatorTest {
 
 	private static final int DOMAIN = 1;
@@ -56,7 +58,7 @@ public class PlanningCalculatorTest {
 		pl.setLength(p.getLength());
 		pl.setMaterial(p.getMaterial());
 
-		LinkedList<Roll> rolls = MkpkGo.getRolls(ctx, "1000");
+		LinkedList<Roll> rolls = MkpkGo.getRolls(ctx, "1000", null);
 		Roll r = rolls.get(0);
 		pl.setRoll(r);
 		pl.setRollWidth(r.getWidth());
