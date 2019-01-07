@@ -51,18 +51,22 @@ public class PlanningCalculatorTest {
 		pl.setMachine(m);
 		pl.setBlowsMinute(m.getBlows());
 
-		Product p = MkpkGo.getProducts(ctx, "170x250").get(0);
+		Product p = MkpkGo.getProducts(ctx,0,10, "170x250").get(0);
 
 		pl.setProduct(p);
 		pl.setWidth(p.getWidth());
 		pl.setLength(p.getLength());
-		pl.setMaterial(p.getMaterial());
+		pl.setMaterialUp(p.getMaterialUp());
+		pl.setMaterialDown(p.getMaterialDown());
 
 		LinkedList<Roll> rolls = MkpkGo.getRolls(ctx, "1000", null);
 		Roll r = rolls.get(0);
-		pl.setRoll(r);
-		pl.setRollWidth(r.getWidth());
-		pl.setRollLength(r.getLength());
+		pl.setRollUp(r);
+		pl.setRollUpWidth(r.getWidth());
+		pl.setRollUpLength(r.getLength());
+		pl.setRollDown(r);
+		pl.setRollDownWidth(r.getWidth());
+		pl.setRollDownLength(r.getLength());
 		pl.setClient(MkpkGo.getClients(ctx, "VAC").get(0));
 
 		pl.setMinutes(17 * 60);
@@ -121,8 +125,10 @@ public class PlanningCalculatorTest {
 					  '|' + MkpkStringUtils.center(DATE_FORMAT.format(pl.getDate()), 12) 
 					+ '|' + MkpkStringUtils.center(MkpkNumberUtils.toString(pl.getOrder()), 3) 
 					+ '|' + MkpkStringUtils.rightPad(MkpkStringUtils.abbreviate(pl.getProduct() != null ? pl.getProduct().getName() : "", 13), 14)
-					+ '|' + MkpkStringUtils.rightPad(MkpkStringUtils.abbreviate(pl.getMaterial() != null ? pl.getMaterial().getName() : "", 12), 13)
-					+ '|' + MkpkStringUtils.rightPad(MkpkStringUtils.abbreviate(pl.getRoll() != null ? pl.getRoll().getName() : "", 13), 14)
+					+ '|' + MkpkStringUtils.rightPad(MkpkStringUtils.abbreviate(pl.getMaterialUp() != null ? pl.getMaterialUp().getName() : "", 12), 13)
+					+ '|' + MkpkStringUtils.rightPad(MkpkStringUtils.abbreviate(pl.getRollUp() != null ? pl.getRollUp().getName() : "", 13), 14)
+					+ '|' + MkpkStringUtils.rightPad(MkpkStringUtils.abbreviate(pl.getMaterialDown() != null ? pl.getMaterialDown().getName() : "", 12), 13)
+					+ '|' + MkpkStringUtils.rightPad(MkpkStringUtils.abbreviate(pl.getRollDown() != null ? pl.getRollDown().getName() : "", 13), 14)
 					+ '|' + MkpkStringUtils.leftPad(FMT_INT.format(pl.getAmount()), 10) 
 					+ '|' + MkpkStringUtils.leftPad(FMT_INT.format(pl.getBlowUnits()), 11) 
 					+ '|' + MkpkStringUtils.leftPad(FMT.format(pl.getMeters()), 10) 

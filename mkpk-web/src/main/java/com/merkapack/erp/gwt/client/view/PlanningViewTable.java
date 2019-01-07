@@ -99,7 +99,7 @@ public class PlanningViewTable extends CellTable<Planning> {
 		final TextColumn<Planning> materialColumn = new TextColumn<Planning>() {
 			@Override
 			public String getValue(Planning planning) {
-				return planning.getMaterial() != null?planning.getMaterial().getName():MkpkStringUtils.EMPTY;
+				return planning.getMaterialUp() != null?planning.getMaterialUp().getName():MkpkStringUtils.EMPTY;
 			}
 		};
 		this.addColumn(materialColumn, MKPK.MSG.material());
@@ -110,7 +110,7 @@ public class PlanningViewTable extends CellTable<Planning> {
 		final TextColumn<Planning> rollColumn = new TextColumn<Planning>() {
 			@Override
 			public String getValue(Planning planning) {
-				return planning.getRoll() != null?planning.getRoll().getName():MkpkStringUtils.EMPTY;
+				return planning.getRollUp() != null?planning.getRollUp().getName():MkpkStringUtils.EMPTY;
 			}
 		};
 		this.addColumn(rollColumn, MKPK.MSG.roll());

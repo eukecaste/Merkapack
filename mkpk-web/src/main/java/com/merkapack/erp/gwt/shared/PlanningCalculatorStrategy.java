@@ -45,17 +45,31 @@ public enum PlanningCalculatorStrategy implements Serializable {
 		planning.setWidth(planning.getProduct().getWidth());
 		planning.setLength(planning.getProduct().getLength());
 
-		if (planning.getMaterial() == null) {
-			if (planning.getProduct().getMaterial() == null) {
+		if (planning.getMaterialUp() == null) {
+			if (planning.getProduct().getMaterialUp() == null) {
 				planning.initialize();
 				return false;
 			}
-			planning.setMaterial(planning.getProduct().getMaterial());
+			planning.setMaterialUp(planning.getProduct().getMaterialUp());
 		}
-		if (planning.getRoll() != null) {
-			planning.setRollWidth(planning.getRoll().getWidth());
-			planning.setRollLength(planning.getRoll().getLength());
-			planning.setBlowUnits((int) MkpkMathUtils.round(planning.getRollWidth() / planning.getWidth(), 0));
+		if (planning.getMaterialDown() == null) {
+			if (planning.getProduct().getMaterialDown() == null) {
+				planning.initialize();
+				return false;
+			}
+			planning.setMaterialDown(planning.getProduct().getMaterialDown());
+		}
+		
+		if (planning.getRollUp() != null) {
+			planning.setRollUpWidth(planning.getRollUp().getWidth());
+			planning.setRollUpLength(planning.getRollUp().getLength());
+		}
+		if (planning.getRollDown() != null) {
+			planning.setRollDownWidth(planning.getRollDown().getWidth());
+			planning.setRollDownLength(planning.getRollDown().getLength());
+		}
+		if ( planning.getRollUpWidth() == planning.getRollDownWidth()) {
+			planning.setBlowUnits((int) MkpkMathUtils.round(planning.getRollUpWidth() / planning.getWidth(), 0));
 		}
 		return !MkpkMathUtils.isZero(planning.getBlowUnits());
 	}

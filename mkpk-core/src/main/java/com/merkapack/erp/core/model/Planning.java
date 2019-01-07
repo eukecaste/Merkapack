@@ -15,10 +15,14 @@ public class Planning implements Serializable, HasAudit, Cloneable {
 	private Product product;
 	private double width;
 	private double length;
-	private Material material;
-	private Roll roll;
-	private double rollWidth;
-	private double rollLength;
+	private Material materialUp;
+	private Roll rollUp;
+	private double rollUpWidth;
+	private double rollUpLength;
+	private Material materialDown;
+	private Roll rollDown;
+	private double rollDownWidth;
+	private double rollDownLength;
 	private double amount;
 	private int blowUnits;
 	private double meters;
@@ -101,38 +105,72 @@ public class Planning implements Serializable, HasAudit, Cloneable {
 		this.length = length;
 		return this;
 	}
-	public Material getMaterial() {
-		return material;
+	public Material getMaterialUp() {
+		return materialUp;
 	}
-	public Planning setMaterial(Material material) {
+	public Planning setMaterialUp(Material materialUp) {
 		if (!isDirty()) setDirty( true );
-		this.material = material;
+		this.materialUp = materialUp;
 		return this;
 	}
-	public Roll getRoll() {
-		return roll;
+	public Roll getRollUp() {
+		return rollUp;
 	}
-	public Planning setRoll(Roll roll) {
+	public Planning setRollUp(Roll rollUp) {
 		if (!isDirty()) setDirty( true );
-		this.roll = roll;
+		this.rollUp = rollUp;
 		return this;
 	}
-	public double getRollWidth() {
-		return rollWidth;
+	public double getRollUpWidth() {
+		return rollUpWidth;
 	}
-	public Planning setRollWidth(double rollWidth) {
+	public Planning setRollUpWidth(double rollUpWidth) {
 		if (!isDirty()) setDirty( true );
-		this.rollWidth = rollWidth;
+		this.rollUpWidth = rollUpWidth;
 		return this;
 	}
-	public double getRollLength() {
-		return rollLength;
+	public double getRollUpLength() {
+		return rollUpLength;
 	}
-	public Planning setRollLength(double rollLength) {
+	public Planning setRollUpLength(double rollUpLength) {
 		if (!isDirty()) setDirty( true );
-		this.rollLength = rollLength;
+		this.rollUpLength = rollUpLength;
 		return this;
 	}
+	
+	public Material getMaterialDown() {
+		return materialDown;
+	}
+	public Planning setMaterialDown(Material materialDown) {
+		if (!isDirty()) setDirty( true );
+		this.materialDown = materialDown;
+		return this;
+	}
+	public Roll getRollDown() {
+		return rollDown;
+	}
+	public Planning setRollDown(Roll rollDown) {
+		if (!isDirty()) setDirty( true );
+		this.rollDown = rollDown;
+		return this;
+	}
+	public double getRollDownWidth() {
+		return rollDownWidth;
+	}
+	public Planning setRollDownWidth(double rollDownWidth) {
+		if (!isDirty()) setDirty( true );
+		this.rollDownWidth = rollDownWidth;
+		return this;
+	}
+	public double getRollDownLength() {
+		return rollDownLength;
+	}
+	public Planning setRollDownLength(double rollDownLength) {
+		if (!isDirty()) setDirty( true );
+		this.rollDownLength = rollDownLength;
+		return this;
+	}
+	
 	public double getAmount() {
 		return amount;
 	}
@@ -262,8 +300,10 @@ public class Planning implements Serializable, HasAudit, Cloneable {
 	public void initialize() {
 		this.setWidth(0);
 		this.setLength(0);
-		this.setRollWidth(0);
-		this.setRollLength(0);
+		this.setRollUpWidth(0);
+		this.setRollUpLength(0);
+		this.setRollDownWidth(0);
+		this.setRollDownLength(0);
 		this.setAmount(0);
 		this.setMeters(0);
 		this.setBlows(0);
@@ -280,10 +320,14 @@ public class Planning implements Serializable, HasAudit, Cloneable {
 			.setProduct(this.product) 
 			.setWidth(this.width) 
 			.setLength(this.length) 
-			.setMaterial(this.material)
-			.setRoll(this.roll) 
-			.setRollWidth(this.rollWidth)
-			.setRollLength(this.rollLength) 
+			.setMaterialUp(this.materialUp)
+			.setRollUp(this.rollUp) 
+			.setRollUpWidth(this.rollUpWidth)
+			.setRollUpLength(this.rollUpLength) 
+			.setMaterialDown(this.materialDown)
+			.setRollDown(this.rollDown) 
+			.setRollDownWidth(this.rollDownWidth)
+			.setRollDownLength(this.rollDownLength) 
 			.setAmount(this.amount) 
 			.setBlowUnits(this.blowUnits) 
 			.setMeters(this.meters) 

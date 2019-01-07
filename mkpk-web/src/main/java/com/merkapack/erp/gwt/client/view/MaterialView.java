@@ -32,8 +32,7 @@ public class MaterialView extends MkpkDockLayout  {
 	
 	private static MaterialServiceAsync SERVICE;
 	private SimpleLayoutPanel content;
-	private final int deleteButtonColumn = 2; 
-	
+	 
 	public MaterialView() {
 		MaterialServiceAsync serviceRaw = GWT.create(MaterialService.class);
 		SERVICE = new MaterialServiceAsyncDecorator(serviceRaw);
@@ -51,16 +50,34 @@ public class MaterialView extends MkpkDockLayout  {
 		final FlexTable tab = new FlexTable();
 		tab.setStyleName(MKPK.CSS.mkpkTable());
 		tab.addStyleName(MKPK.CSS.mkpkBlockCenter());
-		tab.getColumnFormatter().setWidth(0, "auto");
-		tab.getColumnFormatter().setWidth(1, "1%");
-		tab.getColumnFormatter().setWidth(2, "15px");
+		tab.getColumnFormatter().setWidth(0, "1%");
+		tab.getColumnFormatter().setWidth(1, "auto");
+		tab.getColumnFormatter().setWidth(2, "1%");
+		tab.getColumnFormatter().setWidth(3, "1%");
+		tab.getColumnFormatter().setWidth(4, "1%");
+		tab.getColumnFormatter().setWidth(5, "15px");
 		
 		int col = 0;
-		Label nameLabel = new Label(MKPK.MSG.materials());
-		tab.setWidget(0, col, nameLabel);
+		Label referenceLabel = new Label(MKPK.MSG.reference());
+		tab.setWidget(0, col, referenceLabel);
 		tab.getCellFormatter().setStyleName(0, col, MKPK.CSS.mkpkTableHeader());
 		col++;
 		
+		Label nameLabel = new Label(MKPK.MSG.description());
+		tab.setWidget(0, col, nameLabel);
+		tab.getCellFormatter().setStyleName(0, col, MKPK.CSS.mkpkTableHeader());
+		col++;
+
+		Label rawMaterials = new Label(MKPK.MSG.materials());
+		tab.setWidget(0, col, rawMaterials);
+		tab.getCellFormatter().setStyleName(0, col, MKPK.CSS.mkpkTableHeader());
+		col++;
+
+		Label rawComposition = new Label(MKPK.MSG.composition());
+		tab.setWidget(0, col, rawComposition);
+		tab.getCellFormatter().setStyleName(0, col, MKPK.CSS.mkpkTableHeader());
+		col++;
+
 		Label thicknessLabel = new Label(MKPK.MSG.thickness());
 		tab.setWidget(0, col, thicknessLabel);
 		tab.getCellFormatter().setStyleName(0, col, MKPK.CSS.mkpkTableHeader());
@@ -103,15 +120,35 @@ public class MaterialView extends MkpkDockLayout  {
 
 	protected void paintRow(FlexTable tab, final Material material) {
 		int row = tab.getRowCount();
-		MkpkTextBox nameBox = paintNameColumn(tab,row,0,material);
-		paintThicknessColumn(tab,row,1,material);
-		paintDeleteButton(tab,row,material);
+		MkpkTextBox codeBox = paintCodeColumn(tab,row,0,material);
+		paintNameColumn(tab,row,1,material);
+		paintRawMaterialColumn(tab,row,2,material);
+		paintRawCompositionColumn(tab,row,3,material);
+		paintThicknessColumn(tab,row,4,material);
+		paintDeleteButton(tab,row,5,material);
 		
 		Scheduler.get().scheduleDeferred(new ScheduledCommand() {
 			public void execute() {
-				nameBox.setFocus(true);
+				codeBox.setFocus(true);
 			}
 		});
+	}
+
+	private MkpkTextBox paintCodeColumn(FlexTable tab, int row, int col, Material material) {
+		MkpkTextBox codeBox = new MkpkTextBox();
+		codeBox.setValue(material.getCode(), false);
+		codeBox.setMaxLength(15);
+		codeBox.setVisibleLength(15);
+		tab.setWidget(row, col, codeBox);
+		codeBox.addValueChangeHandler( new ValueChangeHandler<String>() {
+
+			@Override
+			public void onValueChange(ValueChangeEvent<String> event) {
+				material.setCode( codeBox.getValue() );
+				save(tab,row,material);
+			}
+		});
+		return codeBox;
 	}
 
 	private MkpkTextBox paintNameColumn(FlexTable tab, int row, int col, Material material) {
@@ -131,35 +168,39 @@ public class MaterialView extends MkpkDockLayout  {
 		return nameBox;
 	}
 
-//	private MkpkDoubleBox paintWidthColumn(FlexTable tab, int row, int col, Material material) {
-//		MkpkDoubleBox widthBox = new MkpkDoubleBox();
-//		widthBox.setValue(material.getWidth(), false);
-//		tab.setWidget(row, col, widthBox);
-//		widthBox.addValueChangeHandler( new ValueChangeHandler<Double>() {
-//
-//			@Override
-//			public void onValueChange(ValueChangeEvent<Double> event) {
-//				material.setWidth( widthBox.getValue() );
-//				save(tab, row, material);
-//			}
-//		});
-//		return widthBox;
-//	}
-//
-//	private MkpkDoubleBox paintLengthColumn(FlexTable tab, int row, int col, Material material) {
-//		MkpkDoubleBox lengthBox = new MkpkDoubleBox();
-//		lengthBox.setValue(material.getLength(), false);
-//		tab.setWidget(row, col, lengthBox);
-//		lengthBox.addValueChangeHandler( new ValueChangeHandler<Double>() {
-//
-//			@Override
-//			public void onValueChange(ValueChangeEvent<Double> event) {
-//				material.setLength( lengthBox.getValue() ); 
-//				save(tab, row, material);
-//			}
-//		});
-//		return lengthBox;
-//	}
+	private MkpkTextBox paintRawMaterialColumn(FlexTable tab, int row, int col, Material material) {
+		MkpkTextBox rawMaterialBox = new MkpkTextBox();
+		rawMaterialBox.setValue(material.getRawMaterial(), false);
+		rawMaterialBox.setMaxLength(15);
+		rawMaterialBox.setVisibleLength(15);
+		tab.setWidget(row, col, rawMaterialBox);
+		rawMaterialBox.addValueChangeHandler( new ValueChangeHandler<String>() {
+
+			@Override
+			public void onValueChange(ValueChangeEvent<String> event) {
+				material.setRawMaterial( rawMaterialBox.getValue() );
+				save(tab,row,material);
+			}
+		});
+		return rawMaterialBox;
+	}
+
+	private MkpkTextBox paintRawCompositionColumn(FlexTable tab, int row, int col, Material material) {
+		MkpkTextBox rawCompositionBox = new MkpkTextBox();
+		rawCompositionBox.setValue(material.getRawComposition(), false);
+		rawCompositionBox.setMaxLength(15);
+		rawCompositionBox.setVisibleLength(15);
+		tab.setWidget(row, col, rawCompositionBox);
+		rawCompositionBox.addValueChangeHandler( new ValueChangeHandler<String>() {
+
+			@Override
+			public void onValueChange(ValueChangeEvent<String> event) {
+				material.setRawComposition( rawCompositionBox.getValue() );
+				save(tab,row,material);
+			}
+		});
+		return rawCompositionBox;
+	}
 
 	private MkpkDoubleBox paintThicknessColumn(FlexTable tab, int row, int col, Material material) {
 		MkpkDoubleBox thicknessBox = new MkpkDoubleBox();
@@ -177,7 +218,7 @@ public class MaterialView extends MkpkDockLayout  {
 		return thicknessBox;
 	}
 
-	private void paintDeleteButton(FlexTable tab, int row, Material material) {
+	private void paintDeleteButton(FlexTable tab, int row, int col, Material material) {
 		if (material.getId() != null) {
 			MkpkButton deleteButton = new MkpkButton();
 			deleteButton.setTabIndex(-1);
@@ -215,9 +256,9 @@ public class MaterialView extends MkpkDockLayout  {
 					
 				}
 			});
-			tab.setWidget(row, deleteButtonColumn, deleteButton);
+			tab.setWidget(row, col, deleteButton);
 		} else {
-			tab.setWidget(row, deleteButtonColumn, new Label());
+			tab.setWidget(row, col, new Label());
 		}
 	}
 
@@ -228,7 +269,7 @@ public class MaterialView extends MkpkDockLayout  {
 			public void onSuccess(Material result) {
 				if (material.getId() == null) {
 					material.setId(result.getId());
-					paintDeleteButton(tab,row,material);							
+					paintDeleteButton(tab,row,5,material);							
 				}
 			}
 			

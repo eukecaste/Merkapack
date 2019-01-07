@@ -63,6 +63,7 @@ public class RollDAO {
 	public static LinkedList<Roll> getRolls(DBContext ctx, RollFilter filter){
 		return getSelect(ctx)
 			.where(ROLL_PROPERTIES.getConditions(filter))
+			.orderBy(ROLL.WIDTH.desc())
 			.fetch()
 			.stream()
 			.map( new RollMapper() )

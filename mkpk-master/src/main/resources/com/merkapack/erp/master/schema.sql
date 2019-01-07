@@ -26,8 +26,11 @@ CREATE TABLE `machine` (
 CREATE TABLE `material` (
 	 `id` int(4) NOT NULL AUTO_INCREMENT COMMENT 'Identificador unico del material'
 	,`domain` int(4) NOT NULL COMMENT 'Identificador del Dominio'
+	,`code` varchar(15) COLLATE latin1_spanish_ci NOT NULL COMMENT 'Codigo del material'
 	,`name` varchar(32) COLLATE latin1_spanish_ci NOT NULL COMMENT 'Nombre del material'
-	,`thickness` double(6,4) DEFAULT '0.00' COMMENT 'Grosor del material'
+	,`raw_material` varchar(32) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Material de composicion'
+	,`raw_composition` varchar(32) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Composicion'
+	,`thickness` double(6,2) DEFAULT '0.00' COMMENT 'Grosor del material'
 	,`creation_user` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de creacion'
 	,`creation_date` datetime DEFAULT NULL COMMENT 'Fecha de creacion'
 	,`modification_user` varchar(16) COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de modificacion'
@@ -59,7 +62,8 @@ CREATE TABLE `product` (
 	,`domain` int(4) NOT NULL COMMENT 'Identificador del Dominio'
 	,`code` varchar(15) COLLATE latin1_spanish_ci NOT NULL COMMENT 'Codigo del producto'
 	,`name` varchar(128) COLLATE latin1_spanish_ci NOT NULL COMMENT 'Nombre del producto'
-	,`material` int(4) NOT NULL COMMENT 'Identificador del Material'
+	,`material_up` int(4) NOT NULL COMMENT 'Identificador del material superior'
+	,`material_down` int(4) NOT NULL COMMENT 'Identificador del material inferior'
 	,`width` double(8,2) DEFAULT '0.00' COMMENT 'Ancho'
 	,`length` double(8,2) DEFAULT '0.00' COMMENT 'Largo'
 	,`box_units` double(8,2) DEFAULT '0.00' COMMENT 'Unidades por caja'
@@ -72,7 +76,8 @@ CREATE TABLE `product` (
 	,KEY `IDX_PRODUCT_DOMAIN` (`domain`)
 	,KEY `IDX_PRODUCT_MATERIAL` (`domain`)
 	,CONSTRAINT `FK_PRODUCT_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)	
-	,CONSTRAINT `FK_PRODUCT_MATERIAL` FOREIGN KEY (`material`) REFERENCES `material` (`id`)
+	,CONSTRAINT `FK_PRODUCT_MATERIAL_UP` FOREIGN KEY (`material_up`) REFERENCES `material` (`id`)
+	,CONSTRAINT `FK_PRODUCT_MATERIAL_DOWN` FOREIGN KEY (`material_down`) REFERENCES `material` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Productos';
 
 CREATE TABLE `user` (
@@ -110,10 +115,14 @@ CREATE TABLE `planning` (
 	,`product` int(4) NOT NULL COMMENT 'Identificador del producto'
 	,`width` double(8,2) DEFAULT '0.00' COMMENT 'Ancho bolsa'
 	,`length` double(8,2) DEFAULT '0.00' COMMENT 'Largo bolsa'
-	,`material` int(4) NOT NULL COMMENT 'Identificador del material'
-	,`roll` int(4) NOT NULL COMMENT 'Identificador de la bobina'
- 	,`roll_width` double(8,2) DEFAULT 0.00 COMMENT 'Ancho bobina'
-  	,`roll_length` double(8,2) DEFAULT 0.00 COMMENT 'Largo bobina'
+	,`material_up` int(4) NOT NULL COMMENT 'Identificador del material superior'
+	,`roll_up` int(4) NOT NULL COMMENT 'Identificador de la bobina superior'
+ 	,`roll_up_width` double(8,2) DEFAULT 0.00 COMMENT 'Ancho bobina superior'
+  	,`roll_up_length` double(8,2) DEFAULT 0.00 COMMENT 'Largo bobina superior'
+	,`material_down` int(4) NOT NULL COMMENT 'Identificador del material inferior'
+	,`roll_down` int(4) NOT NULL COMMENT 'Identificador de la bobina inferior'
+ 	,`roll_down_width` double(8,2) DEFAULT 0.00 COMMENT 'Ancho bobina inferior'
+  	,`roll_down_length` double(8,2) DEFAULT 0.00 COMMENT 'Largo bobina inferior'
 	,`amount` double(8,2) DEFAULT '0.00' COMMENT 'Cantidad'
 	,`blow_units` int(11) DEFAULT 0 COMMENT 'Golpe unidades'	
 	,`meters` double(8,2) DEFAULT '0.00' COMMENT 'Metros'
@@ -130,13 +139,18 @@ CREATE TABLE `planning` (
 	,KEY `IDX_PLANNING_DOMAIN` (`domain`)
 	,KEY `IDX_PLANNING_MACHINE` (`machine`)
 	,KEY `IDX_PLANNING_PRODUCT` (`product`)
-	,KEY `IDX_PLANNING_MATERIAL` (`material`)
+	,KEY `IDX_PLANNING_MATERIAL_UP` (`material_up`)
+	,KEY `IDX_PLANNING_MATERIAL_DOWN` (`material_down`)
+	,KEY `IDX_PLANNING_ROLL_UP` (`roll_up`)
+	,KEY `IDX_PLANNING_ROLL_DOWN` (`roll_down`)
 	,KEY `IDX_PLANNING_CLIENT` (`client`)
 	,CONSTRAINT `FK_PLANNING_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
 	,CONSTRAINT `FK_PLANNING_MACHINE` FOREIGN KEY (`machine`) REFERENCES `machine` (`id`)
 	,CONSTRAINT `FK_PLANNING_PRODUCT` FOREIGN KEY (`product`) REFERENCES `product` (`id`)  
-	,CONSTRAINT `FK_PLANNING_MATERIAL` FOREIGN KEY (`material`) REFERENCES `material` (`id`)
-	,CONSTRAINT `FK_PLANNING_ROLL` FOREIGN KEY (`roll`) REFERENCES `roll` (`id`)
+	,CONSTRAINT `FK_PLANNING_MATERIAL_UP` FOREIGN KEY (`material_up`) REFERENCES `material` (`id`)
+	,CONSTRAINT `FK_PLANNING_ROLL_UP` FOREIGN KEY (`roll_up`) REFERENCES `roll` (`id`)
+	,CONSTRAINT `FK_PLANNING_MATERIAL_DOWN` FOREIGN KEY (`material_down`) REFERENCES `material` (`id`)
+	,CONSTRAINT `FK_PLANNING_ROLL_DOWN` FOREIGN KEY (`roll_down`) REFERENCES `roll` (`id`)
 	,CONSTRAINT `FK_PLANNING_CLIENT` FOREIGN KEY (`client`) REFERENCES `client` (`id`)  
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Plan de fabricacion';
 

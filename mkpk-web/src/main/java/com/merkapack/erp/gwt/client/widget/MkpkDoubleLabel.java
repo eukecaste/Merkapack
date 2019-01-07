@@ -14,6 +14,11 @@ public class MkpkDoubleLabel extends Label{
 		addStyleName(MKPK.CSS.mkpkNumberLabel());
 	}
 	
+	public MkpkDoubleLabel(Double value) {
+		this();
+		setValue(value);
+	}
+	
 	public void setValue(Double value) {
 		if (value == null) value = 0.0;
 		super.setText(MKPK.FMT.format(value));

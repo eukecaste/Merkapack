@@ -60,7 +60,7 @@ public class MachineView extends MkpkDockLayout  {
 		tab.getCellFormatter().setStyleName(0, col, MKPK.CSS.mkpkTableHeader());
 		col++;
 
-		Label blowsLabel = new Label(MKPK.MSG.blows());
+		Label blowsLabel = new Label(MKPK.MSG.defaultBlows());
 		blowsLabel.setStyleName(MKPK.CSS.mkpkBold());
 		tab.setWidget(0, col, blowsLabel);
 		tab.getCellFormatter().setStyleName(0, col, MKPK.CSS.mkpkTableHeader());

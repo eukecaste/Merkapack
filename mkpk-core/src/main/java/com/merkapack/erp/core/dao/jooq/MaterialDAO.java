@@ -19,7 +19,7 @@ public class MaterialDAO {
 			.orderBy(MATERIAL.NAME)
 			.fetch()
 			.stream()
-			.map( new MaterialMapper() )
+			.map( new MaterialMapper(MATERIAL) )
 			.findFirst()
 			.orElse(null);
 	}
@@ -29,7 +29,7 @@ public class MaterialDAO {
 			.orderBy(MATERIAL.NAME)
 			.fetch()
 			.stream()
-			.map( new MaterialMapper() )
+			.map( new MaterialMapper(MATERIAL) )
 			.collect(Collectors.toCollection(LinkedList::new));
 	}
 	public static LinkedList<Material> getMaterials(DBContext ctx, String query) {
@@ -37,12 +37,14 @@ public class MaterialDAO {
 		query = MkpkStringUtils.appendIfMissing(query, "%");
 		return ctx.getDslContext().select()
 				.from( MATERIAL )
-				.where(MATERIAL.NAME.like(query))
-				.orderBy(MATERIAL.NAME)
+				.where(MATERIAL.CODE.like(query)
+					.or(MATERIAL.NAME.like(query))
+				)
+				.orderBy(MATERIAL.CODE)
 				.fetch()
 				.stream()
 				.limit(30)
-				.map( new MaterialMapper() )
+				.map( new MaterialMapper(MATERIAL) )
 				.collect(Collectors.toCollection(LinkedList::new));
 	}
 	public static Material save(DBContext ctx, Material material) {
@@ -55,7 +57,10 @@ public class MaterialDAO {
 		Integer id = ctx.getDslContext()
 			.insertInto(MATERIAL)
 			.set(MATERIAL.DOMAIN,material.getDomain())
+			.set(MATERIAL.CODE,material.getCode())
 			.set(MATERIAL.NAME,material.getName())
+			.set(MATERIAL.RAW_MATERIAL,material.getRawMaterial())
+			.set(MATERIAL.RAW_COMPOSITION,material.getRawComposition())
 			.set(MATERIAL.THICKNESS,material.getThickness())
 			.set(MATERIAL.CREATION_USER,ctx.getUser())
 			.set(MATERIAL.CREATION_DATE, new Timestamp( System.currentTimeMillis()) )
@@ -68,7 +73,10 @@ public class MaterialDAO {
 	public static Material update(DBContext ctx, Material material) {
 		int count = ctx.getDslContext()
 			.update(MATERIAL)
+			.set(MATERIAL.CODE,material.getCode())
 			.set(MATERIAL.NAME,material.getName())
+			.set(MATERIAL.RAW_MATERIAL,material.getRawMaterial())
+			.set(MATERIAL.RAW_COMPOSITION,material.getRawComposition())
 			.set(MATERIAL.THICKNESS,material.getThickness())
 			.set(MATERIAL.MODIFICATION_USER,ctx.getUser())
 			.set(MATERIAL.MODIFICATION_DATE, new Timestamp( System.currentTimeMillis()) )

@@ -7,8 +7,8 @@ import com.merkapack.erp.core.model.Product;
 
 public interface ProductServiceAsync {
 
-	void getProducts(AsyncCallback<LinkedList<Product>> callback);
-	void getProducts(String query,AsyncCallback<LinkedList<Product>> callback);
+	void getProducts(int offset, int count,AsyncCallback<LinkedList<Product>> callback);
+	void getProducts(int offset, int count,String query,AsyncCallback<LinkedList<Product>> callback);
 	void save(Product product, AsyncCallback<Product> callback);
 	void delete(Product product, AsyncCallback<Void> asyncCallback);
 

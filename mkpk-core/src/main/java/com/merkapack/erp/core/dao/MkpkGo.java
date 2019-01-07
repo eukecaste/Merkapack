@@ -19,6 +19,7 @@ import com.merkapack.erp.core.model.Material;
 import com.merkapack.erp.core.model.Planning;
 import com.merkapack.erp.core.model.Product;
 import com.merkapack.erp.core.model.Roll;
+import com.merkapack.watson.util.MkpkStringUtils;
 
 public class MkpkGo {
 	
@@ -96,18 +97,22 @@ public class MkpkGo {
 	//							---------
 	// 							[PRODUCT]
 	//							---------
-	public static LinkedList<Product> getProducts(DBContext ctx) {
+	public static LinkedList<Product> getProducts(DBContext ctx, int offset, int count) {
 		return ctx.getDslContext().transactionResult(
-				configuration -> ProductDAO.getProducts(ctx));
+				configuration -> ProductDAO.getProductList(ctx, offset,count, null));
 	}
-	public static LinkedList<Product> getProducts(DBContext ctx, ProductFilter filter) {
+	public static LinkedList<Product> getProducts(DBContext ctx, int offset, int count, ProductFilter filter) {
 		return ctx.getDslContext().transactionResult(
-				configuration -> ProductDAO.getProducts(ctx,filter));
+				configuration -> ProductDAO.getProductList(ctx, offset,count, filter));
 	}
-	
-	public static LinkedList<Product> getProducts(DBContext ctx,String query) {
+	public static LinkedList<Product> getProducts(DBContext ctx, int offset, int count,String query) {
+		query = MkpkStringUtils.prependIfMissing(query, "%");
+		final String qry = MkpkStringUtils.appendIfMissing(query, "%");
 		return ctx.getDslContext().transactionResult(
-				configuration -> ProductDAO.getProducts(ctx,query));
+				configuration -> ProductDAO.getProductList(ctx,offset,count,
+						p -> p.getCodeProperty().like(qry)
+						 .or(p.getNameProperty().like(qry)))
+				);
 	}
 
 	public static Product save(DBContext ctx,Product product) {

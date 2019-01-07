@@ -16,10 +16,14 @@ public class JsPlanning extends JavaScriptObject {
 	public final native JsProduct getProduct() 		 /*-{	return this.product;			}-*/;
 	public final native double getWidth() 			 /*-{	return this.width;				}-*/;
 	public final native double getLength() 			 /*-{	return this.length;				}-*/;
-	public final native JsMaterial getMaterial() 	 /*-{	return this.material;			}-*/;
-	public final native JsRoll getRoll() 			 /*-{	return this.roll;				}-*/;
-	public final native double getRollWidth() 		 /*-{	return this.rollWidth;			}-*/;
-	public final native double getRollLength() 		 /*-{	return this.rollLength;			}-*/;
+	public final native JsMaterial getMaterialUp() 	 /*-{	return this.materialUp;			}-*/;
+	public final native JsRoll getRollUp() 			 /*-{	return this.rollUp;				}-*/;
+	public final native double getRollUpWidth() 	 /*-{	return this.rollUpWidth;			}-*/;
+	public final native double getRollUpLength() 	 /*-{	return this.rollUpLength;			}-*/;
+	public final native JsMaterial getMaterialDown() /*-{	return this.material;			}-*/;
+	public final native JsRoll getRollDown() 		 /*-{	return this.roll;				}-*/;
+	public final native double getRollDownWidth() 	 /*-{	return this.rollWidth;			}-*/;
+	public final native double getRollDownLength() 	 /*-{	return this.rollLength;			}-*/;
 	public final native double getAmount() 			 /*-{	return this.amount;				}-*/;
 	public final native int getBlowUnits() 			 /*-{	return this.blowUnits;			}-*/;
 	public final native double getMeters() 			 /*-{	return this.meters;				}-*/;

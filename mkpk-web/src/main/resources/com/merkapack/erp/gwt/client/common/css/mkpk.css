@@ -183,6 +183,8 @@ input[type="text"] {
 @sprite .mkpk-icon-checked 	{width: auto; gwt-image: "mkpkIconChecked";}
 @sprite .mkpk-icon-unchecked{width: auto; gwt-image: "mkpkIconUnchecked";}
 @sprite .mkpk-icon-plus 	{width: auto; gwt-image: "mkpkIconPlus";}
+@sprite .mkpk-icon-next 	{width: auto; gwt-image: "mkpkIconNext";}
+@sprite .mkpk-icon-previous	{width: auto; gwt-image: "mkpkIconPrevious";}
 @sprite .mkpk-icon-cancel 	{width: auto; gwt-image: "mkpkIconCancel";}
 @sprite .mkpk-icon-delete 	{width: auto; gwt-image: "mkpkIconDelete";}
 @sprite .mkpk-icon-accept 	{width: auto; gwt-image: "mkpkIconAccept";}

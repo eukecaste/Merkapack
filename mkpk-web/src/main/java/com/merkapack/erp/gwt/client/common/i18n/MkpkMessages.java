@@ -37,6 +37,18 @@ public interface MkpkMessages extends Messages {
 
 	@DefaultMessage("Cancelar")
 	String cancel();
+	
+	@DefaultMessage("Referencia")
+	String reference();
+	
+	@DefaultMessage("Descripci\u00F3n")
+	String description();
+	
+	@DefaultMessage("C\u00F3digo")
+	String code();
+
+	@DefaultMessage("Composici\u00F3n")
+	String composition();
 
 	@DefaultMessage("\u00BFDesea cancelar la operaci\u00F3n?")
 	String cancelAction();
@@ -103,6 +115,9 @@ public interface MkpkMessages extends Messages {
 
 	@DefaultMessage("Golpes")
 	String blows();
+	
+	@DefaultMessage("Golpes por defecto")
+	String defaultBlows();
 
 	@DefaultMessage("Fecha inicial")
 	String startDate();
@@ -154,5 +169,6 @@ public interface MkpkMessages extends Messages {
 	
 	@DefaultMessage("Jornada laboral")
 	String workHoursInADay();
+
 	
 }

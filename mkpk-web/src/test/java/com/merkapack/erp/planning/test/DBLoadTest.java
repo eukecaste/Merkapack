@@ -14,7 +14,6 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import com.google.gwt.dev.util.collect.HashMap;
@@ -26,7 +25,6 @@ import com.merkapack.erp.core.model.Product;
 import com.merkapack.watson.util.MkpkNumberUtils;
 import com.merkapack.watson.util.MkpkStringUtils;
 
-@Ignore
 public class DBLoadTest {
 	
 	private static final int DOMAIN = 1;
@@ -71,13 +69,14 @@ public class DBLoadTest {
 			String name = nameCell.getStringCellValue();
 			String width = widthCell.getStringCellValue();
 			String length = lengthCell.getStringCellValue();
-			String material = materialCell.getStringCellValue();
+			String material = MkpkStringUtils.trim(materialCell.getStringCellValue());
 			double boxUnits = boxUnitsCell.getNumericCellValue();
 			String mold = moldCell.getStringCellValue();
 			if (!MkpkStringUtils.isBlank(material)) {
 				if (!materials.containsKey(material)) {
 					Material m = new Material()
 							.setDomain(DOMAIN)
+							.setCode(material)
 							.setName(material);
 					
 					m  = MkpkGo.save(ctx, m);
@@ -91,7 +90,8 @@ public class DBLoadTest {
 						.setName(name)
 						.setWidth(MkpkNumberUtils.toDouble(width))
 						.setLength(MkpkNumberUtils.toDouble(length))
-						.setMaterial(m)
+						.setMaterialUp(m)
+						.setMaterialDown(m)
 						.setBoxUnits(boxUnits)
 						.setMold(mold);
 				MkpkGo.save(ctx, p);

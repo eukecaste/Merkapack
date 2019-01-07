@@ -49,13 +49,13 @@ public class Excel2Planning {
 					pl.setProduct(product);
 					pl.setWidth(product.getWidth());
 					pl.setLength(product.getLength());
-					pl.setMaterial(product.getMaterial());
+					pl.setMaterialUp(product.getMaterialUp());
 
 					Roll roll = getRoll(ctx, product);
 					if (roll != null) {
-						pl.setRoll(roll);
-						pl.setRollWidth(roll.getWidth());
-						pl.setRollLength(roll.getLength());
+						pl.setRollUp(roll);
+						pl.setRollUpWidth(roll.getWidth());
+						pl.setRollUpLength(roll.getLength());
 					}
 				}
 				list.add(pl);
@@ -67,7 +67,7 @@ public class Excel2Planning {
 	}
 
 	private static Product getProduct(DBContext ctx, String productCode) {
-		LinkedList<Product> products = MkpkGo.getProducts(ctx,
+		LinkedList<Product> products = MkpkGo.getProducts(ctx,0,10,
 				p -> p.getCodeProperty().eq(productCode));
 		if (products != null) {
 			if (products.size() == 1) {
@@ -90,7 +90,7 @@ public class Excel2Planning {
 	}
 
 	private static Roll getRoll(DBContext ctx, Product product) {
-		LinkedList<Roll> rolls = MkpkGo.getRolls(ctx, p -> p.getMaterialIdProperty().eq(product.getMaterial().getId()));
+		LinkedList<Roll> rolls = MkpkGo.getRolls(ctx, p -> p.getMaterialIdProperty().eq(product.getMaterialUp().getId()));
 		LinkedList<Roll> availableRolls = new LinkedList<Roll>();
 		for (Roll roll : rolls) {
 			if (MkpkMathUtils.isZero(roll.getWidth() % product.getWidth())) {

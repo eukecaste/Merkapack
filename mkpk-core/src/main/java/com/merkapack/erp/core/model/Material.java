@@ -9,7 +9,10 @@ public class Material implements Serializable, HasAudit {
 	
 	private Integer id;
 	private int domain;
+	private String code;
 	private String name;
+	private String rawMaterial;
+	private String rawComposition;
 	private double thickness;
 	
 	private String creationUser;
@@ -35,11 +38,35 @@ public class Material implements Serializable, HasAudit {
 		return this;
 	}
 	
+	public String getCode() {
+		return code;
+	}
+	public Material setCode(String code) {
+		this.code = code;
+		return this;
+	}
+	
 	public String getName() {
 		return name;
 	}
 	public Material setName(String name) {
 		this.name = name;
+		return this;
+	}
+	
+	public String getRawMaterial() {
+		return rawMaterial;
+	}
+	public Material setRawMaterial(String rawMaterial) {
+		this.rawMaterial = rawMaterial;
+		return this;
+	}
+	
+	public String getRawComposition() {
+		return rawComposition;
+	}
+	public Material setRawComposition(String rawComposition) {
+		this.rawComposition = rawComposition;
 		return this;
 	}
 	

@@ -214,9 +214,14 @@ public class MkpkDockLayout extends DockLayoutPanel implements EntryPoint {
 	}
 
 	protected void showError(Throwable caught) {
+		MkpkCustomDialog dialog = new MkpkCustomDialog();
+		dialog.setCaption(MKPK.MSG.configuration());
+		dialog.setGlassEnabled(true);
+		dialog.setAnimationEnabled(true);
 		Label errorLabel = new Label(caught.getMessage());
 		errorLabel.setStyleName(MKPK.CSS.mkpkErrorLabel());
-		tabHeader.setWidget(1, 0, errorLabel);
-		
+		dialog.add(errorLabel);
+		dialog.center();
+		dialog.show();
 	}
 }

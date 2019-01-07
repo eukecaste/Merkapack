@@ -17,12 +17,15 @@ public class ProductServiceImpl extends StatelessRemoteServiceServlet implements
 	private static final long serialVersionUID = 949123203256791644L;
 
 	@Override
-	public LinkedList<Product> getProducts() throws MkpkCoreException {
+	public LinkedList<Product> getProducts(int offset, int count) throws MkpkCoreException {
 		DBContext ctx = null;
 		try {
 			ctx = MkpkDatasource.getDBContext(DOMAIN, USER);
-			return MkpkGo.getProducts(ctx);
+			return MkpkGo.getProducts(ctx,offset,count);
 		} catch (Throwable t) {
+			if (t instanceof MkpkCoreException) {
+				throw t;
+			} 
 			throw new MkpkCoreException("Se ha producido un error ["+ t.getMessage() +"]", t);
 		} finally {
 			if (ctx != null)
@@ -31,11 +34,11 @@ public class ProductServiceImpl extends StatelessRemoteServiceServlet implements
 	}
 
 	@Override
-	public LinkedList<Product> getProducts(String query) throws MkpkCoreException {
+	public LinkedList<Product> getProducts(int offset, int count,String query) throws MkpkCoreException {
 		DBContext ctx = null;
 		try {
 			ctx = MkpkDatasource.getDBContext(DOMAIN, USER);
-			LinkedList<Product> list = MkpkGo.getProducts(ctx,query);
+			LinkedList<Product> list = MkpkGo.getProducts(ctx,offset,count,query);
 			return list;
 		} catch (Throwable t) {
 			throw new MkpkCoreException("Se ha producido un error ["+ t.getMessage() +"]", t);

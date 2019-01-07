@@ -11,7 +11,8 @@ public class Product implements Serializable, HasAudit {
 	private int domain;
 	private String code;
 	private String name;
-	private Material material;
+	private Material materialUp;
+	private Material materialDown;
 	private Double width;
 	private Double length;
 	private Double boxUnits;
@@ -56,13 +57,21 @@ public class Product implements Serializable, HasAudit {
 		return this;
 	}
 	
-	public Material getMaterial() {
-		return material;
+	public Material getMaterialUp() {
+		return materialUp;
 	}
-	public Product setMaterial(Material material) {
-		this.material = material;
+	public Product setMaterialUp(Material materialUp) {
+		this.materialUp = materialUp;
 		return this;
 	}
+	public Material getMaterialDown() {
+		return materialDown;
+	}
+	public Product setMaterialDown(Material materialDown) {
+		this.materialDown = materialDown;
+		return this;
+	}
+	
 	public String getMeasure() {
 		return   (this.length==null?"":("" +this.length.intValue())
 			+"x"+(this.width ==null?"":("" +this.width.intValue())))

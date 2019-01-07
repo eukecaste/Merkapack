@@ -52,9 +52,9 @@ public class PlanningCalculator {
 	}
 	
 	public static MkpkPair<Planning,Planning> splitLineMeters(PlanningCalculatorParams params,Planning pl) {
-		if (pl.getMeters() > pl.getRollLength()) {
+		if (pl.getMeters() > pl.getRollUpLength()) {
 			Planning left = pl.clone();
-			double rollLength = pl.getRollLength();
+			double rollLength = pl.getRollUpLength();
 			left.setMeters(rollLength);
 			calculate(params, PlanningCalculatorStrategy.METERS_CHANGED, left);
 			

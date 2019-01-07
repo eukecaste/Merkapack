@@ -43,8 +43,13 @@ public class MkpkConfirmDialog extends MkpkCustomDialog {
     public void confirm(String msg, final MkpkConfirmDialogCallback callback) {
     	confirm("Pregunta", msg, callback);
     }
-    
-	public void confirm(String header,String msg, final MkpkConfirmDialogCallback callback) {
+    public void accept(String header,String msg, final MkpkConfirmDialogCallback callback) {
+    	this.confirm(header, msg, false, callback);
+    }
+    public void confirm(String header,String msg, final MkpkConfirmDialogCallback callback) {
+    	this.confirm(header, msg, true, callback);
+    }
+	private void confirm(String header,String msg, boolean showCancel, final MkpkConfirmDialogCallback callback) {
     	setCaption(header);
     	FlowPanel panel = new FlowPanel();
     	Label label = new Label(msg);
@@ -61,7 +66,7 @@ public class MkpkConfirmDialog extends MkpkCustomDialog {
 			public void onKeyUp(KeyUpEvent event) {
 				if (event.getNativeKeyCode() == KeyCodes.KEY_ESCAPE) {
 					hide();
-					callback.onCancel();	
+					if (callback != null) callback.onCancel();	
 				}
 			}
 		});
@@ -71,40 +76,42 @@ public class MkpkConfirmDialog extends MkpkCustomDialog {
 			public void onClick(ClickEvent event) {
 				okButton.setEnabled(false);
 				hide();
-				callback.onAccept();
+				if (callback != null) callback.onAccept();
 			}
 		});
     	buttons.add(okButton);
     	
-    	final Button cancelButton = new Button();
-    	cancelButton.setStyleName(MKPK.CSS.mkpkConfirmDialogCancelButton());
-    	cancelButton.addStyleName(MKPK.CSS.mkpkMarginLeft());
-    	cancelButton.setText( MKPK.MSG.cancel());
-    	cancelButton.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				cancelButton.setEnabled(false);
-				hide();
-				callback.onCancel();
-			}
-		});
-    	cancelButton.addKeyUpHandler(new KeyUpHandler() {
-			@Override
-			public void onKeyUp(KeyUpEvent event) {
-				if (event.getNativeKeyCode() == KeyCodes.KEY_ESCAPE) {
-					hide();
-					callback.onCancel();	
-				}
-			}
-		});
+    	if (showCancel) {
+    		final Button cancelButton = new Button();
+    		cancelButton.setStyleName(MKPK.CSS.mkpkConfirmDialogCancelButton());
+    		cancelButton.addStyleName(MKPK.CSS.mkpkMarginLeft());
+    		cancelButton.setText( MKPK.MSG.cancel());
+    		cancelButton.addClickHandler(new ClickHandler() {
+    			
+    			@Override
+    			public void onClick(ClickEvent event) {
+    				cancelButton.setEnabled(false);
+    				hide();
+    				if (callback != null) callback.onCancel();
+    			}
+    		});
+    		cancelButton.addKeyUpHandler(new KeyUpHandler() {
+    			@Override
+    			public void onKeyUp(KeyUpEvent event) {
+    				if (event.getNativeKeyCode() == KeyCodes.KEY_ESCAPE) {
+    					hide();
+    					if (callback != null) callback.onCancel();	
+    				}
+    			}
+    		});
+    		buttons.add(cancelButton);
+    	}
     	addCloseHandler(new CloseHandler<PopupPanel>() {
 			@Override
 			public void onClose(CloseEvent<PopupPanel> event) {
-				callback.onClose();
+				if (callback != null) callback.onClose();
 			}
 		});
-    	buttons.add(cancelButton);
     	panel.add(buttons);
     	root.setWidget(panel);
     	

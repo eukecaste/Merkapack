@@ -20,6 +20,9 @@ import com.merkapack.erp.core.model.Product;
 import com.merkapack.erp.core.model.Roll;
 
 public class Mapper {
+	private static com.merkapack.erp.master.jooq.tables.Material MATERIAL_UP = MATERIAL.as("MAT_UP");
+	private static com.merkapack.erp.master.jooq.tables.Material MATERIAL_DOWN = MATERIAL.as("MAT_DOWN");
+	
 	protected static class ClientMapper implements Function<Record,Client> {
 
 		@Override
@@ -56,18 +59,26 @@ public class Mapper {
 	}
 
 	protected static class MaterialMapper implements Function<Record,Material> {
+		private com.merkapack.erp.master.jooq.tables.Material materialTable;
+		public MaterialMapper(com.merkapack.erp.master.jooq.tables.Material materialTable) {
+			this.materialTable = materialTable;
+		}
+		
 
 		@Override
 		public Material apply(Record rec) {
 			return new Material()
-				.setId(rec.get(MATERIAL.ID))
-				.setDomain(rec.get(MATERIAL.DOMAIN))
-				.setName(rec.get(MATERIAL.NAME))
-				.setThickness(rec.get(MATERIAL.THICKNESS))
-				.setCreationUser(rec.getValue(MATERIAL.CREATION_USER))
-				.setCreationDate(rec.getValue(MATERIAL.CREATION_DATE))
-				.setModificationUser(rec.getValue(MATERIAL.MODIFICATION_USER))
-				.setModificationDate(rec.getValue(MATERIAL.MODIFICATION_DATE))
+				.setId(rec.get(materialTable.ID))
+				.setDomain(rec.get(materialTable.DOMAIN))
+				.setCode(rec.get(materialTable.CODE))
+				.setName(rec.get(materialTable.NAME))
+				.setRawMaterial(rec.get(materialTable.RAW_MATERIAL))
+				.setRawComposition(rec.get(materialTable.RAW_COMPOSITION))
+				.setThickness(rec.get(materialTable.THICKNESS))
+				.setCreationUser(rec.getValue(materialTable.CREATION_USER))
+				.setCreationDate(rec.getValue(materialTable.CREATION_DATE))
+				.setModificationUser(rec.getValue(materialTable.MODIFICATION_USER))
+				.setModificationDate(rec.getValue(materialTable.MODIFICATION_DATE))
 				.setDirty(false);
 		}
 		
@@ -80,7 +91,7 @@ public class Mapper {
 			return new Roll()
 				.setId(rec.get(ROLL.ID))
 				.setDomain(rec.get(ROLL.DOMAIN))
-				.setMaterial( (new MaterialMapper()).apply(rec) )
+				.setMaterial( (new MaterialMapper(MATERIAL)).apply(rec) )
 				.setName(rec.get(ROLL.NAME))
 				.setWidth(rec.get(ROLL.WIDTH))
 				.setLength(rec.get(ROLL.LENGTH))
@@ -102,7 +113,8 @@ public class Mapper {
 				.setDomain(rec.get(PRODUCT.DOMAIN))
 				.setCode(rec.get(PRODUCT.CODE))
 				.setName(rec.get(PRODUCT.NAME))
-				.setMaterial( (new MaterialMapper()).apply(rec) )
+				.setMaterialUp( (new MaterialMapper(MATERIAL_UP)).apply(rec) )
+				.setMaterialDown( (new MaterialMapper(MATERIAL_DOWN)).apply(rec) )
 				.setWidth(rec.get(PRODUCT.WIDTH))
 				.setLength(rec.get(PRODUCT.LENGTH))
 				.setBoxUnits(rec.get(PRODUCT.BOX_UNITS))
@@ -128,10 +140,14 @@ public class Mapper {
 				.setProduct( (new ProductMapper()).apply(rec) )
 				.setWidth(rec.get(PLANNING.WIDTH))
 				.setLength(rec.get(PLANNING.LENGTH))
-				.setMaterial( (new MaterialMapper()).apply(rec) )
-				.setRoll( (new RollMapper()).apply(rec) )
-				.setRollWidth(rec.get(PLANNING.ROLL_WIDTH))
-				.setRollLength(rec.get(PLANNING.ROLL_LENGTH))
+				.setMaterialUp( (new MaterialMapper(MATERIAL_UP)).apply(rec) )
+				.setRollUp( (new RollMapper()).apply(rec) )
+				.setRollUpWidth(rec.get(PLANNING.ROLL_UP_WIDTH))
+				.setRollUpLength(rec.get(PLANNING.ROLL_UP_LENGTH))
+				.setMaterialDown( (new MaterialMapper(MATERIAL_DOWN)).apply(rec) )
+				.setRollDown( (new RollMapper()).apply(rec) )
+				.setRollDownWidth(rec.get(PLANNING.ROLL_DOWN_WIDTH))
+				.setRollDownLength(rec.get(PLANNING.ROLL_DOWN_LENGTH))
 				.setAmount(rec.get(PLANNING.AMOUNT))
 				.setBlowUnits(rec.get(PLANNING.BLOW_UNITS))
 				.setMeters(rec.get(PLANNING.METERS))

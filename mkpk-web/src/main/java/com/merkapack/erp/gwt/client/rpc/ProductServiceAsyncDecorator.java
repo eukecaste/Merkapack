@@ -15,16 +15,16 @@ public class ProductServiceAsyncDecorator implements ProductServiceAsync {
 	}
 
 	@Override
-	public void getProducts(AsyncCallback<LinkedList<Product>> callback) {
+	public void getProducts(int offset, int count,AsyncCallback<LinkedList<Product>> callback) {
 		MKPK.start();
-		service.getProducts(callback);
+		service.getProducts(offset, count, callback);
 		
 	}
 
 	@Override
-	public void getProducts(String query, AsyncCallback<LinkedList<Product>> callback) {
+	public void getProducts(int offset, int count,String query, AsyncCallback<LinkedList<Product>> callback) {
 		MKPK.start();
-		service.getProducts(query,callback);
+		service.getProducts(offset, count, query,callback);
 		
 	}
 

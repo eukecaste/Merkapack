@@ -117,7 +117,7 @@ public class MkpkProductBox extends ResizeComposite implements HasValue<String>
 				if (MkpkStringUtils.length(request.getQuery()) >= MIN_CHARACTERS
 				 && MkpkStringUtils.length(request.getQuery()) <= MAX_CHARACTERS) {
 					reset();
-					service.getProducts(request.getQuery() ,new AsyncCallback<LinkedList<Product>>() {
+					service.getProducts(0,20,request.getQuery() ,new AsyncCallback<LinkedList<Product>>() {
 		
 								public void onFailure(Throwable caught) {
 									callback.onSuggestionsReady(request, new Response());

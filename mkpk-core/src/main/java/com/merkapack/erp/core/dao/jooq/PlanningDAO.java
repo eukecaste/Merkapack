@@ -22,8 +22,15 @@ import com.merkapack.erp.core.model.Filter.PlanningFilter;
 import com.merkapack.erp.core.model.Filter.Property;
 import com.merkapack.erp.core.model.Planning;
 import com.merkapack.erp.core.model.Properties.PlanningProperties;
+import com.merkapack.erp.master.jooq.tables.Material;
+import com.merkapack.erp.master.jooq.tables.Roll;
 
 public class PlanningDAO {
+	
+	private static Material MATERIAL_UP = MATERIAL.as("MAT_UP");
+	private static Material MATERIAL_DOWN = MATERIAL.as("MAT_DOWN");
+	private static Roll ROLL_UP = ROLL.as("ROLL_UP");
+	private static Roll ROLL_DOWN = ROLL.as("ROLL_DOWN");
 	
 	private static final PlanningPropertiesDAO PLANNING_PROPERTIES = new PlanningPropertiesDAO();
 	
@@ -44,12 +51,18 @@ public class PlanningDAO {
 		@Override public Property<String> getProductNameProperty() {return new FilterDAO.PropertyDAO<String>(PRODUCT.NAME);}
 		@Override public Property<Double> getWidthProperty() {return new FilterDAO.PropertyDAO<Double>(PLANNING.WIDTH);}
 		@Override public Property<Double> getLengthProperty() {return new FilterDAO.PropertyDAO<Double>(PLANNING.LENGTH);}
-		@Override public Property<Integer> getMaterialIdProperty() {return new FilterDAO.PropertyDAO<Integer>(MATERIAL.ID);} 
-		@Override public Property<String> getMaterialNameProperty() {return new FilterDAO.PropertyDAO<String>(MATERIAL.NAME);}
-		@Override public Property<Integer> getRollIdProperty() {return new FilterDAO.PropertyDAO<Integer>(ROLL.ID);} 
-		@Override public Property<String> getRollNameProperty() {return new FilterDAO.PropertyDAO<String>(ROLL.NAME);}
-		@Override public Property<Double> getRollWidthProperty() {return new FilterDAO.PropertyDAO<Double>(PLANNING.ROLL_WIDTH);}
-		@Override public Property<Double> getRollLengthProperty() {return new FilterDAO.PropertyDAO<Double>(PLANNING.ROLL_LENGTH);}
+		@Override public Property<Integer> getMaterialUpIdProperty() {return new FilterDAO.PropertyDAO<Integer>(MATERIAL_UP.ID);} 
+		@Override public Property<String> getMaterialUpNameProperty() {return new FilterDAO.PropertyDAO<String>(MATERIAL_UP.NAME);}
+		@Override public Property<Integer> getRollUpIdProperty() {return new FilterDAO.PropertyDAO<Integer>(ROLL_UP.ID);} 
+		@Override public Property<String> getRollUpNameProperty() {return new FilterDAO.PropertyDAO<String>(ROLL_UP.NAME);}
+		@Override public Property<Double> getRollUpWidthProperty() {return new FilterDAO.PropertyDAO<Double>(PLANNING.ROLL_UP_WIDTH);}
+		@Override public Property<Double> getRollUpLengthProperty() {return new FilterDAO.PropertyDAO<Double>(PLANNING.ROLL_UP_LENGTH);}
+		@Override public Property<Integer> getMaterialDownIdProperty() {return new FilterDAO.PropertyDAO<Integer>(MATERIAL_DOWN.ID);} 
+		@Override public Property<String> getMaterialDownNameProperty() {return new FilterDAO.PropertyDAO<String>(MATERIAL_DOWN.NAME);}
+		@Override public Property<Integer> getRollDownIdProperty() {return new FilterDAO.PropertyDAO<Integer>(ROLL_DOWN.ID);} 
+		@Override public Property<String> getRollDownNameProperty() {return new FilterDAO.PropertyDAO<String>(ROLL_DOWN.NAME);}
+		@Override public Property<Double> getRollDownWidthProperty() {return new FilterDAO.PropertyDAO<Double>(PLANNING.ROLL_DOWN_WIDTH);}
+		@Override public Property<Double> getRollDownLengthProperty() {return new FilterDAO.PropertyDAO<Double>(PLANNING.ROLL_DOWN_LENGTH);}
 		@Override public Property<Double> getAmountProperty() {return new FilterDAO.PropertyDAO<Double>(PLANNING.AMOUNT);}
 		@Override public Property<Integer> getBlowUnitsProperty() {return new FilterDAO.PropertyDAO<Integer>(PLANNING.BLOW_UNITS);}
 		@Override public Property<Double> getMetersProperty() {return new FilterDAO.PropertyDAO<Double>(PLANNING.METERS);}
@@ -67,8 +80,11 @@ public class PlanningDAO {
 				.from( PLANNING )
 				.join(MACHINE).on(PLANNING.MACHINE.eq(MACHINE.ID))
 				.join(PRODUCT).on(PLANNING.PRODUCT.eq(PRODUCT.ID))
-				.join(MATERIAL).on(PLANNING.MATERIAL.eq(MATERIAL.ID))
-				.join(ROLL).on(PLANNING.ROLL.eq(ROLL.ID));
+				.join(MATERIAL_UP).on(PLANNING.MATERIAL_UP.eq(MATERIAL.ID))
+				.join(ROLL_UP).on(PLANNING.ROLL_UP.eq(ROLL.ID))
+				.join(MATERIAL_DOWN).on(PLANNING.MATERIAL_DOWN.eq(MATERIAL.ID))
+				.join(ROLL_DOWN).on(PLANNING.ROLL_DOWN.eq(ROLL.ID))
+				;
 	}
 	
 	public static Planning getPlanning(DBContext ctx, Integer id) {
@@ -123,11 +139,15 @@ public class PlanningDAO {
 			.set(PLANNING.PRODUCT,planning.getProduct().getId())
 			.set(PLANNING.WIDTH,planning.getWidth())
 			.set(PLANNING.LENGTH,planning.getLength())
-			.set(PLANNING.MATERIAL,planning.getMaterial().getId())
-			.set(PLANNING.ROLL,planning.getRoll().getId())
-			.set(PLANNING.ROLL_WIDTH,planning.getRollWidth())
-			.set(PLANNING.ROLL_LENGTH,planning.getRollLength())
-			.set(PLANNING.AMOUNT,planning.getRollLength())
+			.set(PLANNING.MATERIAL_UP,planning.getMaterialUp().getId())
+			.set(PLANNING.ROLL_UP,planning.getRollUp().getId())
+			.set(PLANNING.ROLL_UP_WIDTH,planning.getRollUpWidth())
+			.set(PLANNING.ROLL_UP_LENGTH,planning.getRollUpLength())
+			.set(PLANNING.MATERIAL_DOWN,planning.getMaterialDown().getId())
+			.set(PLANNING.ROLL_DOWN,planning.getRollDown().getId())
+			.set(PLANNING.ROLL_DOWN_WIDTH,planning.getRollDownWidth())
+			.set(PLANNING.ROLL_DOWN_LENGTH,planning.getRollDownLength())
+			.set(PLANNING.AMOUNT,planning.getAmount())
 			.set(PLANNING.BLOW_UNITS,planning.getBlowUnits())
 			.set(PLANNING.METERS,planning.getMeters())
 			.set(PLANNING.BLOWS,planning.getBlows())
@@ -152,11 +172,15 @@ public class PlanningDAO {
 			.set(PLANNING.PRODUCT,planning.getProduct().getId())
 			.set(PLANNING.WIDTH,planning.getWidth())
 			.set(PLANNING.LENGTH,planning.getLength())
-			.set(PLANNING.MATERIAL,planning.getMaterial().getId())
-			.set(PLANNING.ROLL,planning.getRoll().getId())
-			.set(PLANNING.ROLL_WIDTH,planning.getRollWidth())
-			.set(PLANNING.ROLL_LENGTH,planning.getRollLength())
-			.set(PLANNING.AMOUNT,planning.getRollLength())
+			.set(PLANNING.MATERIAL_UP,planning.getMaterialUp().getId())
+			.set(PLANNING.ROLL_UP,planning.getRollUp().getId())
+			.set(PLANNING.ROLL_UP_WIDTH,planning.getRollUpWidth())
+			.set(PLANNING.ROLL_UP_LENGTH,planning.getRollUpLength())
+			.set(PLANNING.MATERIAL_DOWN,planning.getMaterialDown().getId())
+			.set(PLANNING.ROLL_DOWN,planning.getRollDown().getId())
+			.set(PLANNING.ROLL_DOWN_WIDTH,planning.getRollDownWidth())
+			.set(PLANNING.ROLL_DOWN_LENGTH,planning.getRollDownLength())
+			.set(PLANNING.AMOUNT,planning.getAmount())
 			.set(PLANNING.BLOW_UNITS,planning.getBlowUnits())
 			.set(PLANNING.METERS,planning.getMeters())
 			.set(PLANNING.BLOWS,planning.getBlows())

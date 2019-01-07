@@ -87,7 +87,7 @@ public class PlanningView extends MkpkDockLayout {
 		@Override
 		public Integer getMaterial() {
 			Product pro = product.getSelected();
-			return (pro != null && pro.getMaterial() != null)?pro.getMaterial().getId():null;
+			return (pro != null && pro.getMaterialUp() != null)?pro.getMaterialUp().getId():null;
 		}
 	});
 	private MkpkDoubleBox amount = new MkpkDoubleBox();
@@ -363,7 +363,7 @@ public class PlanningView extends MkpkDockLayout {
 					.setDomain(jsPlanning.getProduct().getDomain())
 					.setCode(jsPlanning.getProduct().getCode())
 					.setName(jsPlanning.getProduct().getName())
-					.setMaterial( new Material()
+					.setMaterialUp( new Material()
 						.setId(jsPlanning.getProduct().getMaterial().getId())
 						.setDomain(jsPlanning.getProduct().getMaterial().getDomain())
 						.setName(jsPlanning.getProduct().getMaterial().getName())
@@ -376,22 +376,22 @@ public class PlanningView extends MkpkDockLayout {
 				)
 				.setWidth(jsPlanning.getWidth())
 				.setLength(jsPlanning.getLength())
-				.setMaterial(new Material()
-						.setId(jsPlanning.getMaterial().getId())
-						.setDomain(jsPlanning.getMaterial().getDomain())
-						.setName(jsPlanning.getMaterial().getName())
-						.setThickness(jsPlanning.getMaterial().getThickness())
+				.setMaterialUp(new Material()
+						.setId(jsPlanning.getMaterialUp().getId())
+						.setDomain(jsPlanning.getMaterialUp().getDomain())
+						.setName(jsPlanning.getMaterialUp().getName())
+						.setThickness(jsPlanning.getMaterialUp().getThickness())
 					)
-				.setRoll(jsPlanning.getRoll()==null?null
+				.setRollUp(jsPlanning.getRollUp()==null?null
 					:new Roll()
-					.setId(jsPlanning.getRoll().getId())
-					.setDomain(jsPlanning.getRoll().getDomain())
-					.setName(jsPlanning.getRoll().getName())
-					.setWidth(jsPlanning.getRoll().getWidth())
-					.setLength(jsPlanning.getRoll().getLength())
+					.setId(jsPlanning.getRollUp().getId())
+					.setDomain(jsPlanning.getRollUp().getDomain())
+					.setName(jsPlanning.getRollUp().getName())
+					.setWidth(jsPlanning.getRollUp().getWidth())
+					.setLength(jsPlanning.getRollUp().getLength())
 				)
-				.setRollWidth(jsPlanning.getRollWidth())
-				.setRollLength(jsPlanning.getRollLength())
+				.setRollUpWidth(jsPlanning.getRollUpWidth())
+				.setRollUpLength(jsPlanning.getRollUpLength())
 				.setAmount(jsPlanning.getAmount())
 				.setBlowUnits(jsPlanning.getBlowUnits())
 				.setMeters(jsPlanning.getMeters())
@@ -527,7 +527,7 @@ public class PlanningView extends MkpkDockLayout {
 					getPlanning().setProduct(p);
 					getPlanning().setWidth(p.getWidth());
 					getPlanning().setLength(p.getLength());
-					getPlanning().setMaterial(p.getMaterial());
+					getPlanning().setMaterialUp(p.getMaterialUp());
 //					material.setValue( p.getMaterial(), false);
 					PlanningCalculator.calculate(getParams(), PlanningCalculatorStrategy.AMOUNT_CHANGED, getPlanning());
 					fire(getPlanning());
@@ -561,9 +561,9 @@ public class PlanningView extends MkpkDockLayout {
 				@Override
 				public void onSelection(SelectionEvent<Roll> event) {
 					Roll r = event.getSelectedItem();
-					getPlanning().setRoll(r);
-					getPlanning().setRollWidth(r.getWidth());
-					getPlanning().setRollLength(r.getLength());
+					getPlanning().setRollUp(r);
+					getPlanning().setRollUpWidth(r.getWidth());
+					getPlanning().setRollUpLength(r.getLength());
 					PlanningCalculator.calculate(getParams(), PlanningCalculatorStrategy.AMOUNT_CHANGED, getPlanning());
 					fire(getPlanning());
 				}
@@ -701,7 +701,7 @@ public class PlanningView extends MkpkDockLayout {
 			orderLabel.setText(MkpkNumberUtils.toString(planning.getOrder()));
 			product.setValue(planning.getProduct(), false, false);
 //			material.setValue(planning.getMaterial(), false, false);
-			roll.setValue(planning.getRoll(), false, false);
+			roll.setValue(planning.getRollUp(), false, false);
 			amount.setValue(planning.getAmount(), false, false);
 			blowUnits.setValue(planning.getBlowUnits(), false, false);
 			meters.setValue(planning.getMeters(), false, false);
@@ -749,9 +749,9 @@ public class PlanningView extends MkpkDockLayout {
 	}
 	
 	private void validateMeters(Planning planning, Widget meters) {
-		if ( MkpkMathUtils.isNotZero(planning.getRollLength())) {
+		if ( MkpkMathUtils.isNotZero(planning.getRollUpLength())) {
 			if ( MkpkMathUtils.isNotZero(planning.getMeters())) {
-				if ( planning.getMeters() > planning.getRollLength()) {
+				if ( planning.getMeters() > planning.getRollUpLength()) {
 					meters.addStyleName(MKPK.CSS.mkpkColorRed());
 				} else {
 					meters.removeStyleName(MKPK.CSS.mkpkColorRed());
@@ -761,9 +761,9 @@ public class PlanningView extends MkpkDockLayout {
 	}
 	
 	private void validateBlowUnitRoll(Planning planning, Widget blowUnits, Widget roll) {
-		if ( MkpkMathUtils.isNotZero(planning.getRollWidth())) {
+		if ( MkpkMathUtils.isNotZero(planning.getRollUpWidth())) {
 			if ( MkpkMathUtils.isNotZero(planning.getWidth())) {
-				if (MkpkMathUtils.isNotZero(MkpkMathUtils.round(planning.getRollWidth() % planning.getWidth()))) {
+				if (MkpkMathUtils.isNotZero(MkpkMathUtils.round(planning.getRollUpWidth() % planning.getWidth()))) {
 					blowUnits.addStyleName(MKPK.CSS.mkpkColorRed());
 					roll.addStyleName(MKPK.CSS.mkpkColorRed());
 				} else {
@@ -835,12 +835,12 @@ public class PlanningView extends MkpkDockLayout {
 		product.addStyleName(MKPK.CSS.mkpkFlexPanelChildProduct());
 		container.add(product);
 		
-		InlineLabel material = new InlineLabel(pl.getMaterial() != null ? pl.getMaterial().getName() : "");
+		InlineLabel material = new InlineLabel(pl.getMaterialUp() != null ? pl.getMaterialUp().getName() : "");
 		material.setStyleName(MKPK.CSS.mkpkFlexPanelChild());
 		material.addStyleName(MKPK.CSS.mkpkFlexPanelChildMaterial());
 		container.add(material);
 
-		InlineLabel roll = new InlineLabel(pl.getRoll() != null ? pl.getRoll().getName() : "");
+		InlineLabel roll = new InlineLabel(pl.getRollUp() != null ? pl.getRollUp().getName() : "");
 		roll.setStyleName(MKPK.CSS.mkpkFlexPanelChild());
 		roll.addStyleName(MKPK.CSS.mkpkFlexPanelChildRoll());
 		container.add(roll);

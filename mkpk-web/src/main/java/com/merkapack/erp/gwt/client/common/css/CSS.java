@@ -89,6 +89,8 @@ public interface CSS extends CssResource {
 	@ClassName("mkpk-icon-menu")		String mkpkIconMenu();
 	@ClassName("mkpk-icon-cancel")		String mkpkIconCancel();
 	@ClassName("mkpk-icon-plus")		String mkpkIconPlus();
+	@ClassName("mkpk-icon-next")		String mkpkIconNext();
+	@ClassName("mkpk-icon-previous")	String mkpkIconPrevious();
 	@ClassName("mkpk-icon-delete")		String mkpkIconDelete();
 	@ClassName("mkpk-icon-accept")		String mkpkIconAccept();
 	@ClassName("mkpk-icon-checked")		String mkpkIconChecked();
