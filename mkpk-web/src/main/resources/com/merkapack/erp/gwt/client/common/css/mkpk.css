@@ -92,8 +92,9 @@ input[type="text"] {
 
 .mkpk-font-smaller {font-size: 0.9em;}
 
-.mkpk-bold		{font-weight: bold;}
-.mkpk-color-red	{color: red;}
+.mkpk-bold				{font-weight: bold;}
+.mkpk-color-red			{color: red;}
+.mkpk-color-lightgray 	{color: lightgray;}
 
 .mkpk-width-all{width: 100%;}
 .mkpk-width-auto{width: auto;}
@@ -170,6 +171,56 @@ input[type="text"] {
 	font-size: 1.4em;
 	border: none;
 	gwt-image: "mkpkStats";
+	cursor: pointer;
+	margin-top: 15px;
+}
+
+@sprite .mkpk-img-machine {
+	width: auto;
+	padding-left: 75px;
+	font-size: 1.4em;
+	border: none;
+	gwt-image: "mkpkMachine";
+	cursor: pointer;
+	margin-top: 15px;
+}
+
+@sprite .mkpk-img-material {
+	width: auto;
+	padding-left: 75px;
+	font-size: 1.4em;
+	border: none;
+	gwt-image: "mkpkMaterial";
+	cursor: pointer;
+	margin-top: 15px;
+}
+
+@sprite .mkpk-img-product {
+	width: auto;
+	padding-left: 75px;
+	font-size: 1.4em;
+	border: none;
+	gwt-image: "mkpkProduct";
+	cursor: pointer;
+	margin-top: 15px;
+}
+
+@sprite .mkpk-img-roll {
+	width: auto;
+	padding-left: 75px;
+	font-size: 1.4em;
+	border: none;
+	gwt-image: "mkpkRoll";
+	cursor: pointer;
+	margin-top: 15px;
+}
+
+@sprite .mkpk-img-client {
+	width: auto;
+	padding-left: 75px;
+	font-size: 1.4em;
+	border: none;
+	gwt-image: "mkpkClient";
 	cursor: pointer;
 	margin-top: 15px;
 }
@@ -440,4 +491,8 @@ input[type="text"] {
 	font-weight: bold;
 	font-size: 1.1em;
 	white-space: nowrap;
+}
+.mkpk-menu-left-cell {
+}
+.mkpk-menu-right-cell {
 }

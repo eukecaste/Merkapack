@@ -24,9 +24,10 @@ public interface CSS extends CssResource {
 	@ClassName("mkpk-display-inline") 	String mkpkDisplayInline();
 	@ClassName("mkpk-pointer") 			String mkpkPointer();
 	
-	@ClassName("mkpk-font-smaller")	String mkpkFontSmaller();
-	@ClassName("mkpk-bold") 		String mkpkBold();
-	@ClassName("mkpk-color-red")	String mkpkColorRed();
+	@ClassName("mkpk-font-smaller")		String mkpkFontSmaller();
+	@ClassName("mkpk-bold") 			String mkpkBold();
+	@ClassName("mkpk-color-red")		String mkpkColorRed();
+	@ClassName("mkpk-color-lightgray")	String mkpkColorLightgray();
 	
 	@ClassName("mkpk-width-all") 	String mkpkWidthAll();
 	@ClassName("mkpk-width-auto") 	String mkpkWidthAuto();
@@ -79,6 +80,11 @@ public interface CSS extends CssResource {
 	@ClassName("mkpk-img-manufacturing")	String mkpkImgManufacturing();
 	@ClassName("mkpk-img-planning")			String mkpkImgPlanning();
 	@ClassName("mkpk-img-stats")			String mkpkImgStats();
+	@ClassName("mkpk-img-machine")			String mkpkImgMachine();
+	@ClassName("mkpk-img-material")			String mkpkImgMaterial();
+	@ClassName("mkpk-img-product")			String mkpkImgProduct();
+	@ClassName("mkpk-img-roll")				String mkpkImgRoll();
+	@ClassName("mkpk-img-client")			String mkpkImgClient();
 	
 	@ClassName("mkpk-button-check-list")	String mkpkButtonCheckList();
 	@ClassName("mkpk-button-add-list")		String mkpkButtonAddList();
@@ -133,7 +139,10 @@ public interface CSS extends CssResource {
 	@ClassName("mkpk-flex-panel-child-fill1")		String mkpkFlexPanelChildFill1();
 	@ClassName("mkpk-flex-panel-child-fill2")		String mkpkFlexPanelChildFill2();
 	
-	@ClassName("mkpk-context-menu-option")			String mkpkContextMenuOption();	
+	@ClassName("mkpk-context-menu-option")			String mkpkContextMenuOption();
+	@ClassName("mkpk-menu-left-cell")				String mkpkMenuLeftCell();
+	@ClassName("mkpk-menu-right-cell")				String mkpkMenuRightCell();
+	
 }
 
 

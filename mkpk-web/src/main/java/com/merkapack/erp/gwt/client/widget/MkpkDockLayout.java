@@ -4,26 +4,19 @@ import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.merkapack.erp.gwt.client.Menu;
 import com.merkapack.erp.gwt.client.common.MKPK;
-import com.merkapack.erp.gwt.client.view.ClientView;
-import com.merkapack.erp.gwt.client.view.MachineView;
-import com.merkapack.erp.gwt.client.view.MaterialView;
-import com.merkapack.erp.gwt.client.view.ProductView;
-import com.merkapack.erp.gwt.client.view.RollView;
 
 public class MkpkDockLayout extends DockLayoutPanel implements EntryPoint {
 
 	private FlexTable tabHeader; 
-	private Widget sidebar;
+//	private Widget sidebar;
 	
 	public MkpkDockLayout() {
 		super(Unit.PX);
@@ -34,8 +27,8 @@ public class MkpkDockLayout extends DockLayoutPanel implements EntryPoint {
 		addStyleName(MKPK.CSS.mkpkNoPadding());
 		addNorth(getHeader(), 70);
 		addSouth(getFooter(), 25);
-		sidebar = getSidebar();
-		addEast(sidebar, 0);
+//		sidebar = getSidebar();
+//		addEast(sidebar, 0);
 	}
 	
 	@Override
@@ -73,46 +66,46 @@ public class MkpkDockLayout extends DockLayoutPanel implements EntryPoint {
 
 		FlowPanel buttonsContainer = new FlowPanel(); 
 
-		Button openSidebar = new Button();
-		openSidebar.setTitle("Men\u00FA");
-		openSidebar.setStyleName(MKPK.CSS.mkpkMenu());
-		openSidebar.addStyleName(MKPK.CSS.mkpkIconPaddingLeft());
-		openSidebar.addStyleName(MKPK.CSS.mkpkNoBorder());
+//		Button openSidebar = new Button();
+//		openSidebar.setTitle("Men\u00FA");
+//		openSidebar.setStyleName(MKPK.CSS.mkpkMenu());
+//		openSidebar.addStyleName(MKPK.CSS.mkpkIconPaddingLeft());
+//		openSidebar.addStyleName(MKPK.CSS.mkpkNoBorder());
+//		
+//		Button closeSidebar = new Button();
+//		closeSidebar.setTitle("Cerrar");
+//		closeSidebar.setStyleName(MKPK.CSS.mkpkClose());
+//		closeSidebar.addStyleName(MKPK.CSS.mkpkIconPaddingLeft());
+//		closeSidebar.addStyleName(MKPK.CSS.mkpkNoBorder());
+//		closeSidebar.setVisible(false);
 		
-		Button closeSidebar = new Button();
-		closeSidebar.setTitle("Cerrar");
-		closeSidebar.setStyleName(MKPK.CSS.mkpkClose());
-		closeSidebar.addStyleName(MKPK.CSS.mkpkIconPaddingLeft());
-		closeSidebar.addStyleName(MKPK.CSS.mkpkNoBorder());
-		closeSidebar.setVisible(false);
-		
-		buttonsContainer.add(openSidebar);
-		buttonsContainer.add(closeSidebar);
+//		buttonsContainer.add(openSidebar);
+//		buttonsContainer.add(closeSidebar);
 		tabHeader.setWidget(1, 1, buttonsContainer);
 		tabHeader.getCellFormatter().setStyleName(1, 1, MKPK.CSS.mkpkTextRight());
 		tabHeader.getCellFormatter().addStyleName(1, 1, MKPK.CSS.mkpkPaddingRight());
 		
-		openSidebar.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				openSidebar.setVisible(false);
-				closeSidebar.setVisible(true);
-				MkpkDockLayout.this.setWidgetSize(sidebar, 200);
-				MkpkDockLayout.this.animate(500);
-			}
-		});
-		
-		closeSidebar.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				openSidebar.setVisible(true);
-				closeSidebar.setVisible(false);
-				MkpkDockLayout.this.setWidgetSize(sidebar, 0);
-				MkpkDockLayout.this.animate(500);
-			}
-		});
+//		openSidebar.addClickHandler(new ClickHandler() {
+//			
+//			@Override
+//			public void onClick(ClickEvent event) {
+//				openSidebar.setVisible(false);
+//				closeSidebar.setVisible(true);
+//				MkpkDockLayout.this.setWidgetSize(sidebar, 200);
+//				MkpkDockLayout.this.animate(500);
+//			}
+//		});
+//		
+//		closeSidebar.addClickHandler(new ClickHandler() {
+//			
+//			@Override
+//			public void onClick(ClickEvent event) {
+//				openSidebar.setVisible(true);
+//				closeSidebar.setVisible(false);
+//				MkpkDockLayout.this.setWidgetSize(sidebar, 0);
+//				MkpkDockLayout.this.animate(500);
+//			}
+//		});
 		
 		return tabHeader;
 	}
@@ -125,93 +118,93 @@ public class MkpkDockLayout extends DockLayoutPanel implements EntryPoint {
 		return footerPanel;
 	}
 
-	private Widget getSidebar() {
-		ScrollPanel scroll = new ScrollPanel();
-		scroll.setStyleName(MKPK.CSS.mkpkBorderLeft());
-		
-		FlexTable toc = new FlexTable();
-		toc.setStyleName(MKPK.CSS.mkpkWidthAll());
-		
-		int row = 0;
-		Button machines = new Button(MKPK.MSG.machines());
-		machines.setStyleName(MKPK.CSS.mkpkIconBullet());
-		machines.addStyleName(MKPK.CSS.mkpkIconPaddingLeft());
-		machines.addStyleName(MKPK.CSS.mkpkNoBorder());
-		machines.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				MachineView machine = new MachineView();
-				machine.onModuleLoad();
-			}
-		});
-		toc.setWidget(row, 0, machines);
-		++row;
-
-		Button materials = new Button(MKPK.MSG.materials());
-		materials.setStyleName(MKPK.CSS.mkpkIconBullet());
-		materials.addStyleName(MKPK.CSS.mkpkIconPaddingLeft());
-		materials.addStyleName(MKPK.CSS.mkpkNoBorder());
-		materials.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				MaterialView material = new MaterialView();
-				material.onModuleLoad();
-			}
-		});
-		toc.setWidget(row, 0, materials);
-		++row;
-		
-		Button products = new Button(MKPK.MSG.products());
-		products.setStyleName(MKPK.CSS.mkpkIconBullet());
-		products.addStyleName(MKPK.CSS.mkpkIconPaddingLeft());
-		products.addStyleName(MKPK.CSS.mkpkNoBorder());
-		products.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				ProductView product = new ProductView();
-				product.onModuleLoad();
-			}
-		});
-		toc.setWidget(row, 0, products);
-		++row;
-
-		Button rolls = new Button(MKPK.MSG.rolls());
-		rolls.setStyleName(MKPK.CSS.mkpkIconBullet());
-		rolls.addStyleName(MKPK.CSS.mkpkIconPaddingLeft());
-		rolls.addStyleName(MKPK.CSS.mkpkNoBorder());
-		rolls.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				RollView roll = new RollView();
-				roll.onModuleLoad();
-			}
-		});
-		toc.setWidget(row, 0, rolls);
-		++row;
-
-		Button clients = new Button(MKPK.MSG.clients());
-		clients.setStyleName(MKPK.CSS.mkpkIconBullet());
-		clients.addStyleName(MKPK.CSS.mkpkIconPaddingLeft());
-		clients.addStyleName(MKPK.CSS.mkpkNoBorder());
-		clients.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				ClientView client = new ClientView();
-				client.onModuleLoad();
-			}
-		});
-		toc.setWidget(row, 0, clients);
-		++row;
-		
-		scroll.add(toc);
-		
-		return scroll;
-	}
+//	private Widget getSidebar() {
+//		ScrollPanel scroll = new ScrollPanel();
+//		scroll.setStyleName(MKPK.CSS.mkpkBorderLeft());
+//		
+//		FlexTable toc = new FlexTable();
+//		toc.setStyleName(MKPK.CSS.mkpkWidthAll());
+//		
+//		int row = 0;
+//		Button machines = new Button(MKPK.MSG.machines());
+//		machines.setStyleName(MKPK.CSS.mkpkIconBullet());
+//		machines.addStyleName(MKPK.CSS.mkpkIconPaddingLeft());
+//		machines.addStyleName(MKPK.CSS.mkpkNoBorder());
+//		machines.addClickHandler(new ClickHandler() {
+//			
+//			@Override
+//			public void onClick(ClickEvent event) {
+//				MachineView machine = new MachineView();
+//				machine.onModuleLoad();
+//			}
+//		});
+//		toc.setWidget(row, 0, machines);
+//		++row;
+//
+//		Button materials = new Button(MKPK.MSG.materials());
+//		materials.setStyleName(MKPK.CSS.mkpkIconBullet());
+//		materials.addStyleName(MKPK.CSS.mkpkIconPaddingLeft());
+//		materials.addStyleName(MKPK.CSS.mkpkNoBorder());
+//		materials.addClickHandler(new ClickHandler() {
+//			
+//			@Override
+//			public void onClick(ClickEvent event) {
+//				MaterialView material = new MaterialView();
+//				material.onModuleLoad();
+//			}
+//		});
+//		toc.setWidget(row, 0, materials);
+//		++row;
+//		
+//		Button products = new Button(MKPK.MSG.products());
+//		products.setStyleName(MKPK.CSS.mkpkIconBullet());
+//		products.addStyleName(MKPK.CSS.mkpkIconPaddingLeft());
+//		products.addStyleName(MKPK.CSS.mkpkNoBorder());
+//		products.addClickHandler(new ClickHandler() {
+//			
+//			@Override
+//			public void onClick(ClickEvent event) {
+//				ProductView product = new ProductView();
+//				product.onModuleLoad();
+//			}
+//		});
+//		toc.setWidget(row, 0, products);
+//		++row;
+//
+//		Button rolls = new Button(MKPK.MSG.rolls());
+//		rolls.setStyleName(MKPK.CSS.mkpkIconBullet());
+//		rolls.addStyleName(MKPK.CSS.mkpkIconPaddingLeft());
+//		rolls.addStyleName(MKPK.CSS.mkpkNoBorder());
+//		rolls.addClickHandler(new ClickHandler() {
+//			
+//			@Override
+//			public void onClick(ClickEvent event) {
+//				RollView roll = new RollView();
+//				roll.onModuleLoad();
+//			}
+//		});
+//		toc.setWidget(row, 0, rolls);
+//		++row;
+//
+//		Button clients = new Button(MKPK.MSG.clients());
+//		clients.setStyleName(MKPK.CSS.mkpkIconBullet());
+//		clients.addStyleName(MKPK.CSS.mkpkIconPaddingLeft());
+//		clients.addStyleName(MKPK.CSS.mkpkNoBorder());
+//		clients.addClickHandler(new ClickHandler() {
+//			
+//			@Override
+//			public void onClick(ClickEvent event) {
+//				ClientView client = new ClientView();
+//				client.onModuleLoad();
+//			}
+//		});
+//		toc.setWidget(row, 0, clients);
+//		++row;
+//		
+//		scroll.add(toc);
+//		
+//		return scroll;
+//	}
 
 	protected void showError(Throwable caught) {
 		MkpkCustomDialog dialog = new MkpkCustomDialog();

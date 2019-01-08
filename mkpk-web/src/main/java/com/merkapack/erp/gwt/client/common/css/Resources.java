@@ -13,6 +13,21 @@ public interface Resources extends ClientBundle {
 	@Source("images/mkpk-logo.png")
 	ImageResource mkpkLogo();
 
+	@Source("images/mkpk-machine.png")
+	ImageResource mkpkMachine();
+	
+	@Source("images/mkpk-material.png")
+	ImageResource mkpkMaterial();
+	
+	@Source("images/mkpk-product.png")
+	ImageResource mkpkProduct();
+	
+	@Source("images/mkpk-roll.png")
+	ImageResource mkpkRoll();
+
+	@Source("images/mkpk-client.png")
+	ImageResource mkpkClient();
+
 	@Source("images/mkpk-manufacturing.png")
 	ImageResource mkpkManufacturing();
 

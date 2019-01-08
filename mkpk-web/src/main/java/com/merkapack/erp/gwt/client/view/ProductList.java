@@ -40,14 +40,14 @@ public class ProductList extends SimpleLayoutPanel  {
 		final FlexTable tab = new FlexTable();
 		tab.setStyleName(MKPK.CSS.mkpkWidth90p());
 		tab.addStyleName(MKPK.CSS.mkpkTable());
-		tab.getColumnFormatter().setWidth(0, "20px");
+		tab.getColumnFormatter().setWidth(0, "30px");
 		tab.getColumnFormatter().setWidth(1, "150px");
 		tab.getColumnFormatter().setWidth(2, "auto");
 		tab.getColumnFormatter().setWidth(3, "150px");
 		tab.getColumnFormatter().setWidth(4, "150px");
 		tab.getColumnFormatter().setWidth(5, "70px");
 		tab.getColumnFormatter().setWidth(6, "70px");
-		tab.getColumnFormatter().setWidth(7, "20px");
+		tab.getColumnFormatter().setWidth(7, "30px");
 		
 		int col = 0;
 		Label numberLabel = new Label("#");
@@ -120,6 +120,11 @@ public class ProductList extends SimpleLayoutPanel  {
 						}
 					});
 					tab.setWidget(row, 0, previousButton);
+					tab.setWidget(row, 1, new Label());
+					tab.getFlexCellFormatter().setColSpan(row, 1, 6);
+				} else {
+					tab.setWidget(row, 0, new Label());
+					tab.getFlexCellFormatter().setColSpan(row, 0, 7);
 				}
 
 				MkpkButton nextButton = new MkpkButton();
@@ -159,13 +164,19 @@ public class ProductList extends SimpleLayoutPanel  {
 
 	protected void paintRow(FlexTable tab, final Product product, int row) {
 		int col = 0;
-		tab.setWidget(row, col++, new Label(MKPK.FMT_INT.format(row + offset)));
+		tab.setWidget(row, col, new Label(MKPK.FMT_INT.format(row + offset)));
+		tab.getCellFormatter().setStyleName(row, col, MKPK.CSS.mkpkTextCenter());
+		col++;
 		tab.setWidget(row, col++, new Label(product.getCode()));
 		tab.setWidget(row, col++, new Label(product.getName()));
 		tab.setWidget(row, col++, new Label(product.getMaterialUp().getName()));
 		tab.setWidget(row, col++, new Label(product.getMaterialDown().getName()));
-		tab.setWidget(row, col++, new Label(MKPK.FMT.format( MkpkNumberUtils.zeroIfNull( product.getLength()))));
-		tab.setWidget(row, col++, new Label(MKPK.FMT.format( MkpkNumberUtils.zeroIfNull( product.getWidth()))));
+		tab.setWidget(row, col, new Label(MKPK.FMT.format( MkpkNumberUtils.zeroIfNull( product.getLength()))));
+		tab.getCellFormatter().setStyleName(row, col, MKPK.CSS.mkpkTextRight());
+		col++;
+		tab.setWidget(row, col, new Label(MKPK.FMT.format( MkpkNumberUtils.zeroIfNull( product.getWidth()))));
+		tab.getCellFormatter().setStyleName(row, col, MKPK.CSS.mkpkTextRight());
+		col++;
 		paintDeleteButton(tab,row,col,product);
 	}
 
