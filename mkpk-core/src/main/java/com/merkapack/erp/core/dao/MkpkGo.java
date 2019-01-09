@@ -97,10 +97,6 @@ public class MkpkGo {
 	//							---------
 	// 							[PRODUCT]
 	//							---------
-	public static LinkedList<Product> getProducts(DBContext ctx, int offset, int count) {
-		return ctx.getDslContext().transactionResult(
-				configuration -> ProductDAO.getProductList(ctx, offset,count, null));
-	}
 	public static LinkedList<Product> getProducts(DBContext ctx, int offset, int count, ProductFilter filter) {
 		return ctx.getDslContext().transactionResult(
 				configuration -> ProductDAO.getProductList(ctx, offset,count, filter));

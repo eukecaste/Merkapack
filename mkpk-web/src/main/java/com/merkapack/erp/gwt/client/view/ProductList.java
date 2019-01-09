@@ -5,13 +5,18 @@ import java.util.LinkedList;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.merkapack.erp.core.model.Material;
 import com.merkapack.erp.core.model.Product;
+import com.merkapack.erp.core.model.ProductParams;
 import com.merkapack.erp.gwt.client.common.MKPK;
 import com.merkapack.erp.gwt.client.rpc.ProductService;
 import com.merkapack.erp.gwt.client.rpc.ProductServiceAsync;
@@ -19,6 +24,8 @@ import com.merkapack.erp.gwt.client.rpc.ProductServiceAsyncDecorator;
 import com.merkapack.erp.gwt.client.widget.MkpkButton;
 import com.merkapack.erp.gwt.client.widget.MkpkConfirmDialog;
 import com.merkapack.erp.gwt.client.widget.MkpkConfirmDialog.MkpkConfirmDialogCallback;
+import com.merkapack.erp.gwt.client.widget.MkpkDoubleBox;
+import com.merkapack.erp.gwt.client.widget.MkpkTextBox;
 import com.merkapack.watson.util.MkpkNumberUtils;
 
 public class ProductList extends SimpleLayoutPanel  {
@@ -26,21 +33,28 @@ public class ProductList extends SimpleLayoutPanel  {
 	private static ProductServiceAsync SERVICE;
 	private int offset = 0;
 	private int count = 20;
-	
+	private MkpkTextBox codeBox = new MkpkTextBox();
+	private MkpkTextBox nameBox = new MkpkTextBox();
+	private MkpkTextBox materialUpBox = new MkpkTextBox();
+	private MkpkTextBox materialDownBox = new MkpkTextBox();
+	private MkpkDoubleBox lengthBox = new MkpkDoubleBox();
+	private MkpkDoubleBox widthBox = new MkpkDoubleBox();
+
 	public ProductList( ) {
 		setStyleName(MKPK.CSS.mkpkWidthAll());
 		ProductServiceAsync serviceRaw = GWT.create(ProductService.class);
 		SERVICE = new ProductServiceAsyncDecorator(serviceRaw);
+		search();
+	}
+	private void search() {
 		setWidget(getContent());
 	}
-
-	private Widget getContent() {
-		ScrollPanel container = new ScrollPanel();
-		
+	
+	private FlexTable defineFlexTable() {
 		final FlexTable tab = new FlexTable();
 		tab.setStyleName(MKPK.CSS.mkpkWidth90p());
 		tab.addStyleName(MKPK.CSS.mkpkTable());
-		tab.getColumnFormatter().setWidth(0, "30px");
+		tab.getColumnFormatter().setWidth(0, "50px");
 		tab.getColumnFormatter().setWidth(1, "150px");
 		tab.getColumnFormatter().setWidth(2, "auto");
 		tab.getColumnFormatter().setWidth(3, "150px");
@@ -48,7 +62,7 @@ public class ProductList extends SimpleLayoutPanel  {
 		tab.getColumnFormatter().setWidth(5, "70px");
 		tab.getColumnFormatter().setWidth(6, "70px");
 		tab.getColumnFormatter().setWidth(7, "30px");
-		
+
 		int col = 0;
 		Label numberLabel = new Label("#");
 		numberLabel.setStyleName(MKPK.CSS.mkpkBold());
@@ -96,8 +110,21 @@ public class ProductList extends SimpleLayoutPanel  {
 		tab.setWidget(0, col, deleteLabel);
 		tab.getCellFormatter().setStyleName(0, col, MKPK.CSS.mkpkTableHeader());
 		col++;
+
+		return tab;
+	}
+	
+	private Widget getContent() {
+		ScrollPanel scrollPanel = new ScrollPanel();
+		FlowPanel container = new FlowPanel();
 		
-		SERVICE.getProducts(offset,count,new AsyncCallback<LinkedList<Product>>() {
+		final FlexTable filter = getFilterTable();
+		container.add(filter);
+		
+		final FlexTable tab = defineFlexTable();
+		container.add(tab);
+
+		SERVICE.getProducts(getParams(), offset,count,new AsyncCallback<LinkedList<Product>>() {
 			
 			@Override
 			public void onSuccess(LinkedList<Product> products) {
@@ -106,7 +133,7 @@ public class ProductList extends SimpleLayoutPanel  {
 					paintRow(tab,product,row);
 					row++;
 				}
-				
+				int nextCol = 1;
 				if (offset > 0) {
 					MkpkButton previousButton = new MkpkButton();
 					previousButton.addStyleName(MKPK.CSS.mkpkIconPrevious());
@@ -122,6 +149,7 @@ public class ProductList extends SimpleLayoutPanel  {
 					tab.setWidget(row, 0, previousButton);
 					tab.setWidget(row, 1, new Label());
 					tab.getFlexCellFormatter().setColSpan(row, 1, 6);
+					nextCol = 2;
 				} else {
 					tab.setWidget(row, 0, new Label());
 					tab.getFlexCellFormatter().setColSpan(row, 0, 7);
@@ -137,7 +165,7 @@ public class ProductList extends SimpleLayoutPanel  {
 						setWidget(getContent());
 					}
 				});
-				tab.setWidget(row, 7, nextButton);
+				tab.setWidget(row, nextCol, nextButton);
 
 			}
 			
@@ -147,19 +175,19 @@ public class ProductList extends SimpleLayoutPanel  {
 			}
 		});
 
-		container.setWidget(tab);
-		
-//		MkpkButton newLineButton = new MkpkButton();
-//		newLineButton.addStyleName(MKPK.CSS.mkpkIconPlus());
-//		newLineButton.addClickHandler(new ClickHandler() {
-//			
-//			@Override
-//			public void onClick(ClickEvent event) {
-//				// TODO
-//			}
-//		});
-//		panel.add(newLineButton);
-		return container;		
+		scrollPanel.setWidget(container);
+		return scrollPanel;		
+	}
+
+	private ProductParams getParams() {
+		ProductParams params = new ProductParams();
+		params.setCode(codeBox.getValue());
+		params.setName(nameBox.getValue());
+		params.setMaterialUp(new Material().setName(materialUpBox.getValue()));
+		params.setMaterialDown(new Material().setName(materialDownBox.getValue()));
+		params.setLength(lengthBox.getValue());
+		params.setWidth(widthBox.getValue());
+		return params;
 	}
 
 	protected void paintRow(FlexTable tab, final Product product, int row) {
@@ -222,31 +250,79 @@ public class ProductList extends SimpleLayoutPanel  {
 			tab.setWidget(row, col, new Label());
 		}
 	}
-//	private void save(FlexTable tab, int row, Product product) {
-//		if (MkpkStringUtils.isNotBlank( product.getName() )
-//			&& product.getMaterialUp().getId() != null) {
-//			SERVICE.save(product, new AsyncCallback<Product>() {
-//				
-//				@Override
-//				public void onSuccess(Product result) {
-//					if (product.getId() == null) {
-//						
-//						product.setId(result.getId());
-//						paintDeleteButton(tab,row,6,product);							
-//					}
-//				}
-//				
-//				@Override
-//				public void onFailure(Throwable caught) {
-//					showError(caught);
-//				}
-//			});
-//		}
-//	}
 
 	protected void showError(Throwable caught) {
 		MkpkConfirmDialog dialog = new MkpkConfirmDialog();
 		dialog.accept("Error", caught.getMessage(), null );
 	}
+	
+	private FlexTable getFilterTable() {
+		FlexTable filter = defineFlexTable();
+		filter.addStyleName(MKPK.CSS.mkpkMarginBottom());
+		
+		codeBox.setVisibleLength(10);
+		codeBox.addValueChangeHandler(new ValueChangeHandler<String>() {
+			
+			@Override
+			public void onValueChange(ValueChangeEvent<String> event) {
+				search();
+			}
+		});
+		filter.setWidget(1, 1, codeBox);
+		
+		nameBox.setVisibleLength(20);
+		nameBox.addValueChangeHandler(new ValueChangeHandler<String>() {
+			
+			@Override
+			public void onValueChange(ValueChangeEvent<String> event) {
+				search();
+			}
+		});
+		filter.setWidget(1, 2, nameBox);
+		
+		materialUpBox.setVisibleLength(10);
+		materialUpBox.addValueChangeHandler(new ValueChangeHandler<String>() {
+			
+			@Override
+			public void onValueChange(ValueChangeEvent<String> event) {
+				search();
+			}
+		});
+		filter.setWidget(1, 3, materialUpBox);
+
+		materialDownBox.setVisibleLength(10);
+		materialDownBox.addValueChangeHandler(new ValueChangeHandler<String>() {
+			
+			@Override
+			public void onValueChange(ValueChangeEvent<String> event) {
+				search();
+			}
+		});
+		filter.setWidget(1, 4, materialDownBox);
+
+		lengthBox.setVisibleLength(10);
+		lengthBox.addValueChangeHandler(new ValueChangeHandler<Double>() {
+			
+			@Override
+			public void onValueChange(ValueChangeEvent<Double> event) {
+				search();
+			}
+		});
+		filter.setWidget(1, 5, lengthBox);
+
+		widthBox.setVisibleLength(10);
+		widthBox.addValueChangeHandler(new ValueChangeHandler<Double>() {
+			
+			@Override
+			public void onValueChange(ValueChangeEvent<Double> event) {
+				search();
+			}
+		});
+		filter.setWidget(1, 6, widthBox);
+		filter.setWidget(1, 7, new Label());
+		
+		return filter;
+	}
+	
 }
 

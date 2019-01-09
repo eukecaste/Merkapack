@@ -65,6 +65,12 @@ public class ProductDAO {
 	}
 	
 	public static Stream<Product> getProducts(DBContext ctx, int offset, int count, ProductFilter filter){
+		System.out.println(
+				getSelect(ctx)
+				.where(PRODUCT_PROPERTIES.getConditions(filter))
+				.limit(offset,count)
+				.getSQL()
+				);
 		return getSelect(ctx)
 			.where(PRODUCT_PROPERTIES.getConditions(filter))
 			.limit(offset,count)

@@ -4,6 +4,7 @@ import java.util.LinkedList;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.merkapack.erp.core.model.Product;
+import com.merkapack.erp.core.model.ProductParams;
 import com.merkapack.erp.gwt.client.common.MKPK;
 
 public class ProductServiceAsyncDecorator implements ProductServiceAsync {
@@ -15,9 +16,9 @@ public class ProductServiceAsyncDecorator implements ProductServiceAsync {
 	}
 
 	@Override
-	public void getProducts(int offset, int count,AsyncCallback<LinkedList<Product>> callback) {
+	public void getProducts(ProductParams params, int offset, int count,AsyncCallback<LinkedList<Product>> callback) {
 		MKPK.start();
-		service.getProducts(offset, count, callback);
+		service.getProducts(params,offset, count, callback);
 		
 	}
 

@@ -32,9 +32,12 @@ public interface MkpkMessages extends Messages {
 	@DefaultMessage("Aceptar")
 	String accept();
 
+	@DefaultMessage("Buscar")
+	String search();
+	
 	@DefaultMessage("Borrar")
 	String delete();
-
+	
 	@DefaultMessage("Cancelar")
 	String cancel();
 	
@@ -169,6 +172,8 @@ public interface MkpkMessages extends Messages {
 	
 	@DefaultMessage("Jornada laboral")
 	String workHoursInADay();
+
+	
 
 	
 }
