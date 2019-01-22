@@ -58,7 +58,8 @@ public class ProductServiceImpl extends StatelessRemoteServiceServlet implements
 			}
 			property =  MkpkStringUtils.prependIfMissing(property, MkpkStringUtils.PERCENT);
 			property =  MkpkStringUtils.appendIfMissing(property, MkpkStringUtils.PERCENT);
-			filter = filter ==null?subFilter:filter.and(p.getNameProperty().like(property));
+			subFilter = p.getNameProperty().like(property);
+			filter = filter ==null?subFilter:filter.and(subFilter);
 		}
 		
 		property = params.getMaterialUp().getName();
@@ -69,7 +70,8 @@ public class ProductServiceImpl extends StatelessRemoteServiceServlet implements
 			}
 			property =  MkpkStringUtils.prependIfMissing(property, MkpkStringUtils.PERCENT);
 			property =  MkpkStringUtils.appendIfMissing(property, MkpkStringUtils.PERCENT);
-			filter = filter ==null?subFilter:filter.and(p.getMaterialUpNameProperty().like(property));
+			subFilter = p.getMaterialUpNameProperty().like(property);
+			filter = filter ==null?subFilter:filter.and(subFilter);
 		}
 		
 		property = params.getMaterialDown().getName();
@@ -80,7 +82,8 @@ public class ProductServiceImpl extends StatelessRemoteServiceServlet implements
 			}
 			property =  MkpkStringUtils.prependIfMissing(property, MkpkStringUtils.PERCENT);
 			property =  MkpkStringUtils.appendIfMissing(property, MkpkStringUtils.PERCENT);
-			filter = filter ==null?subFilter:filter.and(p.getMaterialDownNameProperty().like(property));
+			subFilter = p.getMaterialDownNameProperty().like(property);
+			filter = filter ==null?subFilter:filter.and(subFilter);
 		}
 		
 		Double doubleProperty = params.getLength();

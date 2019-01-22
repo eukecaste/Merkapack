@@ -65,12 +65,6 @@ public class ProductDAO {
 	}
 	
 	public static Stream<Product> getProducts(DBContext ctx, int offset, int count, ProductFilter filter){
-		System.out.println(
-				getSelect(ctx)
-				.where(PRODUCT_PROPERTIES.getConditions(filter))
-				.limit(offset,count)
-				.getSQL()
-				);
 		return getSelect(ctx)
 			.where(PRODUCT_PROPERTIES.getConditions(filter))
 			.limit(offset,count)
@@ -81,6 +75,7 @@ public class ProductDAO {
 	}
 	
 	public static LinkedList<Product> getProductList(DBContext ctx, int offset, int count, ProductFilter filter){
+		System.out.println("getProductList");
 		return getProducts(ctx, offset, count,filter)
 				.collect(Collectors.toCollection(LinkedList::new));
 	}

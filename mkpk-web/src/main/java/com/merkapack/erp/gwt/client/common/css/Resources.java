@@ -64,6 +64,9 @@ public interface Resources extends ClientBundle {
 	@Source("images/mkpk-icon-delete.png")
 	ImageResource mkpkIconDelete();
 
+	@Source("images/mkpk-icon-clean.png")
+	ImageResource mkpkIconClean();
+
 	@Source("images/mkpk-icon-plus.png")
 	ImageResource mkpkIconPlus();
 	

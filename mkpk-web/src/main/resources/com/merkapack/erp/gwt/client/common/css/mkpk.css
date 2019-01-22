@@ -238,6 +238,7 @@ input[type="text"] {
 @sprite .mkpk-icon-previous	{width: auto; gwt-image: "mkpkIconPrevious";}
 @sprite .mkpk-icon-cancel 	{width: auto; gwt-image: "mkpkIconCancel";}
 @sprite .mkpk-icon-delete 	{width: auto; gwt-image: "mkpkIconDelete";}
+@sprite .mkpk-icon-clean 	{width: auto; gwt-image: "mkpkIconClean";}
 @sprite .mkpk-icon-accept 	{width: auto; gwt-image: "mkpkIconAccept";}
 @sprite .mkpk-icon-magic 	{width: auto; gwt-image: "mkpkIconMagic";}
 @sprite .mkpk-icon-config 	{width: auto; gwt-image: "mkpkIconConfig";}

@@ -3,16 +3,17 @@ package com.merkapack.erp.gwt.client.view;
 import java.util.LinkedList;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
-import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.merkapack.erp.core.model.Material;
 import com.merkapack.erp.core.model.Product;
@@ -28,26 +29,32 @@ import com.merkapack.erp.gwt.client.widget.MkpkDoubleBox;
 import com.merkapack.erp.gwt.client.widget.MkpkTextBox;
 import com.merkapack.watson.util.MkpkNumberUtils;
 
-public class ProductList extends SimpleLayoutPanel  {
+public class ProductList extends DockLayoutPanel  {
 	
 	private static ProductServiceAsync SERVICE;
 	private int offset = 0;
 	private int count = 20;
+	
 	private MkpkTextBox codeBox = new MkpkTextBox();
 	private MkpkTextBox nameBox = new MkpkTextBox();
 	private MkpkTextBox materialUpBox = new MkpkTextBox();
 	private MkpkTextBox materialDownBox = new MkpkTextBox();
 	private MkpkDoubleBox lengthBox = new MkpkDoubleBox();
 	private MkpkDoubleBox widthBox = new MkpkDoubleBox();
+	
+	private ScrollPanel scroll = new ScrollPanel();
 
 	public ProductList( ) {
+		super(Unit.PX);
 		setStyleName(MKPK.CSS.mkpkWidthAll());
 		ProductServiceAsync serviceRaw = GWT.create(ProductService.class);
 		SERVICE = new ProductServiceAsyncDecorator(serviceRaw);
+		addNorth(getFilterTable(), 60);
+		add(scroll);
 		search();
 	}
 	private void search() {
-		setWidget(getContent());
+		scroll.setWidget(getContent());
 	}
 	
 	private FlexTable defineFlexTable() {
@@ -117,10 +124,6 @@ public class ProductList extends SimpleLayoutPanel  {
 	private Widget getContent() {
 		ScrollPanel scrollPanel = new ScrollPanel();
 		FlowPanel container = new FlowPanel();
-		
-		final FlexTable filter = getFilterTable();
-		container.add(filter);
-		
 		final FlexTable tab = defineFlexTable();
 		container.add(tab);
 
@@ -143,7 +146,7 @@ public class ProductList extends SimpleLayoutPanel  {
 						public void onClick(ClickEvent event) {
 							offset = offset - count;
 							if (offset < 0 ) offset = 0;
-							setWidget(getContent());
+							add(getContent());
 						}
 					});
 					tab.setWidget(row, 0, previousButton);
@@ -162,7 +165,7 @@ public class ProductList extends SimpleLayoutPanel  {
 					@Override
 					public void onClick(ClickEvent event) {
 						offset = offset + count;
-						setWidget(getContent());
+						ProductList.this.scroll.setWidget(getContent());
 					}
 				});
 				tab.setWidget(row, nextCol, nextButton);
@@ -231,8 +234,7 @@ public class ProductList extends SimpleLayoutPanel  {
 								
 								@Override
 								public void onSuccess(Void nothing) {
-									ProductList.this.clear();
-									ProductList.this.setWidget(getContent());
+									ProductList.this.scroll.setWidget(getContent());
 								}
 								
 								@Override
@@ -300,7 +302,7 @@ public class ProductList extends SimpleLayoutPanel  {
 		});
 		filter.setWidget(1, 4, materialDownBox);
 
-		lengthBox.setVisibleLength(10);
+		lengthBox.setVisibleLength(3);
 		lengthBox.addValueChangeHandler(new ValueChangeHandler<Double>() {
 			
 			@Override
@@ -310,7 +312,7 @@ public class ProductList extends SimpleLayoutPanel  {
 		});
 		filter.setWidget(1, 5, lengthBox);
 
-		widthBox.setVisibleLength(10);
+		widthBox.setVisibleLength(3);
 		widthBox.addValueChangeHandler(new ValueChangeHandler<Double>() {
 			
 			@Override
@@ -319,7 +321,24 @@ public class ProductList extends SimpleLayoutPanel  {
 			}
 		});
 		filter.setWidget(1, 6, widthBox);
-		filter.setWidget(1, 7, new Label());
+		
+		MkpkButton cleanButton = new MkpkButton();
+		cleanButton.setTitle(MKPK.MSG.delete());
+		cleanButton.addStyleName(MKPK.CSS.mkpkIconClean());
+		cleanButton.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				codeBox.setValue(null,false);
+				nameBox.setValue(null,false);
+				materialUpBox.setValue(null,false);
+				materialDownBox.setValue(null,false);
+				lengthBox.setValue(null,false);
+				widthBox.setValue(null,false);
+				search();
+			}
+		});
+		filter.setWidget(1, 7, cleanButton);
 		
 		return filter;
 	}
